@@ -1,8 +1,6 @@
-module org.example.demo {
+module divar.aut.frontend {
     requires javafx.controls;
     requires javafx.fxml;
 
-
-    opens org.example.demo to javafx.fxml;
-    exports org.example.demo;
+    exports divar.aut.frontend;
 }
