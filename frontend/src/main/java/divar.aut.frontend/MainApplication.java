@@ -7,7 +7,6 @@ import javafx.stage.Stage;
 
 public class MainApplication extends Application {
 
-    @Override
     public void start(Stage primaryStage) {
         Label label = new Label("به سامانه خرید و فروش دست دوم خوش آمدید! 🚀");
 
