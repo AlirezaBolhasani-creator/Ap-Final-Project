@@ -1,4 +1,4 @@
-package org.example.demo;
+package divar.aut.frontend;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
