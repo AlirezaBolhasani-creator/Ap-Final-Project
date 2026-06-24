@@ -21,27 +21,4 @@ public class HttpUtils
             return "";
         }
     }
-    public static Map<String, String> parseFormData(String body) throws UnsupportedEncodingException {
-        Map<String, String> map = new HashMap<>();
-        if(body == null|| body.trim().isEmpty())
-        {
-            return map;
-        }
-        String[] parts = body.split("&");
-        for(String part : parts)
-        {
-            String[] keyValue = part.split("=", 2);
-            if(keyValue.length == 2)
-            {
-                try {
-                    String key = URLDecoder.decode(keyValue[0], StandardCharsets.UTF_8);
-                    String value = URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8);
-                    map.put(key, value);
-                } catch (IllegalArgumentException e) {
-                    System.err.println("Warning: Malformed form data parameter ignored: " + part);
-                }
-            }
-        }
-        return map;
-    }
 }
