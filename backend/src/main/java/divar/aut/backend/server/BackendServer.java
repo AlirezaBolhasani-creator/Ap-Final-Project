@@ -1,5 +1,7 @@
 package divar.aut.backend.server;
 import com.sun.net.httpserver.HttpServer;
+import divar.aut.backend.handler.AuthHandler;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
@@ -15,6 +17,7 @@ public class BackendServer
     {
         server = HttpServer.create(new InetSocketAddress(port), 0);
         server.setExecutor(Executors.newCachedThreadPool());
+        server.createContext("/api/auth", new AuthHandler());
         server.start();
         System.out.println("BackendServer started on port " + port);
     }
