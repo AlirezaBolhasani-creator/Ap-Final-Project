@@ -1,5 +1,8 @@
 package divar.aut.backend;
 
+import divar.aut.backend.model.User;
+import divar.aut.backend.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
@@ -8,36 +11,26 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserRepository userRepository;
-
-    public AuthController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody AuthRequest request) {
-        if (request.username() == null || request.password() == null ||
-                request.username().isEmpty() || request.password().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Please fill all fields"));
+    public ResponseEntity<?> register(@RequestBody User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            return ResponseEntity.badRequest().body("{\"message\": \"این نام کاربری قبلاً گرفته شده!\"}");
         }
-
-        boolean isSaved = userRepository.saveUser(request.username(), request.password());
-
-        if (isSaved) {
-            return ResponseEntity.ok(Map.of("message", "Registration successful! "));
-        } else {
-            return ResponseEntity.badRequest().body(Map.of("message", "Username already exists!"));
-        }
+        userRepository.save(user);
+        return ResponseEntity.ok("{\"message\": \"ثبت‌نام با موفقیت انجام شد\"}");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
-        boolean isValid = userRepository.verifyUser(request.username(), request.password());
+    public ResponseEntity<?> login(@RequestBody User loginData) {
+        User user = userRepository.findByUsername(loginData.getUsername());
 
-        if (isValid) {
-            return ResponseEntity.ok(Map.of("message", "Login successful! "));
+        if (user != null && user.getPassword().equals(loginData.getPassword())) {
+            return ResponseEntity.ok("{\"message\": \"ورود موفقیت‌آمیز بود!\"}");
         } else {
-            return ResponseEntity.status(401).body(Map.of("message", "Invalid username or password!"));
+            return ResponseEntity.status(401).body("{\"message\": \"نام کاربری یا رمز عبور اشتباه است\"}");
         }
     }
 }
