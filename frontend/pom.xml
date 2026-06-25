@@ -48,7 +48,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>divar.aut.frontend.AuthView</mainClass>
+                    <mainClass>divar.aut.frontend.LoginView</mainClass>
                 </configuration>
             </plugin>
         </plugins>
