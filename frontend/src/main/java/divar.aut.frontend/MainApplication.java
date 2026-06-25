@@ -45,17 +45,15 @@ public class MainApplication extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    private void sendAuthRequest(String username, String password, String endpoint, Label statusLabel)
-    {
-        if(username.isEmpty() || password.isEmpty())
-        {
+    private void sendAuthRequest(String username, String password, String endpoint, Label statusLabel) {
+        if (username.isEmpty() || password.isEmpty()) {
             statusLabel.setText("Please fill all the fields");
             return;
         }
         try {
             String jsonBody = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(ApiConfig.BASE_URL+"/auth" + endpoint))
+                    .uri(URI.create(ApiConfig.BASE_URL + "/auth" + endpoint))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
@@ -64,25 +62,44 @@ public class MainApplication extends Application {
                     .thenApply(HttpResponse::body)
                     .thenAccept(responseBody -> {
                         javafx.application.Platform.runLater(() -> {
-                            String cleanMessage = responseBody
-                                    .replace("{\"message\": \"", "")
-                                    .replace("\"}", "");
+                            java.util.regex.Matcher matcher = java.util.regex.Pattern
+                                    .compile("\"message\"\\s*:\\s*\"([^\"]+)\"")
+                                    .matcher(responseBody);
 
-                            statusLabel.setText(cleanMessage);
+                            if (matcher.find()) {
+                                String cleanMessage = matcher.group(1);
+
+                                cleanMessage = unescapeJavaString(cleanMessage);
+
+                                statusLabel.setText(cleanMessage);
+                            } else {
+                                statusLabel.setText("bad message from server");
+                            }
                         });
                     })
                     .exceptionally(ex -> {
                         javafx.application.Platform.runLater(() -> statusLabel.setText("خطا در اتصال به سرور!"));
                         return null;
                     });
+        } catch (Exception ex) {
+            statusLabel.setText("Unexpected Error");
         }
-         catch (Exception ex)
-         {
-             statusLabel.setText("Unexpected Error");
-         }
-
     }
-    public static void main(String[] args) {
+
+    private String unescapeJavaString(String st) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < st.length(); i++) {
+            char ch = st.charAt(i);
+            if (ch == '\\' && i < st.length() - 1 && st.charAt(i + 1) == 'u') {
+                String hex = st.substring(i + 2, i + 6);
+                sb.append((char) Integer.parseInt(hex, 16));
+                i += 5;
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }    public static void main(String[] args) {
         launch(args);
     }
 }
