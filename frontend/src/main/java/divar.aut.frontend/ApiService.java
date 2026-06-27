@@ -56,6 +56,47 @@ public class ApiService
             onError.accept("Unexpected Error");
         }
     }
+    public static void sendRegisterRequest(String name, String username, String password, String email, String phone,
+                                           Consumer<String> onSuccess, Consumer<String> onError) {
+        try {
+            String jsonBody = String.format(
+                    "{\"name\":\"%s\", \"username\":\"%s\", \"password\":\"%s\", \"email\":\"%s\", \"phone\":\"%s\"}",
+                    name, username, password, email, phone
+            );
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(ApiConfig.BASE_URL + "/auth/register"))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                    .build();
+
+            httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenAccept(response -> {
+                        String responseBody = response.body();
+                        Platform.runLater(() -> {
+                            Matcher matcher = Pattern.compile("\"message\"\\s*:\\s*\"([^\"]+)\"").matcher(responseBody);
+                            if (matcher.find()) {
+                                String cleanMessage = unescapeJavaString(matcher.group(1));
+
+                                if (response.statusCode() == 200) {
+                                    onSuccess.accept(cleanMessage);
+                                } else {
+                                    onError.accept(cleanMessage);
+                                }
+                            } else {
+                                onError.accept("Unexpected Error");
+                            }
+                        });
+                    })
+                    .exceptionally(ex -> {
+                        Platform.runLater(() -> onError.accept("Error Connecting To Server: " + ex.getMessage()));
+                        return null;
+                    });
+
+        } catch (Exception ex) {
+            onError.accept("Unexpected Error: " + ex.getMessage());
+        }
+    }
     private static String unescapeJavaString(String st) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < st.length(); i++) {
