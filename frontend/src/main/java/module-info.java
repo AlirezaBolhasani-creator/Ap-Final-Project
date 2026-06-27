@@ -6,4 +6,6 @@ module divar.aut.frontend {
 
     opens divar.aut.frontend to javafx.fxml;
     exports divar.aut.frontend;
+    exports divar.aut.frontend.ui;
+    opens divar.aut.frontend.ui to javafx.fxml;
 }
