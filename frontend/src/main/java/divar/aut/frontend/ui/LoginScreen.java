@@ -49,7 +49,7 @@ public class LoginScreen
                     message -> {
                         statusLabel.setText("Success: " + message);
                         statusLabel.setTextFill(Color.GREEN);
-                        //return to main page
+                        mainApp.toMain();
                     },
                     error -> {
                         // Error
