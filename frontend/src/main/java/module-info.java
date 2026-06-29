@@ -8,4 +8,6 @@ module divar.aut.frontend {
     exports divar.aut.frontend;
     exports divar.aut.frontend.ui;
     opens divar.aut.frontend.ui to javafx.fxml;
+    exports divar.aut.frontend.authpart;
+    opens divar.aut.frontend.authpart to javafx.fxml;
 }
