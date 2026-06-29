@@ -1,5 +1,6 @@
 package divar.aut.frontend;
 
+import divar.aut.frontend.authpart.AuthManager;
 import javafx.application.Platform;
 
 import java.net.URI;
@@ -34,18 +35,7 @@ public class ApiService
                     .thenAccept(response -> {
                         String responseBody = response.body();
                         Platform.runLater(() -> {
-                            Matcher matcher = Pattern.compile("\"message\"\\s*:\\s*\"([^\"]+)\"").matcher(responseBody);
-                            if (matcher.find()) {
-                                String cleanMessage = unescapeJavaString(matcher.group(1));
-
-                                if (response.statusCode() == 200) {
-                                    onSuccess.accept(cleanMessage);
-                                } else {
-                                    onError.accept(cleanMessage);
-                                }
-                            } else {
-                                onError.accept("Unexpected Error");
-                            }
+                            handleResponse(response, onSuccess, onError);
                         });
                     })
                     .exceptionally(ex -> {
@@ -72,21 +62,8 @@ public class ApiService
 
             httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenAccept(response -> {
-                        String responseBody = response.body();
-                        Platform.runLater(() -> {
-                            Matcher matcher = Pattern.compile("\"message\"\\s*:\\s*\"([^\"]+)\"").matcher(responseBody);
-                            if (matcher.find()) {
-                                String cleanMessage = unescapeJavaString(matcher.group(1));
+                        handleResponse(response, onSuccess, onError);
 
-                                if (response.statusCode() == 200) {
-                                    onSuccess.accept(cleanMessage);
-                                } else {
-                                    onError.accept(cleanMessage);
-                                }
-                            } else {
-                                onError.accept("Unexpected Error");
-                            }
-                        });
                     })
                     .exceptionally(ex -> {
                         Platform.runLater(() -> onError.accept("Error Connecting To Server: " + ex.getMessage()));
@@ -97,18 +74,22 @@ public class ApiService
             onError.accept("Unexpected Error: " + ex.getMessage());
         }
     }
-    private static String unescapeJavaString(String st) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < st.length(); i++) {
-            char ch = st.charAt(i);
-            if (ch == '\\' && i < st.length() - 1 && st.charAt(i + 1) == 'u') {
-                String hex = st.substring(i + 2, i + 6);
-                sb.append((char) Integer.parseInt(hex, 16));
-                i += 5;
+    private static void handleResponse(HttpResponse<String> response,
+                                       Consumer<String> onSuccess, Consumer<String> onError) {
+        String responseBody = response.body();
+        System.out.println("Server Response: " + responseBody);
+        Platform.runLater(() -> {
+            Matcher messageMatcher = Pattern.compile("\"message\"\\s*:\\s*\"([^\"]+)\"").matcher(responseBody);
+            Matcher tokenMatcher = Pattern.compile("\"token\"\\s*:\\s*\"([^\"]+)\"").matcher(responseBody);
+
+            if (response.statusCode() == 200 || response.statusCode() == 201) {
+                if (tokenMatcher.find()) {
+                    AuthManager.setToken(tokenMatcher.group(1));
+                }
+                onSuccess.accept(messageMatcher.find() ? messageMatcher.group(1) : "Success");
             } else {
-                sb.append(ch);
+                onError.accept(messageMatcher.find() ? messageMatcher.group(1) : "Error occurred");
             }
-        }
-        return sb.toString();
+        });
     }
 }
