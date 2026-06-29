@@ -33,7 +33,6 @@ public class RegisterScreen {
         Label label = new Label("ثبت نام در سامانه");
         label.setTextFill(Color.WHITE);
 
-        // استایل مشترک برای فیلدها
         String fieldStyle = "-fx-background-color: transparent; -fx-border-color: white; -fx-border-width: 0 0 1 0; -fx-text-fill: white; -fx-prompt-text-fill: #cccccc;";
 
         TextField name = createField("Name", fieldStyle);
@@ -56,8 +55,9 @@ public class RegisterScreen {
                     email.getText(),
                     phone.getText(),
                     message -> {
-                        statusLabel.setText("Registered: " + message);
+                        statusLabel.setText("Success: " + message);
                         statusLabel.setTextFill(Color.GREEN);
+                        mainApp.toMain();
                         },
                     error -> {
                         statusLabel.setText("Error: " + error);

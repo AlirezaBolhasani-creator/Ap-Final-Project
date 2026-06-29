@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="divar.aut.frontend.ui.MainViewController"
+            stylesheets="@MainView.css"
+            style="-fx-background-color: #0d0d0d;">
+
+    <!-- ═══════════════════  TOP NAV BAR  ═══════════════════ -->
+    <top>
+        <VBox styleClass="nav-wrapper">
+
+            <!-- Primary Navbar -->
+            <HBox styleClass="navbar" alignment="CENTER_LEFT" spacing="0">
+
+                <!-- Logo -->
+                <Label text="دیوار" styleClass="logo-text"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Search Bar -->
+                <HBox styleClass="search-bar" alignment="CENTER" spacing="8">
+                    <Label text="🔍" styleClass="search-icon"/>
+                    <TextField fx:id="searchField"
+                               promptText="جستجو در همه آگهی‌ها"
+                               styleClass="search-input"/>
+                </HBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Nav Actions -->
+                <HBox spacing="4" alignment="CENTER">
+                    <Button text="دیوار من" styleClass="nav-btn"/>
+                    <Button text="چت و تماس" styleClass="nav-btn"/>
+                    <Button text="پشتیبانی" styleClass="nav-btn"/>
+                    <Button text="ثبت آگهی" styleClass="post-btn" onAction="#onPostAd"/>
+                </HBox>
+
+            </HBox>
+
+            <!-- Category Bar -->
+            <HBox styleClass="category-bar" alignment="CENTER_RIGHT" spacing="4">
+                <Label text="دسته‌ها ▼" styleClass="cat-label"/>
+                <Button text="املاک"             styleClass="cat-chip" onAction="#filterCategory"/>
+                <Button text="وسایل نقلیه"       styleClass="cat-chip" onAction="#filterCategory"/>
+                <Button text="کالای دیجیتال"     styleClass="cat-chip" onAction="#filterCategory"/>
+                <Button text="خانه و آشپزخانه"  styleClass="cat-chip" onAction="#filterCategory"/>
+                <Button text="خدمات"             styleClass="cat-chip" onAction="#filterCategory"/>
+                <Button text="وسایل شخصی"        styleClass="cat-chip" onAction="#filterCategory"/>
+                <Button text="سرگرمی و فراغت"   styleClass="cat-chip" onAction="#filterCategory"/>
+                <Button text="تجهیزات و صنعتی"  styleClass="cat-chip" onAction="#filterCategory"/>
+                <Button text="استخدام"           styleClass="cat-chip" onAction="#filterCategory"/>
+            </HBox>
+
+        </VBox>
+    </top>
+
+    <!-- ═══════════════════  MAIN CONTENT  ═══════════════════ -->
+    <center>
+        <HBox spacing="0" alignment="TOP_RIGHT">
+
+            <!-- ───── Ad Grid (scrollable) ───── -->
+            <ScrollPane fx:id="adScrollPane"
+                        styleClass="ads-scroll"
+                        fitToWidth="true"
+                        HBox.hgrow="ALWAYS">
+
+                <VBox spacing="0" styleClass="ads-container">
+
+                    <!-- Section Header -->
+                    <HBox styleClass="section-header" alignment="CENTER_RIGHT">
+                        <Label text="آگهی‌های قم" styleClass="section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <ComboBox fx:id="sortCombo"
+                                  promptText="مرتب‌سازی"
+                                  styleClass="sort-combo"/>
+                    </HBox>
+
+                    <!-- Ad Grid -->
+                    <FlowPane fx:id="adGrid"
+                              styleClass="ad-grid"
+                              hgap="16"
+                              vgap="16"
+                              prefWrapLength="800">
+                        <!-- AdCards are injected programmatically in MainViewController -->
+                    </FlowPane>
+
+                    <!-- Load More -->
+                    <HBox alignment="CENTER" styleClass="load-more-wrapper">
+                        <Button fx:id="loadMoreBtn"
+                                text="نمایش بیشتر"
+                                styleClass="load-more-btn"
+                                onAction="#loadMore"/>
+                    </HBox>
+
+                </VBox>
+            </ScrollPane>
+
+            <!-- ───── Right Sidebar ───── -->
+            <VBox styleClass="sidebar" spacing="16" minWidth="220" maxWidth="220">
+
+                <!-- Location -->
+                <VBox styleClass="sidebar-card" spacing="8">
+                    <Label text="📍 محله" styleClass="sidebar-title"/>
+                    <Button text="انتخاب ›" styleClass="sidebar-action"/>
+                </VBox>
+
+                <!-- Price Filter -->
+                <VBox styleClass="sidebar-card" spacing="10">
+                    <Label text="قیمت (تومان)" styleClass="sidebar-title"/>
+                    <TextField promptText="از" styleClass="price-field"/>
+                    <TextField promptText="تا" styleClass="price-field"/>
+                    <Button text="اعمال فیلتر" styleClass="apply-btn" onAction="#applyFilter"/>
+                </VBox>
+
+                <!-- Condition Filter -->
+                <VBox styleClass="sidebar-card" spacing="8">
+                    <Label text="وضعیت کالا" styleClass="sidebar-title"/>
+                    <CheckBox text="نو"        styleClass="filter-check"/>
+                    <CheckBox text="در حد نو"  styleClass="filter-check"/>
+                    <CheckBox text="کارکرده"   styleClass="filter-check"/>
+                </VBox>
+
+            </VBox>
+
+        </HBox>
+    </center>
+
+    <!-- ═══════════════════  STATUS BAR  ═══════════════════ -->
+    <bottom>
+        <HBox styleClass="statusbar" alignment="CENTER_LEFT" spacing="12">
+            <Label fx:id="statusLabel" text="آماده" styleClass="status-text"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
