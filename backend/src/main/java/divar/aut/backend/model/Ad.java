@@ -95,10 +95,10 @@ public class Ad
     private LocalDateTime time;
     @Column(nullable = false)
     private String condition;
-    @Column(nullable = false)
+    @Column(name = "image_url", nullable = true)
     private String imageUrl;
     @Column
-    private int photoCount;
+    private int photoCount = 0;
     @Column(nullable = false)
     private String user_id;
 

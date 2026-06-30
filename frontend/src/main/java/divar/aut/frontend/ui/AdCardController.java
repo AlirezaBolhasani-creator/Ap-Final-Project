@@ -31,9 +31,8 @@ public class AdCardController implements Initializable {
 
     public void setData(AdData data) {
         adTitle.setText(data.title());
-        adPrice.setText(data.price());
+        adPrice.setText(data.price().toString());
         adLocation.setText(data.location());
-        adTime.setText(data.time());
         photoCount.setText("📷 " + data.photoCount());
 
         if (data.condition() != null && !data.condition().isBlank()) {
