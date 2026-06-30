@@ -1,4 +1,5 @@
 package divar.aut.frontend.ui;
+import divar.aut.frontend.AdService;
 import javafx.scene.Parent;
 import divar.aut.frontend.DivarApplication;
 import javafx.scene.layout.StackPane;
@@ -7,6 +8,7 @@ public class ViewManager
 {
     private final StackPane root;
     private final DivarApplication mainApp;
+    private String userToken;
     public ViewManager(StackPane root, DivarApplication mainApp)
     {
         this.root = root;
@@ -25,4 +27,15 @@ public class ViewManager
         MainView mainView = new MainView(this);
         show(mainView.getView());
     }
+    public void toPostAd() {
+        show(new PostAdScreen(this, new AdService(this.getUserToken())).getView());
+    }
+    public String getUserToken() {
+        return userToken;
+    }
+    public void setUserToken(String userToken) {
+        this.userToken = userToken;
+    }
+
+
 }

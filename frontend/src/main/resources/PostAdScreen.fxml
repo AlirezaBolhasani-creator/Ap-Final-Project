@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+        <?import javafx.geometry.Insets?>
+        <?import javafx.scene.control.*?>
+        <?import javafx.scene.layout.*?>
+        <?import javafx.scene.text.Font?>
+
+<ScrollPane fitToWidth="true" nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: #242424; -fx-background: #242424;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="divar.aut.frontend.ui.PostAdController">
+
+    <VBox spacing="25" style="-fx-background-color: #242424; -fx-padding: 30;">
+
+        <BorderPane>
+            <right>
+                <Label text="ثبت آگهی" textFill="WHITE" BorderPane.alignment="CENTER">
+                    <font>
+                        <Font name="System Bold" size="20.0" />
+                    </font>
+                </Label>
+            </right>
+            <left>
+                <Button fx:id="clearBtn" onAction="#handleClear" style="-fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 5; -fx-text-fill: #aaa; -fx-padding: 5 15; -fx-cursor: hand;" text="↻ پاک کردن" BorderPane.alignment="CENTER" />
+            </left>
+        </BorderPane>
+
+        <Separator style="-fx-opacity: 0.2;" />
+
+        <VBox spacing="10">
+            <HBox alignment="CENTER_LEFT" spacing="3">
+                <Label text="عکس آگهی" textFill="WHITE">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Label>
+                <Label text="*" textFill="#ff5a5a">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Label>
+            </HBox>
+            <StackPane fx:id="imageUploadBox" maxWidth="120" minHeight="120" minWidth="120" onMouseClicked="#handleImageUpload" style="-fx-border-color: #666; -fx-border-style: dashed; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-cursor: hand; -fx-background-color: transparent;">
+                <Label text="+ 🖼️" textFill="#888">
+                    <font><Font size="24.0" /></font>
+                </Label>
+            </StackPane>
+        </VBox>
+
+        <Separator style="-fx-opacity: 0.2;" />
+
+        <VBox spacing="10">
+            <HBox alignment="CENTER_LEFT" spacing="3">
+                <Label text="عنوان آگهی" textFill="WHITE">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Label>
+                <Label text="*" textFill="#ff5a5a">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Label>
+            </HBox>
+            <TextField fx:id="titleField" promptText="عنوان آگهی خود را بنویسید" style="-fx-background-color: #2a2a2a; -fx-border-color: #444; -fx-border-radius: 5; -fx-text-fill: white; -fx-prompt-text-fill: #777; -fx-padding: 10;" />
+        </VBox>
+
+        <Separator style="-fx-opacity: 0.2;" />
+
+        <VBox spacing="10">
+            <HBox alignment="CENTER_LEFT" spacing="3">
+                <Label text="توضیحات آگهی" textFill="WHITE">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Label>
+                <Label text="*" textFill="#ff5a5a">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Label>
+            </HBox>
+            <TextArea fx:id="descriptionArea" prefRowCount="4" promptText="توضیحات مربوط به آگهی را بنویسید" style="-fx-control-inner-background: #2a2a2a; -fx-background-color: #2a2a2a; -fx-border-color: #444; -fx-border-radius: 5; -fx-text-fill: white; -fx-prompt-text-fill: #777; -fx-padding: 5;" />
+        </VBox>
+
+        <Separator style="-fx-opacity: 0.2;" />
+
+        <HBox spacing="20">
+            <VBox spacing="10" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="3">
+                    <Label text="قیمت (تومان)" textFill="WHITE" />
+                    <Label text="*" textFill="#ff5a5a" />
+                </HBox>
+                <TextField fx:id="priceField" promptText="مثلا: 150000" style="-fx-background-color: #2a2a2a; -fx-border-color: #444; -fx-border-radius: 5; -fx-text-fill: white; -fx-prompt-text-fill: #777; -fx-padding: 10;" />
+            </VBox>
+
+            <VBox spacing="10" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="3">
+                    <Label text="مکان" textFill="WHITE" />
+                    <Label text="*" textFill="#ff5a5a" />
+                </HBox>
+                <TextField fx:id="locationField" promptText="مثلا: تهران، سعادت‌آباد" style="-fx-background-color: #2a2a2a; -fx-border-color: #444; -fx-border-radius: 5; -fx-text-fill: white; -fx-prompt-text-fill: #777; -fx-padding: 10;" />
+            </VBox>
+        </HBox>
+
+        <VBox spacing="10">
+            <Label text="وضعیت کالا" textFill="WHITE" />
+            <ComboBox fx:id="conditionCombo" prefWidth="200.0" promptText="انتخاب کنید..." style="-fx-background-color: #2a2a2a; -fx-border-color: #444; -fx-border-radius: 5; -fx-text-fill: black;" />
+        </VBox>
+
+        <Separator style="-fx-opacity: 0.2;" />
+
+        <HBox alignment="CENTER_RIGHT" spacing="15" style="-fx-padding: 20 0 0 0;">
+            <Label fx:id="statusLabel" textFill="#ff5a5a" />
+            <Button fx:id="submitBtn" onAction="#handleSubmit" prefWidth="150" style="-fx-background-color: #a62626; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10; -fx-background-radius: 5; -fx-cursor: hand;" text="ثبت آگهی" />
+        </HBox>
+
+    </VBox>
+</ScrollPane>

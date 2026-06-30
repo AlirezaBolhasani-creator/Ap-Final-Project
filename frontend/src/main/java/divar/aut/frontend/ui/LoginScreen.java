@@ -46,8 +46,9 @@ public class LoginScreen
             String password = passField.getText();
 
             ApiService.sendAuthRequest(username, password, "/login",
-                    message -> {
-                        statusLabel.setText("Success: " + message);
+                    token -> {
+                        mainApp.setUserToken(token);
+                        statusLabel.setText("Success");
                         statusLabel.setTextFill(Color.GREEN);
                         mainApp.toMain();
                     },

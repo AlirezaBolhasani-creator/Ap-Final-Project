@@ -3,6 +3,7 @@ module divar.aut.frontend {
     requires javafx.fxml;
     requires java.desktop;
     requires java.net.http;
+    requires com.google.gson;
 
     opens divar.aut.frontend to javafx.fxml;
     exports divar.aut.frontend;

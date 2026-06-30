@@ -78,17 +78,29 @@ public class ApiService
                                        Consumer<String> onSuccess, Consumer<String> onError) {
         String responseBody = response.body();
         System.out.println("Server Response: " + responseBody);
-        Platform.runLater(() -> {
-            Matcher messageMatcher = Pattern.compile("\"message\"\\s*:\\s*\"([^\"]+)\"").matcher(responseBody);
-            Matcher tokenMatcher = Pattern.compile("\"token\"\\s*:\\s*\"([^\"]+)\"").matcher(responseBody);
 
+        Matcher messageMatcher = Pattern.compile("\"message\"\\s*:\\s*\"([^\"]+)\"").matcher(responseBody);
+        Matcher tokenMatcher = Pattern.compile("\"token\"\\s*:\\s*\"([^\"]+)\"").matcher(responseBody);
+
+        Platform.runLater(() -> {
             if (response.statusCode() == 200 || response.statusCode() == 201) {
+                String token = null;
                 if (tokenMatcher.find()) {
-                    AuthManager.setToken(tokenMatcher.group(1));
+                    token = tokenMatcher.group(1);
+                    AuthManager.setToken(token); // ذخیره در AuthManager
                 }
-                onSuccess.accept(messageMatcher.find() ? messageMatcher.group(1) : "Success");
+
+                String message = messageMatcher.find() ? messageMatcher.group(1) : "Success";
+
+                if (token != null) {
+                    onSuccess.accept(token);
+                } else {
+                    onSuccess.accept(message);
+                }
+
             } else {
-                onError.accept(messageMatcher.find() ? messageMatcher.group(1) : "Error occurred");
+                String errorMessage = messageMatcher.find() ? messageMatcher.group(1) : "Error occurred";
+                onError.accept(errorMessage);
             }
         });
     }

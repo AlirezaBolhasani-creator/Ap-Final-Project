@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +26,7 @@ public class AdService {
 
     public Ad saveAd(String token, Ad ad) {
         String jwt = token.substring(7);
-
+        System.out.println("TOKEN RECEIVED IN BACKEND: " + token); // این خط را اضافه کن
         if (!jwtUtils.validateToken(jwt)) {
             throw new RuntimeException("Invalid token");
         }
@@ -39,7 +40,7 @@ public class AdService {
 
         String username = jwtUtils.getUsernameFromToken(jwt);
         ad.setUser_id(username);
-
+        ad.setTime(LocalDateTime.now());
         return adRepository.save(ad);
     }
 
@@ -70,8 +71,8 @@ public class AdService {
             String uniqueFileName = UUID.randomUUID().toString() + "." + fileName;
             java.nio.file.Path filePath = java.nio.file.Paths.get(uploadDirectory + uniqueFileName);
             java.nio.file.Files.write(filePath, file.getBytes());
-
             ad.setImageUrl(uniqueFileName);
+            ad.setPhotoCount(ad.getPhotoCount() + 1);
             return adRepository.save(ad);
         }
         catch (java.io.IOException e) {

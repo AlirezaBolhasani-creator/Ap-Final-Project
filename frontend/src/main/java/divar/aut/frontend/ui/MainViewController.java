@@ -1,5 +1,6 @@
 package divar.aut.frontend.ui;
 
+import divar.aut.frontend.AdService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -24,6 +25,7 @@ public class MainViewController implements Initializable {
     @FXML private Button           loadMoreBtn;
     @FXML private Label            statusLabel;
 
+    private AdService adService;
     private final ViewManager viewManager;
     private int page = 0;
 
@@ -31,7 +33,7 @@ public class MainViewController implements Initializable {
     public MainViewController() { this.viewManager = null; }
 
     /** Called by MainView via controller factory */
-    public MainViewController(ViewManager vm) { this.viewManager = vm; }
+    public MainViewController(ViewManager vm) { this.viewManager = vm;}
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -39,25 +41,47 @@ public class MainViewController implements Initializable {
             sortCombo.getItems().addAll("جدیدترین", "ارزان‌ترین", "گران‌ترین");
             sortCombo.getSelectionModel().selectFirst();
         }
-        loadPage();
+        if (viewManager != null && viewManager.getUserToken() != null) {
+            this.adService = new AdService(viewManager.getUserToken());
+            loadPage();
+        } else {
+            if (statusLabel != null) statusLabel.setText("خطا: توکن احراز هویت یافت نشد!");
+        }
     }
 
     private void loadPage() {
-        List<AdData> ads = AdData.samplePage(page);
+        if (statusLabel != null) statusLabel.setText("در حال دریافت آگهی‌ها...");
+        if (loadMoreBtn != null) loadMoreBtn.setDisable(true);
+        adService.fetchAds(page,
+                ads -> {
+                    // موفقیت: این بخش در JavaFX Thread اجرا می‌شود
+                    if (statusLabel != null) statusLabel.setText(ads.size() + " آگهی دریافت شد");
+                    if (loadMoreBtn != null) loadMoreBtn.setDisable(false);
+
+                    renderAds(ads);
+                },
+                error -> {
+                    // خطا: نمایش ارور به کاربر
+                    if (statusLabel != null) statusLabel.setText("خطا در ارتباط با سرور: " + error);
+                    if (loadMoreBtn != null) loadMoreBtn.setDisable(false);
+                }
+        );
+    }
+    public void renderAds(List<AdData> ads) {
         int delay = 0;
         for (AdData ad : ads) {
             Node card = buildCard(ad);
             if (card == null) continue;
+
             card.setOpacity(0);
             adGrid.getChildren().add(card);
+
             FadeTransition ft = new FadeTransition(Duration.millis(280), card);
             ft.setToValue(1);
             ft.setDelay(Duration.millis(delay));
             ft.play();
             delay += 50;
         }
-        if (statusLabel != null)
-            statusLabel.setText(adGrid.getChildren().size() + " آگهی نمایش داده می‌شود");
     }
 
     private Node buildCard(AdData data) {
@@ -96,14 +120,11 @@ public class MainViewController implements Initializable {
     private void loadMore() {
         page++;
         loadPage();
-        loadMoreBtn.setDisable(true);
-        PauseTransition pause = new PauseTransition(Duration.millis(600));
-        pause.setOnFinished(e -> loadMoreBtn.setDisable(false));
-        pause.play();
     }
 
     @FXML private void onPostAd() {
-        statusLabel.setText("در حال انتقال به صفحه ثبت آگهی…");
+        if(viewManager == null || viewManager.getUserToken() == null) return;
+        viewManager.toPostAd();
     }
 
     @FXML private void filterCategory(javafx.event.ActionEvent e) {

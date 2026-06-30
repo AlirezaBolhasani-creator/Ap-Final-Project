@@ -75,7 +75,7 @@
 
                     <!-- Section Header -->
                     <HBox styleClass="section-header" alignment="CENTER_RIGHT">
-                        <Label text="آگهی‌های قم" styleClass="section-title"/>
+                        <Label text="آگهی‌های شهر" styleClass="section-title"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <ComboBox fx:id="sortCombo"
                                   promptText="مرتب‌سازی"
