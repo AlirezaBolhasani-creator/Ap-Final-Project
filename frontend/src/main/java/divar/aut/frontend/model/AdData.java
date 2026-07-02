@@ -9,6 +9,7 @@ public record AdData(
         Double price,
         String location,
         String condition,
+        String category,
         String imageUrl,
         int photoCount,
         Long id

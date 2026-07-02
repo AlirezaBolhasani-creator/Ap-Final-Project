@@ -25,7 +25,7 @@ public class AdService {
     public List<Ad> getAllAdsPaginated(int page, int pageSize)
     {
         Pageable pageable = PageRequest.of(page, pageSize);
-        return adRepository.findAll(pageable).getContent();
+        return adRepository.findByStatus("ACTIVE", pageable).getContent();
     }
     public Ad saveAd(String token, Ad ad) {
         String jwt = token.substring(7);

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-        <?import javafx.geometry.Insets?>
-        <?import javafx.scene.control.*?>
-        <?import javafx.scene.layout.*?>
-        <?import javafx.scene.text.Font?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 
 <ScrollPane fitToWidth="true" nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: #242424; -fx-background: #242424;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="divar.aut.frontend.controller.PostAdController">
 
@@ -27,9 +27,6 @@
         <VBox spacing="10">
             <HBox alignment="CENTER_LEFT" spacing="3">
                 <Label text="عکس آگهی" textFill="WHITE">
-                    <font><Font name="System Bold" size="14.0" /></font>
-                </Label>
-                <Label text="*" textFill="#ff5a5a">
                     <font><Font name="System Bold" size="14.0" /></font>
                 </Label>
             </HBox>
@@ -88,10 +85,22 @@
             </VBox>
         </HBox>
 
-        <VBox spacing="10">
-            <Label text="وضعیت کالا" textFill="WHITE" />
-            <ComboBox fx:id="conditionCombo" prefWidth="200.0" promptText="انتخاب کنید..." style="-fx-background-color: #2a2a2a; -fx-border-color: #444; -fx-border-radius: 5; -fx-text-fill: black;" />
-        </VBox>
+        <HBox spacing="20">
+            <VBox spacing="10" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="3">
+                    <Label text="دسته‌بندی" textFill="WHITE" />
+                    <Label text="*" textFill="#ff5a5a" />
+                </HBox>
+                <ComboBox fx:id="categoryCombo" maxWidth="1.7976931348623157E308" promptText="انتخاب کنید..." style="-fx-background-color: #2a2a2a; -fx-border-color: #444; -fx-border-radius: 5; -fx-text-fill: black;" />
+            </VBox>
+
+            <VBox spacing="10" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="3">
+                    <Label text="وضعیت کالا" textFill="WHITE" />
+                </HBox>
+                <ComboBox fx:id="conditionCombo" maxWidth="1.7976931348623157E308" promptText="انتخاب کنید..." style="-fx-background-color: #2a2a2a; -fx-border-color: #444; -fx-border-radius: 5; -fx-text-fill: black;" />
+            </VBox>
+        </HBox>
 
         <Separator style="-fx-opacity: 0.2;" />
 

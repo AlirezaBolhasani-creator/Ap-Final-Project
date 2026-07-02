@@ -24,7 +24,7 @@ public class PostAdScreen {
             FXMLLoader loader = new FXMLLoader(fxmlLocation);
             view = loader.load();
             PostAdController controller = loader.getController();
-            controller.setAdService(adService);
+            controller.setDependencies(adService, mainApp);
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("خطا در بارگذاری صفحه ثبت آگهی: " + e.getMessage());

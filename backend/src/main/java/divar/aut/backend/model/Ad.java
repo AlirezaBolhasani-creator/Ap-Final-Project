@@ -82,6 +82,22 @@ public class Ad
     {
         return user_id;
     }
+    public String getCategory()
+    {
+        return category;
+    }
+    public void setCategory(String category)
+    {
+        this.category = category;
+    }
+    public String getStatus()
+    {
+        return status;
+    }
+    public void setStatus(String status)
+    {
+        this.status = status;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -101,5 +117,9 @@ public class Ad
     private int photoCount = 0;
     @Column(nullable = false)
     private String user_id;
+    @Column(nullable = false)
+    private String category;
 
+    @Column(nullable = false)
+    private String status = "PENDING";
 }

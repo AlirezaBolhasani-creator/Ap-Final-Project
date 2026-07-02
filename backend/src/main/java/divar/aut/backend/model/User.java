@@ -64,6 +64,8 @@ public class User
     private String fullname;
     private String email;
     private String phone;
+    @Column(nullable = false)
+    private String role = "USER";
     public User() {
     }
     public User(String username, String password, String fullname, String email, String phone) {
@@ -74,5 +76,12 @@ public class User
         this.phone = phone;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 }
 
