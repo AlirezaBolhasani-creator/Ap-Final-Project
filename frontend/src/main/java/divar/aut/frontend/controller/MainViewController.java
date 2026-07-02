@@ -1,6 +1,8 @@
-package divar.aut.frontend.ui;
+package divar.aut.frontend.controller;
 
-import divar.aut.frontend.AdService;
+import divar.aut.frontend.service.AdService;
+import divar.aut.frontend.model.AdData;
+import divar.aut.frontend.ui.ViewManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -54,7 +56,6 @@ public class MainViewController implements Initializable {
         if (loadMoreBtn != null) loadMoreBtn.setDisable(true);
         adService.fetchAds(page,
                 ads -> {
-                    // موفقیت: این بخش در JavaFX Thread اجرا می‌شود
                     if (statusLabel != null) statusLabel.setText(ads.size() + " آگهی دریافت شد");
                     if (loadMoreBtn != null) loadMoreBtn.setDisable(false);
 

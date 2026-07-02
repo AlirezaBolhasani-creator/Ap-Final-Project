@@ -5,7 +5,7 @@
         <?import javafx.scene.layout.*?>
         <?import javafx.scene.text.Font?>
 
-<ScrollPane fitToWidth="true" nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: #242424; -fx-background: #242424;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="divar.aut.frontend.ui.PostAdController">
+<ScrollPane fitToWidth="true" nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: #242424; -fx-background: #242424;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="divar.aut.frontend.controller.PostAdController">
 
     <VBox spacing="25" style="-fx-background-color: #242424; -fx-padding: 30;">
 

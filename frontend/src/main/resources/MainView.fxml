@@ -8,7 +8,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="divar.aut.frontend.ui.MainViewController"
+            fx:controller="divar.aut.frontend.controller.MainViewController"
             stylesheets="@MainView.css"
             style="-fx-background-color: #0d0d0d;">
 

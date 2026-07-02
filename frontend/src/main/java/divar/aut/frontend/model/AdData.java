@@ -1,6 +1,4 @@
-package divar.aut.frontend.ui;
-
-import java.util.List;
+package divar.aut.frontend.model;
 
 /**
  * Immutable data holder for a single advertisement.

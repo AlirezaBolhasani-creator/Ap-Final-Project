@@ -1,9 +1,9 @@
 package divar.aut.frontend.ui;
-import divar.aut.frontend.AdService;
+import divar.aut.frontend.service.AdService;
 import javafx.scene.Parent;
 import divar.aut.frontend.DivarApplication;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+
 public class ViewManager
 {
     private final StackPane root;

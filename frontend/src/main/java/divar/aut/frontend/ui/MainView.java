@@ -1,5 +1,6 @@
 package divar.aut.frontend.ui;
 
+import divar.aut.frontend.controller.MainViewController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 
