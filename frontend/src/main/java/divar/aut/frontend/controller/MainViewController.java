@@ -57,12 +57,19 @@ public class MainViewController implements Initializable {
         adService.fetchAds(page,
                 ads -> {
                     if (statusLabel != null) statusLabel.setText(ads.size() + " آگهی دریافت شد");
-                    if (loadMoreBtn != null) loadMoreBtn.setDisable(false);
 
-                    renderAds(ads);
+                    // NEW LOGIC: Check if we've reached the end of the ads
+                    if (ads.isEmpty()) {
+                        if (loadMoreBtn != null) {
+                            loadMoreBtn.setDisable(true);
+                            loadMoreBtn.setText("پایان آگهی‌ها"); // Updates button text so the user knows
+                        }
+                    } else {
+                        if (loadMoreBtn != null) loadMoreBtn.setDisable(false);
+                        renderAds(ads);
+                    }
                 },
                 error -> {
-                    // خطا: نمایش ارور به کاربر
                     if (statusLabel != null) statusLabel.setText("خطا در ارتباط با سرور: " + error);
                     if (loadMoreBtn != null) loadMoreBtn.setDisable(false);
                 }

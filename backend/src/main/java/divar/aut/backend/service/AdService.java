@@ -4,6 +4,8 @@ import divar.aut.backend.model.Ad;
 import divar.aut.backend.repository.AdRepository;
 import divar.aut.backend.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,13 +22,13 @@ public class AdService {
     @Autowired
     private JwtUtils jwtUtils;
 
-    public List<Ad> getAllAds() {
-        return adRepository.findAll();
+    public List<Ad> getAllAdsPaginated(int page, int pageSize)
+    {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return adRepository.findAll(pageable).getContent();
     }
-
     public Ad saveAd(String token, Ad ad) {
         String jwt = token.substring(7);
-        System.out.println("TOKEN RECEIVED IN BACKEND: " + token); // این خط را اضافه کن
         if (!jwtUtils.validateToken(jwt)) {
             throw new RuntimeException("Invalid token");
         }

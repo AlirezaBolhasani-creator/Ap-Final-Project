@@ -28,7 +28,7 @@ public class AdService {
     {
         String urlWithPage = BASE_URL + "?page=" + page;
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL))
+                .uri(URI.create(urlWithPage))
                 .header("Authorization", "Bearer " + token)
                 .GET()
                 .build();

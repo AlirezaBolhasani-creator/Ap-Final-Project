@@ -17,8 +17,9 @@ public class AdController {
 
 
     @GetMapping
-    public List<Ad> getAds() {
-        return adService.getAllAds();
+    public List<Ad> getAds(@RequestParam(defaultValue = "0") int page) {
+        int pageSize = 10;
+        return adService.getAllAdsPaginated(page, pageSize);
     }
     @GetMapping("/{id}")
     public Ad getAdById(@PathVariable Long id) {
