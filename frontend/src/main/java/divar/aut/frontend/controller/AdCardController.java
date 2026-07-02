@@ -13,7 +13,6 @@ import java.util.ResourceBundle;
 
 public class AdCardController implements Initializable {
 
-    // root element رو از FXML inject نمی‌کنیم — بعد از load دستی می‌گیریم
     @FXML private Rectangle  glassRect;
     @FXML private Rectangle  borderRect;
     @FXML private ImageView  adImage;
@@ -26,7 +25,6 @@ public class AdCardController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // hover رو اینجا نمی‌زنیم — در buildCard بعد از load می‌زنیم
     }
 
     public void setData(AdData data) {
@@ -50,8 +48,16 @@ public class AdCardController implements Initializable {
         }
 
         if (data.imageUrl() != null && !data.imageUrl().isBlank()) {
-            try { adImage.setImage(new Image(data.imageUrl(), true)); }
-            catch (Exception ignored) { }
+            try {
+                String fullUrl = "http://localhost:8080/uploads/" + data.imageUrl();
+                //Encode spaces to %20 so JavaFX doesn't crash
+                fullUrl = fullUrl.replace(" ", "%20");
+                System.out.println("Attempting to load image from: " + fullUrl);
+                adImage.setImage(new Image(fullUrl, true));
+            } catch (Exception e) {
+                System.err.println("Failed to load image for ad: " + data.title());
+                e.printStackTrace();
+            }
         }
     }
 }
