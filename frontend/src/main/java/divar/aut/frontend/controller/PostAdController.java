@@ -1,5 +1,6 @@
-package divar.aut.frontend.ui;
-import divar.aut.frontend.AdService;
+package divar.aut.frontend.controller;
+import divar.aut.frontend.service.AdService;
+import divar.aut.frontend.model.AdData;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;

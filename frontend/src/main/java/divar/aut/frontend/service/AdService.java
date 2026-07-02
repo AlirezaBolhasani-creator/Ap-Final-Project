@@ -1,6 +1,6 @@
-package divar.aut.frontend;
+package divar.aut.frontend.service;
 
-import divar.aut.frontend.ui.AdData;
+import divar.aut.frontend.model.AdData;
 import javafx.application.Platform;
 import com.google.gson.Gson; // فرض بر این است که Gson دارید
 import com.google.gson.reflect.TypeToken;

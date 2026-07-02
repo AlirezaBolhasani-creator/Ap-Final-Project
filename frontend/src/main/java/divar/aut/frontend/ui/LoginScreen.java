@@ -1,5 +1,5 @@
 package divar.aut.frontend.ui;
-import divar.aut.frontend.ApiService;
+import divar.aut.frontend.service.ApiService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;

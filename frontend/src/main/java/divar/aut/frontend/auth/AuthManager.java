@@ -1,4 +1,4 @@
-package divar.aut.frontend.authpart;
+package divar.aut.frontend.auth;
 
 public class AuthManager
 {

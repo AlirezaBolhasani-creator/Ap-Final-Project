@@ -1,6 +1,7 @@
-package divar.aut.frontend;
+package divar.aut.frontend.service;
 
-import divar.aut.frontend.authpart.AuthManager;
+import divar.aut.frontend.config.ApiConfig;
+import divar.aut.frontend.auth.AuthManager;
 import javafx.application.Platform;
 
 import java.net.URI;
