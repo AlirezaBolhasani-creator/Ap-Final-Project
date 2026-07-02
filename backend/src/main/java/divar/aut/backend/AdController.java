@@ -4,6 +4,8 @@ import divar.aut.backend.model.Ad;
 import divar.aut.backend.service.AdService;
 import divar.aut.backend.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +39,21 @@ public class AdController {
     {
         return adService.uploadAdImage(id, file, token);
     }
-
+    @GetMapping("/pending")
+    public List<Ad> getPendingAds(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestHeader("Authorization") String token)
+    {
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return adService.getDependingAds(token, pageable);
+    }
+    @PutMapping("/{id}/status")
+    public Ad updateAdStatus(
+            @PathVariable Long id,
+            @RequestParam String status,
+            @RequestHeader("Authorization") String token) {
+        return adService.changeAdStatus(id, status, token);
+    }
 
 }

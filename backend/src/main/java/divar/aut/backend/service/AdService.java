@@ -1,12 +1,15 @@
 package divar.aut.backend.service;
 
 import divar.aut.backend.model.Ad;
+import divar.aut.backend.model.User;
 import divar.aut.backend.repository.AdRepository;
+import divar.aut.backend.repository.UserRepository;
 import divar.aut.backend.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -18,9 +21,36 @@ import java.util.UUID;
 public class AdService {
     @Autowired
     private AdRepository adRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    public List<Ad> getDependingAds(String adminToken, Pageable pageable) {
+        String jwt = adminToken.substring(7);
+        if (!jwtUtils.validateToken(jwt))
+            throw new RuntimeException("Invalid token");
+        String username = jwtUtils.getUsernameFromToken(jwt);
+        User user = userRepository.findByUsername(username);
+        if(!"ADMIN".equals(user.getRole())){
+            throw new SecurityException("Access Denied: Only Admins can view pending ads");
+        }
+        return adRepository.findByStatus("PENDING", pageable).getContent();
+    }
+    public Ad changeAdStatus(Long id, String status, String adminToken){
+        String jwt = adminToken.substring(7);
+        if (!jwtUtils.validateToken(jwt))
+            throw new RuntimeException("Invalid token");
+        String username = jwtUtils.getUsernameFromToken(jwt);
+        User user = userRepository.findByUsername(username);
+        if(!"ADMIN".equals(user.getRole())){
+            throw new SecurityException("Access Denied: Only Admins can update ads status");
+        }
+        Ad ad = adRepository.findById(id).orElseThrow(()-> new RuntimeException("Ad not found"));
+        ad.setStatus(status);
+        return adRepository.save(ad);
+    }
 
     public List<Ad> getAllAdsPaginated(int page, int pageSize)
     {
