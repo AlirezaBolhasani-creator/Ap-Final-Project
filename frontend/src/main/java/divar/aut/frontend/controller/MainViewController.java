@@ -26,6 +26,7 @@ public class MainViewController implements Initializable {
     @FXML private ComboBox<String> sortCombo;
     @FXML private Button           loadMoreBtn;
     @FXML private Label            statusLabel;
+    @FXML private Button adminPanelBtn;
 
     private AdService adService;
     private final ViewManager viewManager;
@@ -48,6 +49,11 @@ public class MainViewController implements Initializable {
             loadPage();
         } else {
             if (statusLabel != null) statusLabel.setText("خطا: توکن احراز هویت یافت نشد!");
+        }
+        //if user is not ADMIN we won't show AdminPanelButton
+        if (viewManager != null && !"ADMIN".equals(viewManager.getUserRole())) {
+            adminPanelBtn.setVisible(false);
+            adminPanelBtn.setManaged(false);
         }
     }
 
@@ -116,7 +122,27 @@ public class MainViewController implements Initializable {
                 card.setScaleY(1.0);
                 card.setStyle("");
             });
+            card.setOnMouseClicked(e -> {
+                try {
 
+                    AdDetailsController controller = loader.getController();
+                    // ارسال داده‌ها به صفحه جزئیات آگهی
+                    controller.setData(data, adService, viewManager.getUserRole(), () -> {
+                        // این بخش پس از تایید یا رد آگهی توسط ادمین اجرا می‌شود و صفحه را رفرش می‌کند
+                        page = 0;
+                        adGrid.getChildren().clear();
+                        loadPage();
+                    });
+
+                    javafx.stage.Stage stage = new javafx.stage.Stage();
+                    stage.setTitle("جزئیات آگهی: " + data.title());
+                    stage.setScene(new javafx.scene.Scene(card));
+                    stage.initModality(javafx.stage.Modality.APPLICATION_MODAL); // باز شدن به صورت پاپ‌آپ فعال
+                    stage.show();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
             return card;
         } catch (IOException e) {
             e.printStackTrace();
@@ -141,5 +167,10 @@ public class MainViewController implements Initializable {
 
     @FXML private void applyFilter() {
         statusLabel.setText("فیلتر قیمت اعمال شد");
+    }
+    @FXML
+    private void onAdminPanel() {
+        if(viewManager == null || viewManager.getUserToken() == null) return;
+        viewManager.toAdminDashboard();
     }
 }

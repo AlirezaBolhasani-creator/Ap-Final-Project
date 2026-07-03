@@ -9,6 +9,9 @@ public class ViewManager
     private final StackPane root;
     private final DivarApplication mainApp;
     private String userToken;
+    private String userRole;
+
+
     public ViewManager(StackPane root, DivarApplication mainApp)
     {
         this.root = root;
@@ -30,12 +33,20 @@ public class ViewManager
     public void toPostAd() {
         show(new PostAdScreen(this, new AdService(this.getUserToken())).getView());
     }
+
+    public void toAdminDashboard() {
+        AdService adService = new AdService(this.getUserToken());
+        AdminDashboardScreen adminScreen = new AdminDashboardScreen(this, adService);
+        root.getChildren().setAll(adminScreen.getView());
+    }
+
     public String getUserToken() {
         return userToken;
     }
     public void setUserToken(String userToken) {
         this.userToken = userToken;
     }
-
+    public void setUserRole(String role) { this.userRole = role; }
+    public String getUserRole() { return this.userRole; }
 
 }

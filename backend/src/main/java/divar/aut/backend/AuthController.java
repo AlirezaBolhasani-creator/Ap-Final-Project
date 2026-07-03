@@ -35,7 +35,7 @@ public class AuthController {
 
         if (user != null && user.getPassword().equals(loginData.getPassword())) {
             String token = jwtUtils.generateToken(loginData.getUsername());
-            String response = String.format("{\"message\": \"Login successful\", \"token\": \"%s\"}", token);
+            String response = String.format("{\"message\": \"Login successful\", \"token\": \"%s\", \"role\": \"%s\"}", token, user.getRole());
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(401).body("{\"message\": \"username or password is incorrect!\"}");

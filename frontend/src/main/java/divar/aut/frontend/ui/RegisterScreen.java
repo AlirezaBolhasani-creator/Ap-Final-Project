@@ -54,8 +54,9 @@ public class RegisterScreen {
                     password.getText(),
                     email.getText(),
                     phone.getText(),
-                    token -> {
+                    (token, role) -> {
                         mainApp.setUserToken(token);
+                        mainApp.setUserRole(role);
                         statusLabel.setText("Success");
                         statusLabel.setTextFill(Color.GREEN);
                         mainApp.toMain();

@@ -112,4 +112,45 @@ public class AdService {
             onError.accept("خطا در خواندن فایل: " + e.getMessage());
         }
     }
+    public void fetchPendingAds(Consumer<List<AdData>> onSuccess, Consumer<String> onError)
+    {
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BASE_URL+"/pending"))
+                .header("Authorization", "Bearer " + token)
+                .GET().build();
+
+        httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenAccept(response -> {
+                    if(response.statusCode() == 200)
+                    {
+                        Type listType = new TypeToken<List<AdData>>(){}.getType();
+                        List<AdData> ads = gson.fromJson(response.body(), listType);
+                        Platform.runLater(() -> onSuccess.accept(ads));
+                    }
+                    else {
+                        Platform.runLater(() -> onError.accept("Error fetching pending: " + response.statusCode()));
+
+                    }
+                }).exceptionally(ex -> {
+                    Platform.runLater(() -> onError.accept(ex.getMessage()));
+                    return null;
+                });
+    }
+    public void updateAdStatus(Long adId,String status,  Consumer<String> onSuccess, Consumer<String> onError)
+    {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/" + adId + "/status?status=" + status))
+                .header("Authorization", "Bearer "+ token)
+                .PUT(HttpRequest.BodyPublishers.noBody()).build();
+        httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenAccept(response -> {
+                    if (response.statusCode() == 200) {
+                        Platform.runLater(() -> onSuccess.accept("وضعیت آگهی با موفقیت به " + status + " تغییر کرد."));
+                    } else {
+                        Platform.runLater(() -> onError.accept("خطا در تغییر وضعیت: " + response.statusCode()));
+                    }
+                }).exceptionally(ex -> {
+                    Platform.runLater(() -> onError.accept(ex.getMessage()));
+                    return null;
+                });
+    }
 }

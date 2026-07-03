@@ -11,13 +11,13 @@ import java.net.http.HttpResponse;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import java.util.function.BiConsumer;
 public class ApiService
 {
     private static final HttpClient httpClient = HttpClient.newHttpClient();
 
     public static void sendAuthRequest(String username, String password, String endpoint,
-                                       Consumer<String> onSuccess, Consumer<String> onError)
+                                       BiConsumer<String, String> onSuccess, Consumer<String> onError)
     {
         if(username.isEmpty() || password.isEmpty())
         {
@@ -34,7 +34,6 @@ public class ApiService
 
             httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                     .thenAccept(response -> {
-                        String responseBody = response.body();
                         Platform.runLater(() -> {
                             handleResponse(response, onSuccess, onError);
                         });
@@ -48,7 +47,7 @@ public class ApiService
         }
     }
     public static void sendRegisterRequest(String name, String username, String password, String email, String phone,
-                                           Consumer<String> onSuccess, Consumer<String> onError) {
+                                           BiConsumer<String, String> onSuccess, Consumer<String> onError) {
         try {
             String jsonBody = String.format(
                     "{\"name\":\"%s\", \"username\":\"%s\", \"password\":\"%s\", \"email\":\"%s\", \"phone\":\"%s\"}",
@@ -76,27 +75,29 @@ public class ApiService
         }
     }
     private static void handleResponse(HttpResponse<String> response,
-                                       Consumer<String> onSuccess, Consumer<String> onError) {
+                                       BiConsumer<String, String> onSuccess, Consumer<String> onError) {
         String responseBody = response.body();
         System.out.println("Server Response: " + responseBody);
 
         Matcher messageMatcher = Pattern.compile("\"message\"\\s*:\\s*\"([^\"]+)\"").matcher(responseBody);
         Matcher tokenMatcher = Pattern.compile("\"token\"\\s*:\\s*\"([^\"]+)\"").matcher(responseBody);
+        Matcher roleMatcher = Pattern.compile("\"role\"\\s*:\\s*\"([^\"]+)\"").matcher(responseBody);
 
         Platform.runLater(() -> {
             if (response.statusCode() == 200 || response.statusCode() == 201) {
                 String token = null;
                 if (tokenMatcher.find()) {
                     token = tokenMatcher.group(1);
-                    AuthManager.setToken(token); // ذخیره در AuthManager
+                    AuthManager.setToken(token);
                 }
 
                 String message = messageMatcher.find() ? messageMatcher.group(1) : "Success";
+                String role = roleMatcher.find() ? roleMatcher.group(1) : "USER";
 
                 if (token != null) {
-                    onSuccess.accept(token);
+                    onSuccess.accept(token, role); // Pass token AND role
                 } else {
-                    onSuccess.accept(message);
+                    onSuccess.accept(message, role); // Pass message AND role
                 }
 
             } else {

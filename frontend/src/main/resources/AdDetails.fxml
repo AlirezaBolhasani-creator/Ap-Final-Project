@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="divar.aut.frontend.controller.AdDetailsController"
+      spacing="20" style="-fx-background-color: #242424; -fx-padding: 30;"
+      prefWidth="500" prefHeight="650" nodeOrientation="RIGHT_TO_LEFT">
+
+    <HBox alignment="CENTER_LEFT">
+        <Label fx:id="titleLabel" text="عنوان آگهی" textFill="WHITE" style="-fx-font-weight: bold;">
+            <font><Font size="22.0" /></font>
+        </Label>
+    </HBox>
+
+    <StackPane style="-fx-background-color: #1a1a1a; -fx-background-radius: 8;">
+        <ImageView fx:id="adImageView" fitWidth="440" fitHeight="250" preserveRatio="true"/>
+    </StackPane>
+
+    <VBox spacing="10">
+        <HBox spacing="10">
+            <Label text="قیمت:" textFill="#aaa" />
+            <Label fx:id="priceLabel" text="۰" textFill="WHITE" style="-fx-font-weight: bold;"/>
+            <Label text="تومان" textFill="#aaa"/>
+        </HBox>
+        <HBox spacing="10">
+            <Label text="مکان:" textFill="#aaa" />
+            <Label fx:id="locationLabel" text="نامشخص" textFill="WHITE"/>
+        </HBox>
+        <HBox spacing="10">
+            <Label text="دسته‌بندی:" textFill="#aaa" />
+            <Label fx:id="categoryLabel" text="نامشخص" textFill="WHITE"/>
+        </HBox>
+        <HBox spacing="10">
+            <Label text="وضعیت کالا:" textFill="#aaa" />
+            <Label fx:id="conditionLabel" text="نامشخص" textFill="WHITE"/>
+        </HBox>
+    </VBox>
+
+    <Separator style="-fx-opacity: 0.1;"/>
+
+    <VBox spacing="5" VBox.vgrow="ALWAYS">
+        <Label text="توضیحات:" textFill="#aaa" />
+        <TextArea fx:id="descriptionArea" editable="false" wrapText="true"
+                  style="-fx-control-inner-background: #2a2a2a; -fx-text-fill: white;"/>
+    </VBox>
+
+    <HBox fx:id="adminActionBox" spacing="15" alignment="CENTER_RIGHT" visible="false" managed="false">
+        <Button text="✖ رد کردن" onAction="#handleReject" style="-fx-background-color: #991b1b; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
+        <Button text="✔ تایید آگهی" onAction="#handleApprove" style="-fx-background-color: #15803d; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
+    </HBox>
+
+    <Label fx:id="statusLabel" textFill="#ff5a5a"/>
+</VBox>
