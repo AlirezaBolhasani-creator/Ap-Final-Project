@@ -1,6 +1,8 @@
 package divar.aut.frontend.controller;
 
 import divar.aut.frontend.net.AdService;
+import divar.aut.frontend.net.CategoryService;
+import divar.aut.frontend.net.CityService;
 import divar.aut.frontend.model.AdData;
 import divar.aut.frontend.ui.ViewManager;
 import javafx.application.Platform;
@@ -19,13 +21,15 @@ public class PostAdController implements Initializable {
     @FXML private TextField titleField;
     @FXML private TextArea descriptionArea;
     @FXML private TextField priceField;
-    @FXML private TextField locationField;
+    @FXML private ComboBox<String> locationCombo;
     @FXML private ComboBox<String> conditionCombo;
     @FXML private ComboBox<String> categoryCombo;
     @FXML private StackPane imageUploadBox;
     @FXML private Label statusLabel;
 
     private AdService adService;
+    private final CategoryService categoryService = new CategoryService();
+    private final CityService cityService = new CityService();
     private File selectedImageFile = null;
     private ViewManager viewManager;
 
@@ -38,8 +42,38 @@ public class PostAdController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         conditionCombo.getItems().addAll("نو", "در حد نو", "کارکرده");
         conditionCombo.getSelectionModel().select(0);
-        categoryCombo.getItems().addAll("املاک", "وسایل نقلیه", "کالای دیجیتال", "خانه و آشپزخانه", "خدمات", "وسایل شخصی");
-        conditionCombo.getSelectionModel().select(0);
+        loadCategories();
+        loadCities();
+    }
+
+    private void loadCategories() {
+        categoryService.listAll(
+                categories -> {
+                    categoryCombo.getItems().setAll(categories.stream().map(c -> c.name()).toList());
+                    if (!categoryCombo.getItems().isEmpty()) {
+                        categoryCombo.getSelectionModel().selectFirst();
+                    }
+                },
+                error -> {
+                    statusLabel.setText("خطا در دریافت دسته‌بندی‌ها: " + error);
+                    statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
+                }
+        );
+    }
+
+    private void loadCities() {
+        cityService.listAll(
+                cities -> {
+                    locationCombo.getItems().setAll(cities.stream().map(c -> c.name()).toList());
+                    if (!locationCombo.getItems().isEmpty()) {
+                        locationCombo.getSelectionModel().selectFirst();
+                    }
+                },
+                error -> {
+                    statusLabel.setText("خطا در دریافت شهرها: " + error);
+                    statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
+                }
+        );
     }
 
     @FXML
@@ -62,7 +96,7 @@ public class PostAdController implements Initializable {
         titleField.clear();
         descriptionArea.clear();
         priceField.clear();
-        locationField.clear();
+        if (locationCombo != null) locationCombo.getSelectionModel().clearSelection();
         if (conditionCombo != null) conditionCombo.getSelectionModel().clearSelection();
         if (categoryCombo != null) categoryCombo.getSelectionModel().clearSelection();
         selectedImageFile = null;
@@ -74,7 +108,7 @@ public class PostAdController implements Initializable {
     public void handleSubmit() {
         // 1. Validate required fields
         if (titleField.getText().isBlank() || priceField.getText().isBlank() ||
-                locationField.getText().isBlank() || categoryCombo.getValue() == null) {
+                locationCombo.getValue() == null || categoryCombo.getValue() == null) {
             statusLabel.setText("لطفا تمام فیلدهای ستاره‌دار را پر کنید!");
             statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
             return;
@@ -96,7 +130,7 @@ public class PostAdController implements Initializable {
         AdData newAd = new AdData(
                 titleField.getText(),
                 priceValue,
-                locationField.getText(),
+                locationCombo.getValue(),
                 conditionCombo.getValue(),
                 categoryCombo.getValue(),
                 null,

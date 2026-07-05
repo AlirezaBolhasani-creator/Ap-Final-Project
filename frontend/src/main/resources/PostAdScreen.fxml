@@ -81,7 +81,7 @@
                     <Label text="مکان" textFill="WHITE" />
                     <Label text="*" textFill="#ff5a5a" />
                 </HBox>
-                <TextField fx:id="locationField" promptText="مثلا: تهران، سعادت‌آباد" style="-fx-background-color: #2a2a2a; -fx-border-color: #444; -fx-border-radius: 5; -fx-text-fill: white; -fx-prompt-text-fill: #777; -fx-padding: 10;" />
+                <ComboBox fx:id="locationCombo" maxWidth="1.7976931348623157E308" promptText="انتخاب شهر..." style="-fx-background-color: #2a2a2a; -fx-border-color: #444; -fx-border-radius: 5; -fx-text-fill: black;" />
             </VBox>
         </HBox>
 
