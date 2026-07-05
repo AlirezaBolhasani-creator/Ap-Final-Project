@@ -1,7 +1,7 @@
 package divar.aut.frontend.ui;
 
 import divar.aut.frontend.controller.AdminDashboardController;
-import divar.aut.frontend.service.AdService;
+import divar.aut.frontend.net.AdService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 

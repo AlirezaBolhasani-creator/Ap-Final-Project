@@ -9,12 +9,10 @@ module divar.aut.frontend {
     exports divar.aut.frontend;
     exports divar.aut.frontend.ui;
     opens divar.aut.frontend.ui to javafx.fxml;
-    exports divar.aut.frontend.auth;
-    opens divar.aut.frontend.auth to javafx.fxml;
     exports divar.aut.frontend.model;
     opens divar.aut.frontend.model to javafx.fxml;
-    exports divar.aut.frontend.service;
-    opens divar.aut.frontend.service to javafx.fxml;
+    exports divar.aut.frontend.net;
+    opens divar.aut.frontend.net to javafx.fxml;
     exports divar.aut.frontend.config;
     opens divar.aut.frontend.config to javafx.fxml;
     exports divar.aut.frontend.controller;

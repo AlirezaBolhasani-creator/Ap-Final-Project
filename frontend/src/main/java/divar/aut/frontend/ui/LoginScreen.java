@@ -1,5 +1,5 @@
 package divar.aut.frontend.ui;
-import divar.aut.frontend.service.ApiService;
+import divar.aut.frontend.net.AuthService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -45,7 +45,7 @@ public class LoginScreen
             String username = UserName.getText();
             String password = passField.getText();
 
-            ApiService.sendAuthRequest(username, password, "/login",
+            AuthService.sendAuthRequest(username, password, "/login",
                     (token, role) -> {
                         mainApp.setUserToken(token);
                         mainApp.setUserRole(role);

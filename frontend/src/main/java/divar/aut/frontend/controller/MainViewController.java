@@ -1,6 +1,6 @@
 package divar.aut.frontend.controller;
 
-import divar.aut.frontend.service.AdService;
+import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.model.AdData;
 import divar.aut.frontend.ui.ViewManager;
 import javafx.fxml.FXML;
@@ -45,7 +45,7 @@ public class MainViewController implements Initializable {
             sortCombo.getSelectionModel().selectFirst();
         }
         if (viewManager != null && viewManager.getUserToken() != null) {
-            this.adService = new AdService(viewManager.getUserToken());
+            this.adService = new AdService();
             loadPage();
         } else {
             if (statusLabel != null) statusLabel.setText("خطا: توکن احراز هویت یافت نشد!");

@@ -1,7 +1,7 @@
 package divar.aut.frontend.controller;
 
 import divar.aut.frontend.model.AdData;
-import divar.aut.frontend.service.AdService;
+import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.ui.ViewManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

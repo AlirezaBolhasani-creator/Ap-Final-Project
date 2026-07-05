@@ -1,5 +1,5 @@
 package divar.aut.frontend.ui;
-import divar.aut.frontend.service.AdService;
+import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.controller.PostAdController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

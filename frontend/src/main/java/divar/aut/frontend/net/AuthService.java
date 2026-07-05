@@ -1,0 +1,75 @@
+package divar.aut.frontend.net;
+
+import com.google.gson.Gson;
+import divar.aut.frontend.SessionManager;
+
+import java.net.http.HttpResponse;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+/** Talks to /api/auth/**. */
+public class AuthService {
+
+    private static final Gson GSON = new Gson();
+
+    public static void sendAuthRequest(String username, String password, String endpoint,
+                                        BiConsumer<String, String> onSuccess, Consumer<String> onError) {
+        if (username.isEmpty() || password.isEmpty()) {
+            onError.accept("Please fill all the fields");
+            return;
+        }
+        String jsonBody = GSON.toJson(new LoginRequestBody(username, password));
+        ApiClient.send("POST", "/api/auth" + endpoint, jsonBody,
+                response -> handleResponse(response, onSuccess, onError), onError);
+    }
+
+    public static void sendRegisterRequest(String name, String username, String password, String email, String phone,
+                                            BiConsumer<String, String> onSuccess, Consumer<String> onError) {
+        String jsonBody = GSON.toJson(new RegisterRequestBody(name, username, password, email, phone));
+        ApiClient.send("POST", "/api/auth/register", jsonBody,
+                response -> handleResponse(response, onSuccess, onError), onError);
+    }
+
+    private static void handleResponse(HttpResponse<String> response,
+                                        BiConsumer<String, String> onSuccess, Consumer<String> onError) {
+        AuthApiResponse parsed;
+        try {
+            parsed = GSON.fromJson(response.body(), AuthApiResponse.class);
+        } catch (Exception e) {
+            onError.accept("Could not understand the server's response");
+            return;
+        }
+
+        if (response.statusCode() == 200 || response.statusCode() == 201) {
+            String role = (parsed != null && parsed.role != null) ? parsed.role : "USER";
+            if (parsed != null && parsed.token != null) {
+                SessionManager.getInstance().setToken(parsed.token);
+                SessionManager.getInstance().setRole(role);
+                onSuccess.accept(parsed.token, role);
+            } else {
+                String message = (parsed != null && parsed.message != null) ? parsed.message : "Success";
+                onSuccess.accept(message, role);
+            }
+        } else {
+            String message = (parsed != null && parsed.message != null) ? parsed.message : "Error occurred";
+            onError.accept(message);
+        }
+    }
+
+    private record LoginRequestBody(String username, String password) {
+    }
+
+    // NOTE: the backend's User entity field is "fullname", but AuthController#register
+    // never reads/uses the name at all - so this key name has no real effect either way.
+    // Kept as "name" here to match the existing (pre-existing, unrelated to this refactor)
+    // request shape rather than silently changing behavior.
+    private record RegisterRequestBody(String name, String username, String password, String email, String phone) {
+    }
+
+    /** Shape returned by AuthController: always a message, optionally a token/role. */
+    private static class AuthApiResponse {
+        String message;
+        String token;
+        String role;
+    }
+}

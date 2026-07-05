@@ -1,6 +1,6 @@
 package divar.aut.frontend.ui;
 
-import divar.aut.frontend.service.ApiService;
+import divar.aut.frontend.net.AuthService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -48,7 +48,7 @@ public class RegisterScreen {
         register.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-font-weight: bold;");
 
         register.setOnAction(event -> {
-            ApiService.sendRegisterRequest(
+            AuthService.sendRegisterRequest(
                     name.getText(),
                     username.getText(),
                     password.getText(),
