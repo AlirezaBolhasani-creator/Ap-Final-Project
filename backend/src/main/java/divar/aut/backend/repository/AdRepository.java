@@ -1,6 +1,6 @@
 package divar.aut.backend.repository;
 
-import divar.aut.backend.model.Ad;
+import divar.aut.backend.entity.Ad;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
