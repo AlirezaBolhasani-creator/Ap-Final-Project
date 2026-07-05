@@ -55,6 +55,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                     // Public: no token required.
                     .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/cities/**").permitAll()
                     // Admin-only ad moderation. Declared before the general "/ads/*" GET
                     // rule below since Spring Security uses the first matching rule.
                     .requestMatchers(HttpMethod.GET, "/ads/pending").hasRole("ADMIN")
