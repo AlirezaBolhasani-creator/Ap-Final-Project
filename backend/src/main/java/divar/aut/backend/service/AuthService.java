@@ -1,5 +1,7 @@
 package divar.aut.backend.service;
 
+import divar.aut.backend.dto.LoginRequest;
+import divar.aut.backend.dto.RegisterRequest;
 import divar.aut.backend.entity.User;
 import divar.aut.backend.exception.ApiException;
 import divar.aut.backend.repository.UserRepository;
@@ -26,16 +28,23 @@ public class AuthService {
         this.jwtUtils = jwtUtils;
     }
 
-    public String register(User user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
+    public String register(RegisterRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw ApiException.badRequest("this username is already taken!");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setFullname(request.getFullName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+
         userRepository.save(user);
         return jwtUtils.generateToken(user.getUsername());
     }
 
-    public LoginResult login(User loginData) {
+    public LoginResult login(LoginRequest loginData) {
         User user = userRepository.findByUsername(loginData.getUsername());
         if (user == null || !passwordEncoder.matches(loginData.getPassword(), user.getPassword())) {
             throw ApiException.unauthorized("username or password is incorrect!");

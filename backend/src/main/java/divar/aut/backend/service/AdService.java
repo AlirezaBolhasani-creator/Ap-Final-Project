@@ -1,5 +1,7 @@
 package divar.aut.backend.service;
 
+import divar.aut.backend.dto.AdRequest;
+import divar.aut.backend.dto.AdResponse;
 import divar.aut.backend.entity.Ad;
 import divar.aut.backend.entity.User;
 import divar.aut.backend.exception.ApiException;
@@ -26,43 +28,49 @@ public class AdService {
     private AdRepository adRepository;
 
     /** Admin-only ad moderation queue; access already restricted by SecurityConfig. */
-    public List<Ad> getPendingAds(Pageable pageable) {
-        return adRepository.findByStatus("PENDING", pageable).getContent();
+    public List<AdResponse> getPendingAds(Pageable pageable) {
+        return adRepository.findByStatus("PENDING", pageable).getContent().stream()
+                .map(AdResponse::new)
+                .toList();
     }
 
     /** Admin-only status change (approve/reject); access already restricted by SecurityConfig. */
-    public Ad changeAdStatus(Long id, String status) {
+    public AdResponse changeAdStatus(Long id, String status) {
         Ad ad = adRepository.findById(id).orElseThrow(() -> ApiException.notFound("Ad not found"));
         ad.setStatus(status);
-        return adRepository.save(ad);
+        return new AdResponse(adRepository.save(ad));
     }
 
-    public List<Ad> getAllAdsPaginated(int page, int pageSize) {
+    public List<AdResponse> getAllAdsPaginated(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        return adRepository.findByStatus("ACTIVE", pageable).getContent();
+        return adRepository.findByStatus("ACTIVE", pageable).getContent().stream()
+                .map(AdResponse::new)
+                .toList();
     }
 
-    public Ad saveAd(User owner, Ad ad) {
-        if (ad.getTitle() == null || ad.getTitle().isEmpty()) {
-            throw ApiException.badRequest("Title is empty");
-        }
-        if (ad.getPrice() == null || ad.getPrice().doubleValue() < 0) {
-            throw ApiException.badRequest("Price is invalid");
-        }
+    public AdResponse saveAd(User owner, AdRequest request) {
+        Ad ad = new Ad();
+        ad.setTitle(request.getTitle());
+        ad.setPrice(request.getPrice());
+        ad.setLocation(request.getLocation());
+        ad.setCondition(request.getCondition());
+        ad.setCategory(request.getCategory());
 
         ad.setUser_id(owner.getUsername());
         ad.setTime(LocalDateTime.now());
-        return adRepository.save(ad);
+        return new AdResponse(adRepository.save(ad));
     }
 
-    public Ad getAdById(Long id) {
-        return adRepository.findById(id)
+    public AdResponse getAdById(Long id) {
+        Ad ad = adRepository.findById(id)
                 .orElseThrow(() -> ApiException.notFound("Ad not found with id: " + id));
+        return new AdResponse(ad);
     }
 
-    public Ad uploadAdImage(Long adId, MultipartFile file, User actingUser) {
+    public AdResponse uploadAdImage(Long adId, MultipartFile file, User actingUser) {
         try {
-            Ad ad = getAdById(adId);
+            Ad ad = adRepository.findById(adId)
+                    .orElseThrow(() -> ApiException.notFound("Ad not found with id: " + adId));
             if (!ad.getUser_id().equals(actingUser.getUsername())) {
                 throw ApiException.forbidden("You are not allowed to access this resource");
             }
@@ -80,7 +88,7 @@ public class AdService {
             java.nio.file.Files.write(filePath, file.getBytes());
             ad.setImageUrl(uniqueFileName);
             ad.setPhotoCount(ad.getPhotoCount() + 1);
-            return adRepository.save(ad);
+            return new AdResponse(adRepository.save(ad));
         } catch (java.io.IOException e) {
             throw new ApiException(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error in saving file: " + e.getMessage());

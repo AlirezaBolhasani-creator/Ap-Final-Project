@@ -1,6 +1,8 @@
 package divar.aut.backend.controller;
 
-import divar.aut.backend.entity.User;
+import divar.aut.backend.dto.AuthResponse;
+import divar.aut.backend.dto.LoginRequest;
+import divar.aut.backend.dto.RegisterRequest;
 import divar.aut.backend.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -16,17 +18,14 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody User user) {
-        String token = authService.register(user);
-        String response = String.format("{\"message\": \"Registration successful\", \"token\": \"%s\"}", token);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+        String token = authService.register(request);
+        return ResponseEntity.ok(new AuthResponse("Registration successful", token, "USER"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody User loginData) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest loginData) {
         AuthService.LoginResult result = authService.login(loginData);
-        String response = String.format("{\"message\": \"Login successful\", \"token\": \"%s\", \"role\": \"%s\"}",
-                result.token(), result.role());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new AuthResponse("Login successful", result.token(), result.role()));
     }
 }
