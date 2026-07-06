@@ -1,97 +1,233 @@
 package divar.aut.backend.service;
 
+import divar.aut.backend.dto.AdDetailResponse;
 import divar.aut.backend.dto.AdRequest;
-import divar.aut.backend.dto.AdResponse;
+import divar.aut.backend.dto.AdSummaryResponse;
 import divar.aut.backend.entity.Ad;
+import divar.aut.backend.entity.AdImage;
+import divar.aut.backend.entity.AdStatus;
+import divar.aut.backend.entity.Category;
+import divar.aut.backend.entity.City;
+import divar.aut.backend.entity.ItemCondition;
 import divar.aut.backend.entity.User;
 import divar.aut.backend.exception.ApiException;
 import divar.aut.backend.repository.AdRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import divar.aut.backend.repository.CategoryRepository;
+import divar.aut.backend.repository.CityRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 /**
- * Business rules for creating, browsing, and moderating advertisements. Who
- * is allowed to do what is now decided by SecurityConfig (route/role
- * restrictions) and the AuthenticationPrincipal passed in by AdController -
- * this class no longer parses tokens itself.
+ * Business rules for creating, browsing, editing, and moderating
+ * advertisements. Anything about *who is allowed to do what* to an ad lives
+ * here, not in the controller - the controller just extracts the
+ * authenticated user from the request and delegates.
  */
 @Service
 public class AdService {
-    @Autowired
-    private AdRepository adRepository;
 
-    /** Admin-only ad moderation queue; access already restricted by SecurityConfig. */
-    public List<AdResponse> getPendingAds(Pageable pageable) {
-        return adRepository.findByStatus("PENDING", pageable).getContent().stream()
-                .map(AdResponse::new)
+    private final AdRepository adRepository;
+    private final CategoryRepository categoryRepository;
+    private final CityRepository cityRepository;
+    private final ImageStorageService imageStorageService;
+    private final SellerRatingService sellerRatingService;
+
+    public AdService(AdRepository adRepository, CategoryRepository categoryRepository,
+                     CityRepository cityRepository, ImageStorageService imageStorageService,
+                     SellerRatingService sellerRatingService) {
+        this.adRepository = adRepository;
+        this.categoryRepository = categoryRepository;
+        this.cityRepository = cityRepository;
+        this.imageStorageService = imageStorageService;
+        this.sellerRatingService = sellerRatingService;
+    }
+
+    public AdDetailResponse createAd(User owner, AdRequest request) {
+        Category category = findCategoryOrThrow(request.getCategoryId());
+        City city = findCityOrThrow(request.getCityId());
+        ItemCondition condition = parseCondition(request.getItemCondition());
+
+        Ad ad = new Ad(request.getTitle(), request.getDescription(), request.getPrice(),
+                       condition, owner, category, city);
+        adRepository.save(ad);
+
+        return toDetailResponse(ad);
+    }
+
+    public AdDetailResponse updateAd(User actingUser, Long adId, AdRequest request) {
+        Ad ad = findAdOrThrow(adId);
+        requireOwner(actingUser, ad);
+
+        Category category = findCategoryOrThrow(request.getCategoryId());
+        City city = findCityOrThrow(request.getCityId());
+        ItemCondition condition = parseCondition(request.getItemCondition());
+
+        ad.applyEdit(request.getTitle(), request.getDescription(), request.getPrice(),
+                     condition, category, city);
+        adRepository.save(ad);
+
+        return toDetailResponse(ad);
+    }
+
+    /**
+     * Fetches one ad for viewing. Public visitors and other users may only
+     * see it if it is ACTIVE; the owner and admins may see it in any status
+     * (e.g. the owner checking on a still-pending ad).
+     */
+    public AdDetailResponse getAdForViewing(Long adId, User viewerOrNull) {
+        Ad ad = findAdOrThrow(adId);
+
+        boolean isOwner = viewerOrNull != null && viewerOrNull.getId().equals(ad.getOwner().getId());
+        boolean isAdmin = viewerOrNull != null && viewerOrNull.isAdmin();
+
+        if (ad.getStatus() != AdStatus.ACTIVE && !isOwner && !isAdmin) {
+            throw ApiException.notFound("Advertisement not found");
+        }
+
+        return toDetailResponse(ad);
+    }
+
+    /**
+     * Advanced search restricted to ACTIVE ads only so nothing pending/rejected/deleted/sold
+     * is ever leaked from this method.
+     */
+    public List<AdSummaryResponse> searchActiveAds(String keyword, Long categoryId, Long cityId,
+                                                   Double minPrice, Double maxPrice,
+                                                   String conditionText, String sortBy) {
+        String normalizedKeyword = (keyword == null || keyword.isBlank()) ? null : keyword.trim();
+        ItemCondition condition = (conditionText == null || conditionText.isBlank()) ? 
+                                   null : parseCondition(conditionText);
+        Sort sort = resolveSort(sortBy);
+
+        List<Ad> ads = adRepository.searchActiveAds(normalizedKeyword, categoryId, cityId,
+                                                    minPrice, maxPrice, condition, sort);
+        return ads.stream().map(AdSummaryResponse::new).toList();
+    }
+
+    /**
+     * List all ads owned by the authenticated user, regardless of status.
+     * The user can see their pending/rejected/sold ads to track them.
+     */
+    public List<AdSummaryResponse> listMyAds(User owner) {
+        return adRepository.findByOwnerOrderByCreatedAtDesc(owner).stream()
+                .map(AdSummaryResponse::new)
                 .toList();
     }
 
-    /** Admin-only status change (approve/reject); access already restricted by SecurityConfig. */
-    public AdResponse changeAdStatus(Long id, String status) {
-        Ad ad = adRepository.findById(id).orElseThrow(() -> ApiException.notFound("Ad not found"));
-        ad.setStatus(status);
-        return new AdResponse(adRepository.save(ad));
+    /**
+     * Owner deletes their own ad (marks as DELETED, not actually removed).
+     */
+    public void deleteOwnAd(User actingUser, Long adId) {
+        Ad ad = findAdOrThrow(adId);
+        requireOwner(actingUser, ad);
+        ad.markAsDeleted();
+        adRepository.save(ad);
     }
 
-    public List<AdResponse> getAllAdsPaginated(int page, int pageSize) {
-        Pageable pageable = PageRequest.of(page, pageSize);
-        return adRepository.findByStatus("ACTIVE", pageable).getContent().stream()
-                .map(AdResponse::new)
-                .toList();
+    /**
+     * Owner marks their ad as SOLD (only works if currently ACTIVE).
+     */
+    public void markAsSold(User actingUser, Long adId) {
+        Ad ad = findAdOrThrow(adId);
+        requireOwner(actingUser, ad);
+
+        if (ad.getStatus() != AdStatus.ACTIVE) {
+            throw ApiException.badRequest("Only an active ad can be marked as sold");
+        }
+        ad.markAsSold();
+        adRepository.save(ad);
     }
 
-    public AdResponse saveAd(User owner, AdRequest request) {
-        Ad ad = new Ad();
-        ad.setTitle(request.getTitle());
-        ad.setPrice(request.getPrice());
-        ad.setLocation(request.getLocation());
-        ad.setCondition(request.getCondition());
-        ad.setCategory(request.getCategory());
+    /**
+     * Upload multiple images to an ad. Owner only.
+     */
+    public void addImages(User actingUser, Long adId, List<MultipartFile> files) {
+        Ad ad = findAdOrThrow(adId);
+        requireOwner(actingUser, ad);
 
-        ad.setUser_id(owner.getUsername());
-        ad.setTime(LocalDateTime.now());
-        return new AdResponse(adRepository.save(ad));
+        for (MultipartFile file : files) {
+            String fileName = imageStorageService.save(file);
+            ad.addImage(new AdImage(ad, fileName));
+        }
+        // Ad.images has cascade = ALL, so saving the ad also inserts the new AdImage rows
+        adRepository.save(ad);
     }
 
-    public AdResponse getAdById(Long id) {
-        Ad ad = adRepository.findById(id)
-                .orElseThrow(() -> ApiException.notFound("Ad not found with id: " + id));
-        return new AdResponse(ad);
+    /**
+     * Admin-only: approve a pending ad (moves to ACTIVE).
+     */
+    public AdDetailResponse approvePendingAd(Long adId) {
+        Ad ad = findAdOrThrow(adId);
+        if (ad.getStatus() != AdStatus.PENDING_REVIEW) {
+            throw ApiException.badRequest("Only a pending ad can be approved");
+        }
+        ad.approve();
+        adRepository.save(ad);
+        return toDetailResponse(ad);
     }
 
-    public AdResponse uploadAdImage(Long adId, MultipartFile file, User actingUser) {
-        try {
-            Ad ad = adRepository.findById(adId)
-                    .orElseThrow(() -> ApiException.notFound("Ad not found with id: " + adId));
-            if (!ad.getUser_id().equals(actingUser.getUsername())) {
-                throw ApiException.forbidden("You are not allowed to access this resource");
-            }
-            if (file.isEmpty()) {
-                throw ApiException.badRequest("The file is empty");
-            }
-            String uploadDirectory = "uploads/";
-            java.io.File directory = new java.io.File(uploadDirectory);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-            String fileName = file.getOriginalFilename();
-            String uniqueFileName = UUID.randomUUID().toString() + "." + fileName;
-            java.nio.file.Path filePath = java.nio.file.Paths.get(uploadDirectory + uniqueFileName);
-            java.nio.file.Files.write(filePath, file.getBytes());
-            ad.setImageUrl(uniqueFileName);
-            ad.setPhotoCount(ad.getPhotoCount() + 1);
-            return new AdResponse(adRepository.save(ad));
-        } catch (java.io.IOException e) {
-            throw new ApiException(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error in saving file: " + e.getMessage());
+    /**
+     * Admin-only: reject a pending ad with a reason (moves to REJECTED).
+     */
+    public AdDetailResponse rejectPendingAd(Long adId, String reason) {
+        Ad ad = findAdOrThrow(adId);
+        if (ad.getStatus() != AdStatus.PENDING_REVIEW) {
+            throw ApiException.badRequest("Only a pending ad can be rejected");
+        }
+        ad.reject(reason);
+        adRepository.save(ad);
+        return toDetailResponse(ad);
+    }
+
+    // --- helpers ---
+
+    private void requireOwner(User actingUser, Ad ad) {
+        if (!ad.getOwner().getId().equals(actingUser.getId())) {
+            throw ApiException.forbidden("You do not own this advertisement");
         }
     }
+
+    private Ad findAdOrThrow(Long adId) {
+        return adRepository.findById(adId)
+                .orElseThrow(() -> ApiException.notFound("Advertisement not found"));
+    }
+
+    private Category findCategoryOrThrow(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> ApiException.badRequest("Category not found"));
+    }
+
+    private City findCityOrThrow(Long cityId) {
+        return cityRepository.findById(cityId)
+                .orElseThrow(() -> ApiException.badRequest("City not found"));
+    }
+
+    private ItemCondition parseCondition(String value) {
+        try {
+            return ItemCondition.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw ApiException.badRequest("itemCondition must be NEW or USED");
+        }
+    }
+
+    private Sort resolveSort(String sortBy) {
+        if (sortBy == null) {
+            return Sort.by(Sort.Direction.DESC, "createdAt");
+        }
+        return switch (sortBy) {
+            case "cheapest" -> Sort.by(Sort.Direction.ASC, "price");
+            case "expensive" -> Sort.by(Sort.Direction.DESC, "price");
+            default -> Sort.by(Sort.Direction.DESC, "createdAt");  // "newest"
+        };
+    }
+
+    private AdDetailResponse toDetailResponse(Ad ad) {
+        double avgRating = sellerRatingService.getAverageRating(ad.getOwner());
+        int ratingCount = sellerRatingService.getRatingCount(ad.getOwner());
+        return new AdDetailResponse(ad, avgRating, ratingCount);
+    }
 }
+
