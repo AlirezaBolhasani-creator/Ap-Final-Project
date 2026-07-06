@@ -53,18 +53,29 @@ public class SecurityConfig {
                     .authenticationEntryPoint(authenticationEntryPoint)
                     .accessDeniedHandler(accessDeniedHandler))
             .authorizeHttpRequests(authorize -> authorize
-                    // Public: no token required.
-                    .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/cities/**").permitAll()
-                    // Admin-only ad moderation. Declared before the general "/ads/*" GET
-                    // rule below since Spring Security uses the first matching rule.
-                    .requestMatchers(HttpMethod.GET, "/ads/pending").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.PUT, "/ads/*/status").hasRole("ADMIN")
-                    // Public browsing: list and single-ad view.
-                    .requestMatchers(HttpMethod.GET, "/ads", "/ads/*").permitAll()
+                    // Public endpoints (no auth required)
+                    .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/register").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/cities/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/ads").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/ads/{id}").permitAll()
                     .requestMatchers("/uploads/**").permitAll()
-                    // Everything else (create ad, upload image, ...) just needs a logged-in user.
+                    
+                    // Admin-only ad moderation (must come before general /ads routes)
+                    .requestMatchers(HttpMethod.GET, "/ads/pending").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/ads/{id}/approve").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/ads/{id}/reject").hasRole("ADMIN")
+                    
+                    // Authenticated (user) endpoints: ad creation, editing, deletion, image upload
+                    .requestMatchers(HttpMethod.POST, "/ads").authenticated()
+                    .requestMatchers(HttpMethod.PUT, "/ads/{id}").authenticated()
+                    .requestMatchers(HttpMethod.DELETE, "/ads/{id}").authenticated()
+                    .requestMatchers(HttpMethod.PUT, "/ads/{id}/mark-as-sold").authenticated()
+                    .requestMatchers(HttpMethod.POST, "/ads/{id}/images").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/ads/my-ads").authenticated()
+                    
+                    // Catch-all: everything else requires authentication
                     .anyRequest().authenticated())
             .addFilterBefore(new JwtAuthenticationFilter(jwtUtils, userRepository),
                     UsernamePasswordAuthenticationFilter.class);
