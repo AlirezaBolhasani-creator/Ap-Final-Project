@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <ScrollPane fitToWidth="true" nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: #242424; -fx-background: #242424;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="divar.aut.frontend.controller.PostAdController">
 
@@ -18,7 +19,9 @@
                 </Label>
             </right>
             <left>
-                <Button fx:id="clearBtn" onAction="#handleClear" style="-fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 5; -fx-text-fill: #aaa; -fx-padding: 5 15; -fx-cursor: hand;" text="↻ پاک کردن" BorderPane.alignment="CENTER" />
+                <Button fx:id="clearBtn" onAction="#handleClear" style="-fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 5; -fx-text-fill: #aaa; -fx-padding: 5 15; -fx-cursor: hand;" text="پاک کردن" BorderPane.alignment="CENTER">
+                    <graphic><FontIcon iconLiteral="fas-redo" iconSize="13" iconColor="#aaa"/></graphic>
+                </Button>
             </left>
         </BorderPane>
 
@@ -31,9 +34,12 @@
                 </Label>
             </HBox>
             <StackPane fx:id="imageUploadBox" maxWidth="120" minHeight="120" minWidth="120" onMouseClicked="#handleImageUpload" style="-fx-border-color: #666; -fx-border-style: dashed; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-cursor: hand; -fx-background-color: transparent;">
-                <Label text="+ 🖼️" textFill="#888">
-                    <font><Font size="24.0" /></font>
-                </Label>
+                <VBox alignment="CENTER" spacing="6">
+                    <FontIcon iconLiteral="fas-image" iconSize="28" iconColor="#888"/>
+                    <Label text="+" textFill="#888">
+                        <font><Font size="18.0" /></font>
+                    </Label>
+                </VBox>
             </StackPane>
         </VBox>
 

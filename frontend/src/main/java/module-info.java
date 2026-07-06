@@ -5,6 +5,8 @@ module divar.aut.frontend {
     requires java.desktop;
     requires java.net.http;
     requires com.google.gson;
+    requires org.kordamp.ikonli.javafx;
+    requires org.kordamp.ikonli.fontawesome5;
 
     opens divar.aut.frontend to javafx.fxml;
     exports divar.aut.frontend;

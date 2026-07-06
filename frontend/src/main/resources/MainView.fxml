@@ -5,6 +5,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -26,7 +27,7 @@
 
                 <!-- Search Bar -->
                 <HBox styleClass="search-bar" alignment="CENTER" spacing="8">
-                    <Label text="🔍" styleClass="search-icon"/>
+                    <FontIcon iconLiteral="fas-search" iconSize="16" iconColor="#999" styleClass="search-icon"/>
                     <TextField fx:id="searchField"
                                promptText="جستجو در همه آگهی‌ها"
                                styleClass="search-input"
@@ -111,7 +112,10 @@
 
                 <!-- Location -->
                 <VBox styleClass="sidebar-card" spacing="8">
-                    <Label text="📍 شهر" styleClass="sidebar-title"/>
+                    <HBox alignment="CENTER_RIGHT" spacing="6">
+                        <FontIcon iconLiteral="fas-map-marker-alt" iconSize="14" iconColor="#aaa"/>
+                        <Label text="شهر" styleClass="sidebar-title"/>
+                    </HBox>
                     <ComboBox fx:id="cityCombo" promptText="همه شهرها" styleClass="sort-combo" maxWidth="Infinity" onAction="#applyFilter"/>
                 </VBox>
 

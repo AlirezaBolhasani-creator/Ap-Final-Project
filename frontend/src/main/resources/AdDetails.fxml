@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="divar.aut.frontend.controller.AdDetailsController"
@@ -55,8 +56,12 @@
     </HBox>
 
     <HBox fx:id="adminActionBox" spacing="15" alignment="CENTER_RIGHT" visible="false" managed="false">
-        <Button text="✖ رد کردن" onAction="#handleReject" style="-fx-background-color: #991b1b; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
-        <Button text="✔ تایید آگهی" onAction="#handleApprove" style="-fx-background-color: #15803d; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
+        <Button text="رد کردن" onAction="#handleReject" style="-fx-background-color: #991b1b; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;">
+            <graphic><FontIcon iconLiteral="fas-times" iconSize="14" iconColor="white"/></graphic>
+        </Button>
+        <Button text="تایید آگهی" onAction="#handleApprove" style="-fx-background-color: #15803d; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;">
+            <graphic><FontIcon iconLiteral="fas-check" iconSize="14" iconColor="white"/></graphic>
+        </Button>
     </HBox>
 
     <HBox fx:id="ownerActionBox" spacing="15" alignment="CENTER_RIGHT" visible="false" managed="false">
