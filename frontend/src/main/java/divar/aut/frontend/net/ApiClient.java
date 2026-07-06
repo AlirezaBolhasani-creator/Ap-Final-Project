@@ -99,7 +99,7 @@ public final class ApiClient {
     private static HttpRequest.Builder requestBuilder(String path) {
         HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(ApiConfig.SERVER_URL + path));
         String token = SessionManager.getInstance().getToken();
-        if (token != null) {
+        if (token != null && !token.isBlank() && !"null".equalsIgnoreCase(token)) {
             builder.header("Authorization", "Bearer " + token);
         }
         return builder;

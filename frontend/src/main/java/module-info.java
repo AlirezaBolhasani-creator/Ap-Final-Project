@@ -1,4 +1,5 @@
 module divar.aut.frontend {
+    requires transitive javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;

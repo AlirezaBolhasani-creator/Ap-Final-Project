@@ -3,6 +3,7 @@ package divar.aut.frontend.controller;
 import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.model.AdData;
 import divar.aut.frontend.ui.ViewManager;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -26,11 +27,13 @@ public class MainViewController implements Initializable {
     @FXML private ComboBox<String> sortCombo;
     @FXML private Button           loadMoreBtn;
     @FXML private Label            statusLabel;
-    @FXML private Button adminPanelBtn;
+    @FXML private Button           myAdsBtn;
+    @FXML private Button           adminPanelBtn;
 
     private AdService adService;
     private final ViewManager viewManager;
     private int page = 0;
+    private boolean showingMyAds = false;
 
     /** No-arg constructor required by FXMLLoader — do NOT remove */
     public MainViewController() { this.viewManager = null; }
@@ -58,28 +61,48 @@ public class MainViewController implements Initializable {
     }
 
     private void loadPage() {
-        if (statusLabel != null) statusLabel.setText("در حال دریافت آگهی‌ها...");
-        if (loadMoreBtn != null) loadMoreBtn.setDisable(true);
-        adService.fetchAds(page,
-                ads -> {
-                    if (statusLabel != null) statusLabel.setText(ads.size() + " آگهی دریافت شد");
+        if (statusLabel != null) statusLabel.setText(showingMyAds ? "در حال دریافت آگهی‌های من..." : "در حال دریافت آگهی‌ها...");
+        if (loadMoreBtn != null) {
+            loadMoreBtn.setDisable(true);
+            loadMoreBtn.setVisible(!showingMyAds);
+            loadMoreBtn.setManaged(!showingMyAds);
+        }
 
-                    // NEW LOGIC: Check if we've reached the end of the ads
-                    if (ads.isEmpty()) {
-                        if (loadMoreBtn != null) {
-                            loadMoreBtn.setDisable(true);
-                            loadMoreBtn.setText("پایان آگهی‌ها"); // Updates button text so the user knows
-                        }
-                    } else {
-                        if (loadMoreBtn != null) loadMoreBtn.setDisable(false);
+        if (showingMyAds) {
+            adService.fetchMyAds(
+                    ads -> {
+                        if (statusLabel != null) statusLabel.setText(ads.size() + " آگهی دریافت شد");
+                        if (loadMoreBtn != null) loadMoreBtn.setDisable(true);
                         renderAds(ads);
+                    },
+                    error -> {
+                        if (statusLabel != null) statusLabel.setText("خطا در ارتباط با سرور: " + error);
+                        if (loadMoreBtn != null) loadMoreBtn.setDisable(false);
                     }
-                },
-                error -> {
-                    if (statusLabel != null) statusLabel.setText("خطا در ارتباط با سرور: " + error);
-                    if (loadMoreBtn != null) loadMoreBtn.setDisable(false);
-                }
-        );
+            );
+        } else {
+            adService.fetchAds(page,
+                    ads -> {
+                        if (statusLabel != null) statusLabel.setText(ads.size() + " آگهی دریافت شد");
+                        if (ads.isEmpty()) {
+                            if (loadMoreBtn != null) {
+                                loadMoreBtn.setDisable(true);
+                                loadMoreBtn.setText("پایان آگهی‌ها");
+                            }
+                        } else {
+                            if (loadMoreBtn != null) {
+                                loadMoreBtn.setDisable(false);
+                                loadMoreBtn.setText("نمایش بیشتر");
+                            }
+                            renderAds(ads);
+                        }
+                    },
+                    error -> {
+                        if (statusLabel != null) statusLabel.setText("خطا در ارتباط با سرور: " + error);
+                        if (loadMoreBtn != null) loadMoreBtn.setDisable(false);
+                    }
+            );
+        }
     }
     public void renderAds(List<AdData> ads) {
         int delay = 0;
@@ -123,25 +146,14 @@ public class MainViewController implements Initializable {
                 card.setStyle("");
             });
             card.setOnMouseClicked(e -> {
-                try {
-
-                    AdDetailsController controller = loader.getController();
-                    // ارسال داده‌ها به صفحه جزئیات آگهی
-                    controller.setData(data, adService, viewManager.getUserRole(), () -> {
-                        // این بخش پس از تایید یا رد آگهی توسط ادمین اجرا می‌شود و صفحه را رفرش می‌کند
-                        page = 0;
-                        adGrid.getChildren().clear();
-                        loadPage();
+                if (adService == null || viewManager == null) return;
+                adService.fetchAdDetails(data.id(), adDetail -> {
+                    Platform.runLater(() -> openAdDetails(adDetail));
+                }, error -> {
+                    Platform.runLater(() -> {
+                        if (statusLabel != null) statusLabel.setText("خطا در دریافت جزئیات آگهی: " + error);
                     });
-
-                    javafx.stage.Stage stage = new javafx.stage.Stage();
-                    stage.setTitle("جزئیات آگهی: " + data.title());
-                    stage.setScene(new javafx.scene.Scene(card));
-                    stage.initModality(javafx.stage.Modality.APPLICATION_MODAL); // باز شدن به صورت پاپ‌آپ فعال
-                    stage.show();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                });
             });
             return card;
         } catch (IOException e) {
@@ -153,6 +165,40 @@ public class MainViewController implements Initializable {
     @FXML
     private void loadMore() {
         page++;
+        loadPage();
+    }
+
+    private void openAdDetails(divar.aut.frontend.model.AdDetailData adDetail) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
+            Parent root = loader.load();
+            AdDetailsController controller = loader.getController();
+            controller.setData(adDetail, adService, viewManager.getUserRole(), showingMyAds, () -> {
+                page = 0;
+                adGrid.getChildren().clear();
+                loadPage();
+            }, viewManager);
+
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.setTitle("جزئیات آگهی: " + adDetail.title());
+            stage.setScene(new javafx.scene.Scene(root));
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.show();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            if (statusLabel != null) statusLabel.setText("خطا در باز کردن جزئیات آگهی");
+        }
+    }
+
+    @FXML
+    private void onMyAds() {
+        if (viewManager == null || viewManager.getUserToken() == null) return;
+        showingMyAds = !showingMyAds;
+        if (myAdsBtn != null) {
+            myAdsBtn.setText(showingMyAds ? "بازگشت به آگهی‌ها" : "دیوار من");
+        }
+        page = 0;
+        adGrid.getChildren().clear();
         loadPage();
     }
 

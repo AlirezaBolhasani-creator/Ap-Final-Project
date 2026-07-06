@@ -1,7 +1,9 @@
 package divar.aut.frontend.controller;
 
-import divar.aut.frontend.model.AdData;
+import divar.aut.frontend.model.AdDetailData;
 import divar.aut.frontend.net.AdService;
+import divar.aut.frontend.ui.PostAdScreen;
+import divar.aut.frontend.ui.ViewManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -11,57 +13,128 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class AdDetailsController {
-    @FXML private Label titleLabel, priceLabel, locationLabel, categoryLabel, conditionLabel, statusLabel;
+    @FXML private Label titleLabel;
+    @FXML private Label priceLabel;
+    @FXML private Label locationLabel;
+    @FXML private Label categoryLabel;
+    @FXML private Label conditionLabel;
+    @FXML private Label statusLabel;
     @FXML private ImageView adImageView;
     @FXML private TextArea descriptionArea;
     @FXML private HBox adminActionBox;
+    @FXML private HBox ownerActionBox;
+    @FXML private Button editButton;
+    @FXML private Button deleteButton;
+    @FXML private Button markAsSoldButton;
 
-    private AdData adData;
+    private AdDetailData adDetail;
     private AdService adService;
     private Runnable onActionCompleted;
+    private ViewManager viewManager;
 
-    public void setData(AdData ad, AdService adService, String userRole, Runnable onActionCompleted) {
-        this.adData = ad;
+    public void setData(AdDetailData ad, AdService adService, String userRole,
+                        boolean isOwner, Runnable onActionCompleted, ViewManager viewManager) {
+        this.adDetail = ad;
         this.adService = adService;
         this.onActionCompleted = onActionCompleted;
+        this.viewManager = viewManager;
 
         titleLabel.setText(ad.title());
         priceLabel.setText(String.valueOf(ad.price()));
-        locationLabel.setText(ad.location());
-        categoryLabel.setText(ad.category());
-        conditionLabel.setText(ad.condition());
-        descriptionArea.setText(ad.imageUrl());
+        locationLabel.setText(ad.cityName());
+        categoryLabel.setText(ad.categoryName());
+        conditionLabel.setText(mapCondition(ad.itemCondition()));
+        descriptionArea.setText(ad.description());
+        statusLabel.setText(ad.status());
 
-        if (ad.imageUrl() != null && !ad.imageUrl().isBlank()) {
-            String fullUrl = "http://localhost:8080/uploads/" + ad.imageUrl().replace(" ", "%20");
-            try { adImageView.setImage(new Image(fullUrl, true)); } catch (Exception ignored) {}
+        if (ad.imageFileNames() != null && !ad.imageFileNames().isEmpty()) {
+            String fullUrl = "http://localhost:8080/uploads/" + ad.imageFileNames().get(0);
+            fullUrl = fullUrl.replace(" ", "%20");
+            try {
+                adImageView.setImage(new Image(fullUrl, true));
+            } catch (Exception ignored) {
+            }
         }
 
-
-        if ("ADMIN".equals(userRole)) {
-            adminActionBox.setVisible(true);
-            adminActionBox.setManaged(true);
-        }
+        adminActionBox.setVisible("ADMIN".equals(userRole));
+        adminActionBox.setManaged("ADMIN".equals(userRole));
+        ownerActionBox.setVisible(isOwner);
+        ownerActionBox.setManaged(isOwner);
+        boolean canMarkAsSold = isOwner && "ACTIVE".equals(ad.status());
+        markAsSoldButton.setVisible(canMarkAsSold);
+        markAsSoldButton.setManaged(canMarkAsSold);
     }
 
     @FXML
-    private void handleApprove() { updateStatus("ACTIVE"); }
+    private void handleApprove() {
+        setUiDisabled(true);
+        adService.updateAdStatus(adDetail.id(), "ACTIVE",
+                success -> Platform.runLater(() -> finishAction(success)),
+                error -> Platform.runLater(() -> showError(error)));
+    }
 
     @FXML
-    private void handleReject() { updateStatus("REJECTED"); }
+    private void handleReject() {
+        setUiDisabled(true);
+        adService.updateAdStatus(adDetail.id(), "REJECTED",
+                success -> Platform.runLater(() -> finishAction(success)),
+                error -> Platform.runLater(() -> showError(error)));
+    }
 
-    private void updateStatus(String status) {
-        adminActionBox.setDisable(true);
-        adService.updateAdStatus(adData.id(), status,
-                success -> Platform.runLater(() -> {
-                    if (onActionCompleted != null) onActionCompleted.run();
-                    closeWindow();
-                }),
-                error -> Platform.runLater(() -> {
-                    statusLabel.setText("خطا: " + error);
-                    adminActionBox.setDisable(false);
-                })
-        );
+    @FXML
+    private void handleMarkAsSold() {
+        setUiDisabled(true);
+        adService.markAsSold(adDetail.id(),
+                success -> Platform.runLater(() -> finishAction(success)),
+                error -> Platform.runLater(() -> showError(error)));
+    }
+
+    @FXML
+    private void handleDelete() {
+        setUiDisabled(true);
+        adService.deleteAd(adDetail.id(),
+                success -> Platform.runLater(() -> finishAction(success)),
+                error -> Platform.runLater(() -> showError(error)));
+    }
+
+    @FXML
+    private void handleEdit() {
+        if (viewManager == null) return;
+        try {
+            PostAdScreen editScreen = new PostAdScreen(viewManager, adService, adDetail);
+            viewManager.show(editScreen.getView());
+            closeWindow();
+        } catch (Exception e) {
+            showError("خطا در باز کردن صفحه ویرایش");
+        }
+    }
+
+    private void finishAction(String successMessage) {
+        statusLabel.setText(successMessage);
+        if (onActionCompleted != null) onActionCompleted.run();
+        closeWindow();
+    }
+
+    private void showError(String error) {
+        statusLabel.setText("خطا: " + error);
+        setUiDisabled(false);
+    }
+
+    private void setUiDisabled(boolean disabled) {
+        adminActionBox.setDisable(disabled);
+        ownerActionBox.setDisable(disabled);
+        if (editButton != null) editButton.setDisable(disabled);
+        if (deleteButton != null) deleteButton.setDisable(disabled);
+        if (markAsSoldButton != null) markAsSoldButton.setDisable(disabled);
+    }
+
+    private String mapCondition(String condition) {
+        if (condition == null) return "نامشخص";
+        return switch (condition) {
+            case "NEW" -> "نو";
+            case "USED" -> "کارکرده";
+            default -> condition;
+        };
     }
 
     private void closeWindow() {

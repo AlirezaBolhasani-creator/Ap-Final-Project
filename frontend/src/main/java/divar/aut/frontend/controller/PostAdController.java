@@ -1,9 +1,12 @@
 package divar.aut.frontend.controller;
 
+import divar.aut.frontend.model.AdDetailData;
+import divar.aut.frontend.model.AdRequestData;
+import divar.aut.frontend.model.CategoryData;
+import divar.aut.frontend.model.CityData;
 import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.CategoryService;
 import divar.aut.frontend.net.CityService;
-import divar.aut.frontend.model.AdData;
 import divar.aut.frontend.ui.ViewManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -14,6 +17,8 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class PostAdController implements Initializable {
@@ -30,12 +35,35 @@ public class PostAdController implements Initializable {
     private AdService adService;
     private final CategoryService categoryService = new CategoryService();
     private final CityService cityService = new CityService();
+    private final List<CategoryData> categoryList = new ArrayList<>();
+    private final List<CityData> cityList = new ArrayList<>();
     private File selectedImageFile = null;
     private ViewManager viewManager;
+    private AdDetailData editingAd;
+    private String pendingCategoryName;
+    private String pendingCityName;
 
     public void setDependencies(AdService adService, ViewManager viewManager) {
         this.adService = adService;
         this.viewManager = viewManager;
+    }
+
+    public void setData(AdDetailData adDetail) {
+        this.editingAd = adDetail;
+        this.pendingCategoryName = adDetail.categoryName();
+        this.pendingCityName = adDetail.cityName();
+
+        titleField.setText(adDetail.title());
+        descriptionArea.setText(adDetail.description());
+        priceField.setText(String.valueOf(adDetail.price()));
+        conditionCombo.getSelectionModel().select(mapConditionToLabel(adDetail.itemCondition()));
+
+        if (!categoryList.isEmpty()) {
+            categoryCombo.getSelectionModel().select(pendingCategoryName);
+        }
+        if (!cityList.isEmpty()) {
+            locationCombo.getSelectionModel().select(pendingCityName);
+        }
     }
 
     @Override
@@ -49,8 +77,13 @@ public class PostAdController implements Initializable {
     private void loadCategories() {
         categoryService.listAll(
                 categories -> {
-                    categoryCombo.getItems().setAll(categories.stream().map(c -> c.name()).toList());
-                    if (!categoryCombo.getItems().isEmpty()) {
+                    categoryList.clear();
+                    categoryList.addAll(categories);
+                    categoryCombo.getItems().setAll(categories.stream().map(CategoryData::name).toList());
+                    if (pendingCategoryName != null) {
+                        categoryCombo.getSelectionModel().select(pendingCategoryName);
+                    }
+                    if (categoryCombo.getSelectionModel().isEmpty() && !categoryCombo.getItems().isEmpty()) {
                         categoryCombo.getSelectionModel().selectFirst();
                     }
                 },
@@ -64,8 +97,13 @@ public class PostAdController implements Initializable {
     private void loadCities() {
         cityService.listAll(
                 cities -> {
-                    locationCombo.getItems().setAll(cities.stream().map(c -> c.name()).toList());
-                    if (!locationCombo.getItems().isEmpty()) {
+                    cityList.clear();
+                    cityList.addAll(cities);
+                    locationCombo.getItems().setAll(cities.stream().map(CityData::name).toList());
+                    if (pendingCityName != null) {
+                        locationCombo.getSelectionModel().select(pendingCityName);
+                    }
+                    if (locationCombo.getSelectionModel().isEmpty() && !locationCombo.getItems().isEmpty()) {
                         locationCombo.getSelectionModel().selectFirst();
                     }
                 },
@@ -126,44 +164,83 @@ public class PostAdController implements Initializable {
         statusLabel.setText("در حال ارسال...");
         statusLabel.setStyle("-fx-text-fill: white;");
 
-        // 2. Build AdData WITH the category included
-        AdData newAd = new AdData(
+        long selectedCategoryId = findSelectedCategoryId();
+        long selectedCityId = findSelectedCityId();
+        if (selectedCategoryId <= 0 || selectedCityId <= 0) {
+            statusLabel.setText("لطفا دسته‌بندی و شهر معتبر انتخاب کنید.");
+            statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
+            return;
+        }
+
+        AdRequestData requestData = new AdRequestData(
+                selectedCategoryId,
+                selectedCityId,
                 titleField.getText(),
+                descriptionArea.getText(),
                 priceValue,
-                locationCombo.getValue(),
-                conditionCombo.getValue(),
-                categoryCombo.getValue(),
-                null,
-                0,
-                null
+                mapLabelToCondition(conditionCombo.getValue())
         );
 
-        // 3. Send request and handle navigation
-        adService.createAd(newAd,
-                createdAd -> {
-                    if (selectedImageFile != null) {
-                        adService.uploadImage(createdAd.id(), selectedImageFile,
-                                msg -> {
-                                    Platform.runLater(() -> viewManager.toMain());
-                                },
-                                err -> {
-                                    Platform.runLater(() -> {
-                                        statusLabel.setText("آگهی ثبت شد اما عکس خطا خورد: " + err);
-                                        statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
-                                    });
-                                }
-                        );
-                    } else {
-                        // Success without Image -> Go back to Main immediately
-                        Platform.runLater(() -> viewManager.toMain());
-                    }
-                },
-                error -> {
-                    Platform.runLater(() -> {
-                        statusLabel.setText("خطا در ثبت: " + error);
-                        statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
-                    });
-                }
-        );
+        if (editingAd != null) {
+            adService.updateAd(editingAd.id(), requestData,
+                    updatedAd -> handlePostSuccess(updatedAd),
+                    error -> Platform.runLater(() -> handleError("خطا در ویرایش: " + error)));
+        } else {
+            adService.createAd(requestData,
+                    createdAd -> handlePostSuccess(createdAd),
+                    error -> Platform.runLater(() -> handleError("خطا در ثبت: " + error)));
+        }
+    }
+
+    private void handlePostSuccess(AdDetailData adDetail) {
+        if (selectedImageFile != null) {
+            adService.uploadImage(adDetail.id(), selectedImageFile,
+                    msg -> Platform.runLater(() -> viewManager.toMain()),
+                    err -> Platform.runLater(() -> handleError("آگهی ثبت شد اما عکس خطا خورد: " + err))
+            );
+        } else {
+            Platform.runLater(() -> viewManager.toMain());
+        }
+    }
+
+    private void handleError(String message) {
+        statusLabel.setText(message);
+        statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
+    }
+
+    private long findSelectedCategoryId() {
+        String selectedName = categoryCombo.getValue();
+        return categoryList.stream()
+                .filter(c -> c.name().equals(selectedName))
+                .map(CategoryData::id)
+                .findFirst()
+                .orElse(-1L);
+    }
+
+    private long findSelectedCityId() {
+        String selectedName = locationCombo.getValue();
+        return cityList.stream()
+                .filter(c -> c.name().equals(selectedName))
+                .map(CityData::id)
+                .findFirst()
+                .orElse(-1L);
+    }
+
+    private String mapLabelToCondition(String label) {
+        if (label == null) return "USED";
+        return switch (label) {
+            case "نو" -> "NEW";
+            case "در حد نو", "کارکرده" -> "USED";
+            default -> label.toUpperCase();
+        };
+    }
+
+    private String mapConditionToLabel(String condition) {
+        if (condition == null) return "در حد نو";
+        return switch (condition) {
+            case "NEW" -> "نو";
+            case "USED" -> "در حد نو";
+            default -> condition;
+        };
     }
 }

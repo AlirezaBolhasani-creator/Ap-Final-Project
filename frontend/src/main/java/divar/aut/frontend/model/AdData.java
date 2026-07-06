@@ -5,12 +5,13 @@ package divar.aut.frontend.model;
  * Replace with your real model/DTO class.
  */
 public record AdData(
+        Long id,
         String title,
         Double price,
-        String location,
-        String condition,
-        String category,
-        String imageUrl,
-        int photoCount,
-        Long id
-) {}
+        String itemCondition,
+        String status,
+        String cityName,
+        String categoryName,
+        String thumbnailFileName
+) {
+}

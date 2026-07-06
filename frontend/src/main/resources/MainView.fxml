@@ -36,7 +36,7 @@
 
                 <!-- Nav Actions -->
                 <HBox spacing="4" alignment="CENTER">
-                    <Button text="دیوار من" styleClass="nav-btn"/>
+                    <Button fx:id="myAdsBtn" text="دیوار من" styleClass="nav-btn" onAction="#onMyAds"/>
                     <Button text="چت و تماس" styleClass="nav-btn"/>
                     <Button text="پشتیبانی" styleClass="nav-btn"/>
 

@@ -6,6 +6,8 @@ import divar.aut.backend.dto.AdSummaryResponse;
 import divar.aut.backend.security.UserPrincipal;
 import divar.aut.backend.service.AdService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,9 +59,9 @@ public class AdController {
      * Create a new ad (post-ad form). Authenticated user only.
      */
     @PostMapping
-    public AdDetailResponse createAd(@AuthenticationPrincipal UserPrincipal principal,
-                                      @Valid @RequestBody AdRequest request) {
-        return adService.createAd(principal.getUser(), request);
+    public ResponseEntity<AdDetailResponse> createAd(@AuthenticationPrincipal UserPrincipal principal,
+                                                     @Valid @RequestBody AdRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(adService.createAd(principal.getUser(), request));
     }
 
     /**
@@ -76,16 +78,18 @@ public class AdController {
      * Delete an ad. Owner only.
      */
     @DeleteMapping("/{id}")
-    public void deleteAd(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal principal) {
+    public ResponseEntity<Void> deleteAd(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal principal) {
         adService.deleteOwnAd(principal.getUser(), id);
+        return ResponseEntity.noContent().build();
     }
 
     /**
      * Mark an ad as sold. Owner only, only works if ad is ACTIVE.
      */
-    @PutMapping("/{id}/mark-as-sold")
-    public void markAsSold(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal principal) {
+    @PutMapping({"/{id}/mark-as-sold", "/{id}/sold"})
+    public ResponseEntity<Void> markAsSold(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal principal) {
         adService.markAsSold(principal.getUser(), id);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -93,16 +97,17 @@ public class AdController {
      * Accepts multiple files via multipart/form-data with key "files".
      */
     @PostMapping("/{id}/images")
-    public void uploadImages(@PathVariable Long id,
-                             @AuthenticationPrincipal UserPrincipal principal,
-                             @RequestParam("files") List<MultipartFile> files) {
+    public ResponseEntity<Void> uploadImages(@PathVariable Long id,
+                                             @AuthenticationPrincipal UserPrincipal principal,
+                                             @RequestParam("files") List<MultipartFile> files) {
         adService.addImages(principal.getUser(), id, files);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
      * List all ads owned by the authenticated user (any status).
      */
-    @GetMapping("/my-ads")
+    @GetMapping({"/my-ads", "/mine/list"})
     public List<AdSummaryResponse> listMyAds(@AuthenticationPrincipal UserPrincipal principal) {
         return adService.listMyAds(principal.getUser());
     }

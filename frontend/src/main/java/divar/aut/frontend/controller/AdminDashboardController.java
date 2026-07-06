@@ -3,6 +3,7 @@ package divar.aut.frontend.controller;
 import divar.aut.frontend.model.AdData;
 import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.ui.ViewManager;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -106,30 +107,30 @@ public class AdminDashboardController {
     }
 
     private void openAdDetails(AdData data) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
-            Parent root = loader.load();
+        adService.fetchAdDetails(data.id(), adDetail -> {
+            Platform.runLater(() -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
+                    Parent root = loader.load();
+                    AdDetailsController controller = loader.getController();
+                    controller.setData(adDetail, adService, "ADMIN", false, () -> loadPendingAds(), viewManager);
 
-            AdDetailsController controller = loader.getController();
-
-            // Pass the data, explicitly state "ADMIN" role, and pass a callback to refresh the grid
-            controller.setData(data, adService, "ADMIN", () -> {
-                // This callback runs after the admin clicks approve or reject in the popup
-                loadPendingAds();
+                    Stage popupStage = new Stage();
+                    popupStage.setTitle("بررسی آگهی: " + data.title());
+                    popupStage.setScene(new Scene(root));
+                    popupStage.initModality(Modality.APPLICATION_MODAL);
+                    popupStage.show();
+                } catch (IOException ex) {
+                    System.err.println("Error loading AdDetails.fxml");
+                    ex.printStackTrace();
+                }
             });
-
-            Stage popupStage = new Stage();
-            popupStage.setTitle("بررسی آگهی: " + data.title());
-            popupStage.setScene(new Scene(root));
-
-            // This forces the user to interact with the popup before clicking other things
-            popupStage.initModality(Modality.APPLICATION_MODAL);
-            popupStage.show();
-
-        } catch (IOException ex) {
-            System.err.println("Error loading AdDetails.fxml");
-            ex.printStackTrace();
-        }
+        }, error -> {
+            Platform.runLater(() -> {
+                statusLabel.setText("خطا در دریافت جزئیات آگهی: " + error);
+                statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
+            });
+        });
     }
 
     @FXML

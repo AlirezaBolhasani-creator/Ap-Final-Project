@@ -29,17 +29,23 @@ public class AdCardController implements Initializable {
 
     public void setData(AdData data) {
         adTitle.setText(data.title());
-        adPrice.setText(data.price().toString());
-        adLocation.setText(data.location());
-        photoCount.setText("📷 " + data.photoCount());
+        adPrice.setText(data.price() == null ? "0" : String.valueOf(data.price()));
+        adLocation.setText(data.cityName() != null ? data.cityName() : "ناشناس");
+        adTime.setText(data.status() != null ? data.status() : "-" );
+        photoCount.setText(data.categoryName() != null ? data.categoryName() : "");
 
-        if (data.condition() != null && !data.condition().isBlank()) {
-            conditionLabel.setText(data.condition());
+        if (data.itemCondition() != null && !data.itemCondition().isBlank()) {
+            String labelText = switch (data.itemCondition()) {
+                case "NEW" -> "نو";
+                case "USED" -> "کارکرده";
+                default -> data.itemCondition();
+            };
+            conditionLabel.setText(labelText);
             conditionLabel.setVisible(true);
-            String chipStyle = switch (data.condition()) {
-                case "نو"       -> "-fx-background-color:rgba(74,222,128,.18);-fx-text-fill:#4ade80;-fx-border-color:rgba(74,222,128,.3);";
-                case "در حد نو" -> "-fx-background-color:rgba(96,165,250,.18);-fx-text-fill:#60a5fa;-fx-border-color:rgba(96,165,250,.3);";
-                default         -> "-fx-background-color:rgba(168,85,247,.18);-fx-text-fill:#a855f7;-fx-border-color:rgba(168,85,247,.3);";
+            String chipStyle = switch (labelText) {
+                case "نو" -> "-fx-background-color:rgba(74,222,128,.18);-fx-text-fill:#4ade80;-fx-border-color:rgba(74,222,128,.3);";
+                case "کارکرده" -> "-fx-background-color:rgba(168,85,247,.18);-fx-text-fill:#a855f7;-fx-border-color:rgba(168,85,247,.3);";
+                default -> "-fx-background-color:rgba(96,165,250,.18);-fx-text-fill:#60a5fa;-fx-border-color:rgba(96,165,250,.3);";
             };
             conditionLabel.setStyle(chipStyle +
                     "-fx-padding:3 8 3 8;-fx-background-radius:12;-fx-border-radius:12;-fx-border-width:1;");
@@ -47,12 +53,10 @@ public class AdCardController implements Initializable {
             conditionLabel.setVisible(false);
         }
 
-        if (data.imageUrl() != null && !data.imageUrl().isBlank()) {
+        if (data.thumbnailFileName() != null && !data.thumbnailFileName().isBlank()) {
             try {
-                String fullUrl = "http://localhost:8080/uploads/" + data.imageUrl();
-                //Encode spaces to %20 so JavaFX doesn't crash
+                String fullUrl = "http://localhost:8080/uploads/" + data.thumbnailFileName();
                 fullUrl = fullUrl.replace(" ", "%20");
-                System.out.println("Attempting to load image from: " + fullUrl);
                 adImage.setImage(new Image(fullUrl, true));
             } catch (Exception e) {
                 System.err.println("Failed to load image for ad: " + data.title());

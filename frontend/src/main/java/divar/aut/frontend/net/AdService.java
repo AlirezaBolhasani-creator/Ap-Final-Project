@@ -3,6 +3,8 @@ package divar.aut.frontend.net;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import divar.aut.frontend.model.AdData;
+import divar.aut.frontend.model.AdDetailData;
+import divar.aut.frontend.model.AdRequestData;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -20,22 +22,78 @@ public class AdService {
                 response -> handleList(response, onSuccess, onError), onError);
     }
 
-    public void createAd(AdData newAd, Consumer<AdData> onSuccess, Consumer<String> onError) {
+    public void fetchPendingAds(Consumer<List<AdData>> onSuccess, Consumer<String> onError) {
+        ApiClient.send("GET", "/ads/pending", null,
+                response -> handleList(response, onSuccess, onError), onError);
+    }
+
+    public void fetchMyAds(Consumer<List<AdData>> onSuccess, Consumer<String> onError) {
+        ApiClient.send("GET", "/ads/my-ads", null,
+                response -> handleList(response, onSuccess, onError), onError);
+    }
+
+    public void fetchAdDetails(Long adId, Consumer<AdDetailData> onSuccess, Consumer<String> onError) {
+        ApiClient.send("GET", "/ads/" + adId, null,
+                response -> {
+                    if (response.statusCode() == 200) {
+                        AdDetailData ad = GSON.fromJson(response.body(), AdDetailData.class);
+                        onSuccess.accept(ad);
+                    } else {
+                        onError.accept(ApiClient.extractErrorMessage(response, "Error fetching ad details: "));
+                    }
+                }, onError);
+    }
+
+    public void createAd(AdRequestData newAd, Consumer<AdDetailData> onSuccess, Consumer<String> onError) {
         String jsonBody = GSON.toJson(newAd);
         ApiClient.send("POST", "/ads", jsonBody,
                 response -> {
-                    if (response.statusCode() == 200) {
-                        onSuccess.accept(GSON.fromJson(response.body(), AdData.class));
+                    if (response.statusCode() == 200 || response.statusCode() == 201) {
+                        onSuccess.accept(GSON.fromJson(response.body(), AdDetailData.class));
                     } else {
                         onError.accept(ApiClient.extractErrorMessage(response, "Error creating ad: "));
                     }
                 }, onError);
     }
 
-    public void uploadImage(Long adId, File file, Consumer<String> onSuccess, Consumer<String> onError) {
-        ApiClient.uploadFile("/ads/" + adId + "/image", "file", file,
+    public void updateAd(Long adId, AdRequestData updatedAd, Consumer<AdDetailData> onSuccess, Consumer<String> onError) {
+        String jsonBody = GSON.toJson(updatedAd);
+        ApiClient.send("PUT", "/ads/" + adId, jsonBody,
                 response -> {
                     if (response.statusCode() == 200) {
+                        onSuccess.accept(GSON.fromJson(response.body(), AdDetailData.class));
+                    } else {
+                        onError.accept(ApiClient.extractErrorMessage(response, "Error updating ad: "));
+                    }
+                }, onError);
+    }
+
+    public void deleteAd(Long adId, Consumer<String> onSuccess, Consumer<String> onError) {
+        ApiClient.send("DELETE", "/ads/" + adId, null,
+                response -> {
+                    if (response.statusCode() == 200 || response.statusCode() == 204) {
+                        onSuccess.accept("آگهی با موفقیت حذف شد.");
+                    } else {
+                        onError.accept(ApiClient.extractErrorMessage(response, "Error deleting ad: "));
+                    }
+                }, onError);
+    }
+
+    public void markAsSold(Long adId, Consumer<String> onSuccess, Consumer<String> onError) {
+        ApiClient.send("PUT", "/ads/" + adId + "/mark-as-sold", null,
+                response -> {
+                    if (response.statusCode() == 200) {
+                        onSuccess.accept("آگهی با موفقیت به فروخته شده علامت‌گذاری شد.");
+                    } else {
+                        onError.accept(ApiClient.extractErrorMessage(response, "Error marking ad as sold: "));
+                    }
+                }, onError);
+    }
+
+    public void uploadImage(Long adId, File file, Consumer<String> onSuccess, Consumer<String> onError) {
+        ApiClient.uploadFile("/ads/" + adId + "/images", "files", file,
+                response -> {
+                    if (response.statusCode() == 200 || response.statusCode() == 201) {
                         onSuccess.accept("عکس با موفقیت آپلود شد");
                     } else {
                         onError.accept(ApiClient.extractErrorMessage(response, "خطای سرور: "));
@@ -43,13 +101,18 @@ public class AdService {
                 }, onError);
     }
 
-    public void fetchPendingAds(Consumer<List<AdData>> onSuccess, Consumer<String> onError) {
-        ApiClient.send("GET", "/ads/pending", null,
-                response -> handleList(response, onSuccess, onError), onError);
-    }
-
     public void updateAdStatus(Long adId, String status, Consumer<String> onSuccess, Consumer<String> onError) {
-        ApiClient.send("PUT", "/ads/" + adId + "/status?status=" + status, null,
+        String path;
+        if ("ACTIVE".equals(status)) {
+            path = "/ads/" + adId + "/approve";
+        } else if ("REJECTED".equals(status)) {
+            path = "/ads/" + adId + "/reject?reason=";
+        } else {
+            onError.accept("Unsupported status change: " + status);
+            return;
+        }
+
+        ApiClient.send("PUT", path, null,
                 response -> {
                     if (response.statusCode() == 200) {
                         onSuccess.accept("وضعیت آگهی با موفقیت به " + status + " تغییر کرد.");

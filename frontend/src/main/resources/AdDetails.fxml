@@ -52,5 +52,11 @@
         <Button text="✔ تایید آگهی" onAction="#handleApprove" style="-fx-background-color: #15803d; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
     </HBox>
 
+    <HBox fx:id="ownerActionBox" spacing="15" alignment="CENTER_RIGHT" visible="false" managed="false">
+        <Button fx:id="editButton" text="ویرایش" onAction="#handleEdit" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
+        <Button fx:id="markAsSoldButton" text="فروخته شد" onAction="#handleMarkAsSold" style="-fx-background-color: #ea580c; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
+        <Button fx:id="deleteButton" text="حذف" onAction="#handleDelete" style="-fx-background-color: #991b1b; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
+    </HBox>
+
     <Label fx:id="statusLabel" textFill="#ff5a5a"/>
 </VBox>

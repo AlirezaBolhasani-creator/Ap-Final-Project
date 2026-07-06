@@ -47,35 +47,21 @@ public class SecurityConfig {
         http
             // REST API with JWTs does not need CSRF protection or HTTP sessions.
             .csrf(AbstractHttpConfigurer::disable)
-            .anonymous(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(exceptions -> exceptions
                     .authenticationEntryPoint(authenticationEntryPoint)
                     .accessDeniedHandler(accessDeniedHandler))
             .authorizeHttpRequests(authorize -> authorize
-                    // Public endpoints (no auth required)
-                    .requestMatchers("/auth/**").permitAll()
-                    .requestMatchers("/register").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/cities/**").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/ads").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/ads/{id}").permitAll()
-                    .requestMatchers("/uploads/**").permitAll()
-                    
-                    // Admin-only ad moderation (must come before general /ads routes)
+                    // Public endpoints
+                    .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/cities/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/ads/pending").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.PUT, "/ads/{id}/approve").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.PUT, "/ads/{id}/reject").hasRole("ADMIN")
-                    
-                    // Authenticated (user) endpoints: ad creation, editing, deletion, image upload
-                    .requestMatchers(HttpMethod.POST, "/ads").authenticated()
-                    .requestMatchers(HttpMethod.PUT, "/ads/{id}").authenticated()
-                    .requestMatchers(HttpMethod.DELETE, "/ads/{id}").authenticated()
-                    .requestMatchers(HttpMethod.PUT, "/ads/{id}/mark-as-sold").authenticated()
-                    .requestMatchers(HttpMethod.POST, "/ads/{id}/images").authenticated()
-                    .requestMatchers(HttpMethod.GET, "/ads/my-ads").authenticated()
-                    
-                    // Catch-all: everything else requires authentication
+                    .requestMatchers(HttpMethod.PUT, "/ads/*/approve", "/ads/*/reject", "/ads/*/status").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/ads", "/ads/*").permitAll()
+                    .requestMatchers("/uploads/**").permitAll()
+
+                    // Everything else requires a logged-in user
                     .anyRequest().authenticated())
             .addFilterBefore(new JwtAuthenticationFilter(jwtUtils, userRepository),
                     UsernamePasswordAuthenticationFilter.class);

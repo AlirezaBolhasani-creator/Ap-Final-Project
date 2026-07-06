@@ -148,6 +148,10 @@ public class AdService {
         Ad ad = findAdOrThrow(adId);
         requireOwner(actingUser, ad);
 
+        if (files == null || files.isEmpty()) {
+            throw ApiException.badRequest("No image files provided");
+        }
+
         for (MultipartFile file : files) {
             String fileName = imageStorageService.save(file);
             ad.addImage(new AdImage(ad, fileName));
