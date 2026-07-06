@@ -36,6 +36,10 @@ public class ViewManager
         show(new FavoritesScreen(this).getView());
     }
 
+    public void toConversations() {
+        show(new ConversationsScreen(this).getView());
+    }
+
     public void toAdminDashboard() {
         AdService adService = new AdService();
         AdminDashboardScreen adminScreen = new AdminDashboardScreen(this, adService);

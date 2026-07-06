@@ -3,6 +3,8 @@ package divar.aut.frontend.controller;
 import divar.aut.frontend.model.AdDetailData;
 import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.FavoriteService;
+import divar.aut.frontend.net.ConversationService;
+import divar.aut.frontend.ui.ConversationDetailScreen;
 import divar.aut.frontend.ui.PostAdScreen;
 import divar.aut.frontend.ui.ViewManager;
 import javafx.application.Platform;
@@ -12,6 +14,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class AdDetailsController {
@@ -30,10 +34,12 @@ public class AdDetailsController {
     @FXML private Button deleteButton;
     @FXML private Button markAsSoldButton;
     @FXML private Button favoriteButton;
+    @FXML private Button messageButton;
 
     private AdDetailData adDetail;
     private AdService adService;
     private final FavoriteService favoriteService = new FavoriteService();
+    private final ConversationService conversationService = new ConversationService();
     private Runnable onActionCompleted;
     private ViewManager viewManager;
 
@@ -83,6 +89,25 @@ public class AdDetailsController {
             frame.setStyle("-fx-background-color: #111; -fx-background-radius: 8; -fx-padding: 5;");
             imageGalleryBox.getChildren().add(frame);
         }
+    }
+
+    @FXML
+    private void handleMessageSeller() {
+        messageButton.setDisable(true);
+        conversationService.startConversation(adDetail.id(),
+                conversation -> Platform.runLater(() -> {
+                    ConversationDetailScreen screen = new ConversationDetailScreen(conversation, null);
+                    Stage stage = new Stage();
+                    stage.setTitle("گفت‌وگو: " + adDetail.title());
+                    stage.setScene(new Scene(screen.getView()));
+                    stage.initModality(Modality.APPLICATION_MODAL);
+                    stage.show();
+                    messageButton.setDisable(false);
+                }),
+                error -> Platform.runLater(() -> {
+                    showError(error);
+                    messageButton.setDisable(false);
+                }));
     }
 
     @FXML
@@ -158,6 +183,7 @@ public class AdDetailsController {
         if (deleteButton != null) deleteButton.setDisable(disabled);
         if (markAsSoldButton != null) markAsSoldButton.setDisable(disabled);
         if (favoriteButton != null) favoriteButton.setDisable(disabled);
+        if (messageButton != null) messageButton.setDisable(disabled);
     }
 
     private String mapCondition(String condition) {

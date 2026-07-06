@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="divar.aut.frontend.controller.ConversationDetailController"
+            stylesheets="@MainView.css"
+            style="-fx-background-color: #242424; -fx-padding: 20;"
+            prefWidth="560" prefHeight="650"
+            nodeOrientation="RIGHT_TO_LEFT">
+
+    <top>
+        <VBox spacing="8">
+            <Label fx:id="headerLabel" text="گفت‌وگو" textFill="WHITE" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+            <Separator style="-fx-opacity: 0.2;"/>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: #1a1a1a; -fx-background: #1a1a1a;">
+            <VBox fx:id="messagesBox" spacing="10" style="-fx-padding: 15;"/>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <VBox spacing="10" style="-fx-padding: 15 0 0 0;">
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <TextField fx:id="messageField" promptText="پیام خود را بنویسید..." HBox.hgrow="ALWAYS"
+                           onAction="#sendMessage"
+                           style="-fx-background-color: #2a2a2a; -fx-border-color: #444; -fx-border-radius: 5; -fx-text-fill: white; -fx-prompt-text-fill: #777; -fx-padding: 10;"/>
+                <Button text="ارسال" onAction="#sendMessage" style="-fx-background-color: #a62626; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 5;"/>
+            </HBox>
+            <Label fx:id="statusLabel" textFill="#ff5a5a"/>
+        </VBox>
+    </bottom>
+</BorderPane>

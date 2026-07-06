@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="divar.aut.frontend.controller.ConversationsController"
+            stylesheets="@MainView.css"
+            style="-fx-background-color: #0d0d0d;">
+
+    <top>
+        <HBox styleClass="navbar" alignment="CENTER_LEFT" spacing="12">
+            <Label text="گفت‌وگوها" styleClass="logo-text"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="بازگشت" styleClass="nav-btn" onAction="#goBack"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane styleClass="ads-scroll" fitToWidth="true">
+            <VBox fx:id="conversationList" spacing="12" style="-fx-padding: 20;"/>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="statusbar" alignment="CENTER_LEFT" spacing="12">
+            <Label fx:id="statusLabel" text="در حال دریافت گفت‌وگوها..." styleClass="status-text"/>
+        </HBox>
+    </bottom>
+</BorderPane>

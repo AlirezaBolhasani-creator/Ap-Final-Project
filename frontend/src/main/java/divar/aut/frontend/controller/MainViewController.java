@@ -238,6 +238,11 @@ public class MainViewController implements Initializable {
         viewManager.toFavorites();
     }
 
+    @FXML private void onConversations() {
+        if(viewManager == null || viewManager.getUserToken() == null) return;
+        viewManager.toConversations();
+    }
+
     @FXML private void filterCategory(javafx.event.ActionEvent e) {
         String categoryName = ((Button) e.getSource()).getText();
         selectedCategoryId = categories.stream()

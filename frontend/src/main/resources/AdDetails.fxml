@@ -50,6 +50,7 @@
     </VBox>
 
     <HBox fx:id="viewerActionBox" spacing="15" alignment="CENTER_RIGHT" visible="false" managed="false">
+        <Button fx:id="messageButton" text="پیام به فروشنده" onAction="#handleMessageSeller" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
         <Button fx:id="favoriteButton" text="افزودن به علاقه‌مندی‌ها" onAction="#handleAddFavorite" style="-fx-background-color: #a62626; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
     </HBox>
 
