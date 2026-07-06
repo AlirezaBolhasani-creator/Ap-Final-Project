@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class AdDetailsController {
@@ -19,7 +20,7 @@ public class AdDetailsController {
     @FXML private Label categoryLabel;
     @FXML private Label conditionLabel;
     @FXML private Label statusLabel;
-    @FXML private ImageView adImageView;
+    @FXML private HBox imageGalleryBox;
     @FXML private TextArea descriptionArea;
     @FXML private HBox adminActionBox;
     @FXML private HBox ownerActionBox;
@@ -47,14 +48,7 @@ public class AdDetailsController {
         descriptionArea.setText(ad.description());
         statusLabel.setText(ad.status());
 
-        if (ad.imageFileNames() != null && !ad.imageFileNames().isEmpty()) {
-            String fullUrl = "http://localhost:8080/uploads/" + ad.imageFileNames().get(0);
-            fullUrl = fullUrl.replace(" ", "%20");
-            try {
-                adImageView.setImage(new Image(fullUrl, true));
-            } catch (Exception ignored) {
-            }
-        }
+        renderImages(ad);
 
         adminActionBox.setVisible("ADMIN".equals(userRole));
         adminActionBox.setManaged("ADMIN".equals(userRole));
@@ -63,6 +57,25 @@ public class AdDetailsController {
         boolean canMarkAsSold = isOwner && "ACTIVE".equals(ad.status());
         markAsSoldButton.setVisible(canMarkAsSold);
         markAsSoldButton.setManaged(canMarkAsSold);
+    }
+
+    private void renderImages(AdDetailData ad) {
+        imageGalleryBox.getChildren().clear();
+        if (ad.imageFileNames() == null || ad.imageFileNames().isEmpty()) {
+            Label emptyImageLabel = new Label("بدون عکس");
+            emptyImageLabel.setStyle("-fx-text-fill: #888; -fx-padding: 30;");
+            imageGalleryBox.getChildren().add(emptyImageLabel);
+            return;
+        }
+        for (String fileName : ad.imageFileNames()) {
+            String fullUrl = ("http://localhost:8080/uploads/" + fileName).replace(" ", "%20");
+            ImageView imageView = new ImageView(new Image(fullUrl, 180, 140, true, true, true));
+            imageView.setPreserveRatio(true);
+            StackPane frame = new StackPane(imageView);
+            frame.setMinSize(190, 150);
+            frame.setStyle("-fx-background-color: #111; -fx-background-radius: 8; -fx-padding: 5;");
+            imageGalleryBox.getChildren().add(frame);
+        }
     }
 
     @FXML

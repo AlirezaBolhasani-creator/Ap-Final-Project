@@ -15,9 +15,11 @@
         </Label>
     </HBox>
 
-    <StackPane style="-fx-background-color: #1a1a1a; -fx-background-radius: 8;">
-        <ImageView fx:id="adImageView" fitWidth="440" fitHeight="250" preserveRatio="true"/>
-    </StackPane>
+    <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER"
+                style="-fx-background-color: #1a1a1a; -fx-background: #1a1a1a; -fx-background-radius: 8;">
+        <HBox fx:id="imageGalleryBox" spacing="10" alignment="CENTER_RIGHT"
+              style="-fx-background-color: #1a1a1a; -fx-padding: 10; -fx-background-radius: 8;"/>
+    </ScrollPane>
 
     <VBox spacing="10">
         <HBox spacing="10">

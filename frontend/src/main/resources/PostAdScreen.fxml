@@ -26,7 +26,7 @@
 
         <VBox spacing="10">
             <HBox alignment="CENTER_LEFT" spacing="3">
-                <Label text="عکس آگهی" textFill="WHITE">
+                <Label text="عکس‌های آگهی" textFill="WHITE">
                     <font><Font name="System Bold" size="14.0" /></font>
                 </Label>
             </HBox>

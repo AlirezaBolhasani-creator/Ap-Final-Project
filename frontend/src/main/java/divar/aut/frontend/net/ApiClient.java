@@ -58,11 +58,49 @@ public final class ApiClient {
             String boundary = "SecondhandBoundary" + System.currentTimeMillis();
             ByteArrayOutputStream bodyBytes = new ByteArrayOutputStream();
             bodyBytes.write(("--" + boundary + "\r\n").getBytes());
-            bodyBytes.write(("Content-Disposition: form-data; name=\"" + fieldName
-                    + "\"; filename=\"" + file.getName() + "\"\r\n").getBytes());
+                String disposition = "Content-Disposition: form-data; name=\"" + fieldName
+                        + "\"; filename=\"" + file.getName() + "\"\r\n";
+                bodyBytes.write(disposition.getBytes());
             bodyBytes.write("Content-Type: application/octet-stream\r\n\r\n".getBytes());
             bodyBytes.write(Files.readAllBytes(file.toPath()));
             bodyBytes.write(("\r\n--" + boundary + "--\r\n").getBytes());
+
+            HttpRequest request = requestBuilder(path)
+                    .header("Content-Type", "multipart/form-data; boundary=" + boundary)
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(bodyBytes.toByteArray()))
+                    .build();
+
+            HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenAccept(response -> Platform.runLater(() -> onSuccess.accept(response)))
+                    .exceptionally(ex -> {
+                        Platform.runLater(() -> onError.accept("Could not reach the server: " + ex.getMessage()));
+                        return null;
+                    });
+        } catch (IOException e) {
+            onError.accept("Could not read file: " + e.getMessage());
+        }
+    }
+
+    /** Uploads multiple files as multipart/form-data under the same form field name. */
+    public static void uploadFiles(String path, String fieldName, java.util.List<File> files,
+                                   Consumer<HttpResponse<String>> onSuccess, Consumer<String> onError) {
+        if (files == null || files.isEmpty()) {
+            onError.accept("No files selected");
+            return;
+        }
+        try {
+            String boundary = "SecondhandBoundary" + System.currentTimeMillis();
+            ByteArrayOutputStream bodyBytes = new ByteArrayOutputStream();
+            for (File file : files) {
+                bodyBytes.write(("--" + boundary + "\r\n").getBytes());
+                String disposition = "Content-Disposition: form-data; name=\"" + fieldName
+                        + "\"; filename=\"" + file.getName() + "\"\r\n";
+                bodyBytes.write(disposition.getBytes());
+                bodyBytes.write("Content-Type: application/octet-stream\r\n\r\n".getBytes());
+                bodyBytes.write(Files.readAllBytes(file.toPath()));
+                bodyBytes.write("\r\n".getBytes());
+            }
+            bodyBytes.write(("--" + boundary + "--\r\n").getBytes());
 
             HttpRequest request = requestBuilder(path)
                     .header("Content-Type", "multipart/form-data; boundary=" + boundary)

@@ -109,10 +109,14 @@ public class AdService {
     }
 
     public void uploadImage(Long adId, File file, Consumer<String> onSuccess, Consumer<String> onError) {
-        ApiClient.uploadFile("/ads/" + adId + "/images", "files", file,
+        uploadImages(adId, List.of(file), onSuccess, onError);
+    }
+
+    public void uploadImages(Long adId, List<File> files, Consumer<String> onSuccess, Consumer<String> onError) {
+        ApiClient.uploadFiles("/ads/" + adId + "/images", "files", files,
                 response -> {
                     if (response.statusCode() == 200 || response.statusCode() == 201) {
-                        onSuccess.accept("عکس با موفقیت آپلود شد");
+                        onSuccess.accept("عکس‌ها با موفقیت آپلود شدند");
                     } else {
                         onError.accept(ApiClient.extractErrorMessage(response, "خطای سرور: "));
                     }

@@ -37,7 +37,7 @@ public class PostAdController implements Initializable {
     private final CityService cityService = new CityService();
     private final List<CategoryData> categoryList = new ArrayList<>();
     private final List<CityData> cityList = new ArrayList<>();
-    private File selectedImageFile = null;
+    private final List<File> selectedImageFiles = new ArrayList<>();
     private ViewManager viewManager;
     private AdDetailData editingAd;
     private String pendingCategoryName;
@@ -121,10 +121,11 @@ public class PostAdController implements Initializable {
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
         );
-        File file = fileChooser.showOpenDialog(imageUploadBox.getScene().getWindow());
-        if (file != null) {
-            selectedImageFile = file;
-            statusLabel.setText("عکس انتخاب شد: " + file.getName());
+        List<File> files = fileChooser.showOpenMultipleDialog(imageUploadBox.getScene().getWindow());
+        if (files != null && !files.isEmpty()) {
+            selectedImageFiles.clear();
+            selectedImageFiles.addAll(files);
+            statusLabel.setText(files.size() + " عکس انتخاب شد");
             statusLabel.setStyle("-fx-text-fill: #4CAF50;");
         }
     }
@@ -137,7 +138,7 @@ public class PostAdController implements Initializable {
         if (locationCombo != null) locationCombo.getSelectionModel().clearSelection();
         if (conditionCombo != null) conditionCombo.getSelectionModel().clearSelection();
         if (categoryCombo != null) categoryCombo.getSelectionModel().clearSelection();
-        selectedImageFile = null;
+        selectedImageFiles.clear();
         statusLabel.setText("");
         statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
     }
@@ -193,10 +194,10 @@ public class PostAdController implements Initializable {
     }
 
     private void handlePostSuccess(AdDetailData adDetail) {
-        if (selectedImageFile != null) {
-            adService.uploadImage(adDetail.id(), selectedImageFile,
+        if (!selectedImageFiles.isEmpty()) {
+            adService.uploadImages(adDetail.id(), selectedImageFiles,
                     msg -> Platform.runLater(() -> viewManager.toMain()),
-                    err -> Platform.runLater(() -> handleError("آگهی ثبت شد اما عکس خطا خورد: " + err))
+                    err -> Platform.runLater(() -> handleError("آگهی ثبت شد اما عکس‌ها خطا خوردند: " + err))
             );
         } else {
             Platform.runLater(() -> viewManager.toMain());
