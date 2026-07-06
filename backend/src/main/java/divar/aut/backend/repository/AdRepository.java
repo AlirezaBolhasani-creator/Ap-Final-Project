@@ -19,6 +19,8 @@ public interface AdRepository extends JpaRepository<Ad, Long> {
 
     Page<Ad> findByStatus(AdStatus status, Pageable pageable);
 
+    List<Ad> findByStatusOrderByCreatedAtDesc(AdStatus status);
+
     /**
      * Find all ads owned by a specific user, ordered newest first. Includes ads
      * in any status (so owner can see their pending/rejected ads too).

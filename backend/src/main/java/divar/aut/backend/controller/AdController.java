@@ -119,11 +119,7 @@ public class AdController {
      */
     @GetMapping("/pending")
     public List<AdSummaryResponse> listPendingAds() {
-        // Note: SecurityConfig restricts this to admins only
-        // We would need a paginated version; for now return all pending
-        return adService.searchActiveAds(null, null, null, null, null, "PENDING_REVIEW", null).stream()
-                .filter(ad -> ad.getStatus().equals("PENDING_REVIEW"))
-                .toList();
+        return adService.listPendingAds();
     }
 
     /**

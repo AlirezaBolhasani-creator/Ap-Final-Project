@@ -117,6 +117,12 @@ public class AdService {
                 .toList();
     }
 
+    public List<AdSummaryResponse> listPendingAds() {
+        return adRepository.findByStatusOrderByCreatedAtDesc(AdStatus.PENDING_REVIEW).stream()
+                .map(AdSummaryResponse::new)
+                .toList();
+    }
+
     /**
      * Owner deletes their own ad (marks as DELETED, not actually removed).
      */
