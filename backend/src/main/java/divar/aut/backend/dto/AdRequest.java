@@ -1,12 +1,9 @@
 package divar.aut.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
-import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AdRequest {
@@ -15,28 +12,67 @@ public class AdRequest {
     @Size(max = 200, message = "must be at most 200 characters")
     private String title;
 
+    @NotBlank(message = "must not be blank")
+    @Size(max = 2000, message = "must be at most 2000 characters")
+    private String description;
+
     @NotNull(message = "must not be null")
-    @DecimalMin(value = "0.0", inclusive = true, message = "must be greater than or equal to 0")
-    private BigDecimal price;
+    private double price;
 
     @NotBlank(message = "must not be blank")
-    @Size(max = 200, message = "must be at most 200 characters")
-    private String location;
+    private String itemCondition;
 
-    @NotBlank(message = "must not be blank")
-    private String condition;
+    @NotNull(message = "must not be null")
+    private Long categoryId;
 
-    @NotBlank(message = "must not be blank")
-    private String category;
+    @NotNull(message = "must not be null")
+    private Long cityId;
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
-    public String getCondition() { return condition; }
-    public void setCondition(String condition) { this.condition = condition; }
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getItemCondition() {
+        return itemCondition;
+    }
+
+    public void setItemCondition(String itemCondition) {
+        this.itemCondition = itemCondition;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Long getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(Long cityId) {
+        this.cityId = cityId;
+    }
 }
