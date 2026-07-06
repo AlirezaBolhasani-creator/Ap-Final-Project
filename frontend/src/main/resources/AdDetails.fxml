@@ -49,6 +49,10 @@
                   style="-fx-control-inner-background: #2a2a2a; -fx-text-fill: white;"/>
     </VBox>
 
+    <HBox fx:id="viewerActionBox" spacing="15" alignment="CENTER_RIGHT" visible="false" managed="false">
+        <Button fx:id="favoriteButton" text="افزودن به علاقه‌مندی‌ها" onAction="#handleAddFavorite" style="-fx-background-color: #a62626; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
+    </HBox>
+
     <HBox fx:id="adminActionBox" spacing="15" alignment="CENTER_RIGHT" visible="false" managed="false">
         <Button text="✖ رد کردن" onAction="#handleReject" style="-fx-background-color: #991b1b; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
         <Button text="✔ تایید آگهی" onAction="#handleApprove" style="-fx-background-color: #15803d; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>

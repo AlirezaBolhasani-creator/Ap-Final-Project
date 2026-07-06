@@ -2,6 +2,7 @@ package divar.aut.frontend.controller;
 
 import divar.aut.frontend.model.AdDetailData;
 import divar.aut.frontend.net.AdService;
+import divar.aut.frontend.net.FavoriteService;
 import divar.aut.frontend.ui.PostAdScreen;
 import divar.aut.frontend.ui.ViewManager;
 import javafx.application.Platform;
@@ -24,12 +25,15 @@ public class AdDetailsController {
     @FXML private TextArea descriptionArea;
     @FXML private HBox adminActionBox;
     @FXML private HBox ownerActionBox;
+    @FXML private HBox viewerActionBox;
     @FXML private Button editButton;
     @FXML private Button deleteButton;
     @FXML private Button markAsSoldButton;
+    @FXML private Button favoriteButton;
 
     private AdDetailData adDetail;
     private AdService adService;
+    private final FavoriteService favoriteService = new FavoriteService();
     private Runnable onActionCompleted;
     private ViewManager viewManager;
 
@@ -54,6 +58,9 @@ public class AdDetailsController {
         adminActionBox.setManaged("ADMIN".equals(userRole));
         ownerActionBox.setVisible(isOwner);
         ownerActionBox.setManaged(isOwner);
+        boolean canFavorite = !isOwner && !"DELETED".equals(ad.status());
+        viewerActionBox.setVisible(canFavorite);
+        viewerActionBox.setManaged(canFavorite);
         boolean canMarkAsSold = isOwner && "ACTIVE".equals(ad.status());
         markAsSoldButton.setVisible(canMarkAsSold);
         markAsSoldButton.setManaged(canMarkAsSold);
@@ -76,6 +83,17 @@ public class AdDetailsController {
             frame.setStyle("-fx-background-color: #111; -fx-background-radius: 8; -fx-padding: 5;");
             imageGalleryBox.getChildren().add(frame);
         }
+    }
+
+    @FXML
+    private void handleAddFavorite() {
+        favoriteButton.setDisable(true);
+        favoriteService.addFavorite(adDetail.id(),
+                success -> Platform.runLater(() -> finishAction(success)),
+                error -> Platform.runLater(() -> {
+                    showError(error);
+                    favoriteButton.setDisable(false);
+                }));
     }
 
     @FXML
@@ -139,6 +157,7 @@ public class AdDetailsController {
         if (editButton != null) editButton.setDisable(disabled);
         if (deleteButton != null) deleteButton.setDisable(disabled);
         if (markAsSoldButton != null) markAsSoldButton.setDisable(disabled);
+        if (favoriteButton != null) favoriteButton.setDisable(disabled);
     }
 
     private String mapCondition(String condition) {

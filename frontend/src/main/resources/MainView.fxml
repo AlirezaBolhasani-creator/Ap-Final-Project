@@ -39,7 +39,7 @@
                 <HBox spacing="4" alignment="CENTER">
                     <Button fx:id="myAdsBtn" text="دیوار من" styleClass="nav-btn" onAction="#onMyAds"/>
                     <Button text="چت و تماس" styleClass="nav-btn"/>
-                    <Button text="پشتیبانی" styleClass="nav-btn"/>
+                    <Button text="علاقه‌مندی‌ها" styleClass="nav-btn" onAction="#onFavorites"/>
 
                     <Button fx:id="adminPanelBtn" text="پنل مدیریت" styleClass="nav-btn" onAction="#onAdminPanel"/>
 

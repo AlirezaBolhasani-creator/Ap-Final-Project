@@ -32,6 +32,10 @@ public class ViewManager
         show(new PostAdScreen(this, new AdService()).getView());
     }
 
+    public void toFavorites() {
+        show(new FavoritesScreen(this).getView());
+    }
+
     public void toAdminDashboard() {
         AdService adService = new AdService();
         AdminDashboardScreen adminScreen = new AdminDashboardScreen(this, adService);

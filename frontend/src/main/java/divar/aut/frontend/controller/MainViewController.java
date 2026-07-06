@@ -233,6 +233,11 @@ public class MainViewController implements Initializable {
         viewManager.toPostAd();
     }
 
+    @FXML private void onFavorites() {
+        if(viewManager == null || viewManager.getUserToken() == null) return;
+        viewManager.toFavorites();
+    }
+
     @FXML private void filterCategory(javafx.event.ActionEvent e) {
         String categoryName = ((Button) e.getSource()).getText();
         selectedCategoryId = categories.stream()
