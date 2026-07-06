@@ -29,7 +29,8 @@
                     <Label text="🔍" styleClass="search-icon"/>
                     <TextField fx:id="searchField"
                                promptText="جستجو در همه آگهی‌ها"
-                               styleClass="search-input"/>
+                               styleClass="search-input"
+                               onAction="#applyFilter"/>
                 </HBox>
 
                 <Region HBox.hgrow="ALWAYS"/>
@@ -110,24 +111,22 @@
 
                 <!-- Location -->
                 <VBox styleClass="sidebar-card" spacing="8">
-                    <Label text="📍 محله" styleClass="sidebar-title"/>
-                    <Button text="انتخاب ›" styleClass="sidebar-action"/>
+                    <Label text="📍 شهر" styleClass="sidebar-title"/>
+                    <ComboBox fx:id="cityCombo" promptText="همه شهرها" styleClass="sort-combo" maxWidth="Infinity" onAction="#applyFilter"/>
                 </VBox>
 
                 <!-- Price Filter -->
                 <VBox styleClass="sidebar-card" spacing="10">
                     <Label text="قیمت (تومان)" styleClass="sidebar-title"/>
-                    <TextField promptText="از" styleClass="price-field"/>
-                    <TextField promptText="تا" styleClass="price-field"/>
+                    <TextField fx:id="minPriceField" promptText="از" styleClass="price-field" onAction="#applyFilter"/>
+                    <TextField fx:id="maxPriceField" promptText="تا" styleClass="price-field" onAction="#applyFilter"/>
                     <Button text="اعمال فیلتر" styleClass="apply-btn" onAction="#applyFilter"/>
                 </VBox>
 
                 <!-- Condition Filter -->
                 <VBox styleClass="sidebar-card" spacing="8">
                     <Label text="وضعیت کالا" styleClass="sidebar-title"/>
-                    <CheckBox text="نو"        styleClass="filter-check"/>
-                    <CheckBox text="در حد نو"  styleClass="filter-check"/>
-                    <CheckBox text="کارکرده"   styleClass="filter-check"/>
+                    <ComboBox fx:id="conditionCombo" promptText="همه وضعیت‌ها" styleClass="sort-combo" maxWidth="Infinity" onAction="#applyFilter"/>
                 </VBox>
 
             </VBox>

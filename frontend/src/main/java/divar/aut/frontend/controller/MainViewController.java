@@ -1,7 +1,11 @@
 package divar.aut.frontend.controller;
 
 import divar.aut.frontend.net.AdService;
+import divar.aut.frontend.net.CategoryService;
+import divar.aut.frontend.net.CityService;
 import divar.aut.frontend.model.AdData;
+import divar.aut.frontend.model.CategoryData;
+import divar.aut.frontend.model.CityData;
 import divar.aut.frontend.ui.ViewManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,6 +20,7 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -29,8 +34,17 @@ public class MainViewController implements Initializable {
     @FXML private Label            statusLabel;
     @FXML private Button           myAdsBtn;
     @FXML private Button           adminPanelBtn;
+    @FXML private ComboBox<String> cityCombo;
+    @FXML private ComboBox<String> conditionCombo;
+    @FXML private TextField        minPriceField;
+    @FXML private TextField        maxPriceField;
 
     private AdService adService;
+    private final CategoryService categoryService = new CategoryService();
+    private final CityService cityService = new CityService();
+    private final List<CategoryData> categories = new ArrayList<>();
+    private final List<CityData> cities = new ArrayList<>();
+    private Long selectedCategoryId;
     private final ViewManager viewManager;
     private int page = 0;
     private boolean showingMyAds = false;
@@ -46,9 +60,19 @@ public class MainViewController implements Initializable {
         if (sortCombo != null) {
             sortCombo.getItems().addAll("جدیدترین", "ارزان‌ترین", "گران‌ترین");
             sortCombo.getSelectionModel().selectFirst();
+            sortCombo.setOnAction(e -> applyFilter());
+        }
+        if (conditionCombo != null) {
+            conditionCombo.getItems().addAll("همه", "نو", "کارکرده");
+            conditionCombo.getSelectionModel().selectFirst();
+        }
+        if (cityCombo != null) {
+            cityCombo.getItems().add("همه شهرها");
+            cityCombo.getSelectionModel().selectFirst();
         }
         if (viewManager != null && viewManager.getUserToken() != null) {
             this.adService = new AdService();
+            loadFilterOptions();
             loadPage();
         } else {
             if (statusLabel != null) statusLabel.setText("خطا: توکن احراز هویت یافت نشد!");
@@ -81,7 +105,8 @@ public class MainViewController implements Initializable {
                     }
             );
         } else {
-            adService.fetchAds(page,
+            adService.searchAds(searchText(), selectedCategoryId, selectedCityId(), parsePrice(minPriceField),
+                    parsePrice(maxPriceField), selectedCondition(), selectedSort(),
                     ads -> {
                         if (statusLabel != null) statusLabel.setText(ads.size() + " آگهی دریافت شد");
                         if (ads.isEmpty()) {
@@ -105,6 +130,7 @@ public class MainViewController implements Initializable {
         }
     }
     public void renderAds(List<AdData> ads) {
+        adGrid.getChildren().clear();
         int delay = 0;
         for (AdData ad : ads) {
             Node card = buildCard(ad);
@@ -208,11 +234,99 @@ public class MainViewController implements Initializable {
     }
 
     @FXML private void filterCategory(javafx.event.ActionEvent e) {
-        statusLabel.setText("فیلتر: " + ((Button) e.getSource()).getText());
+        String categoryName = ((Button) e.getSource()).getText();
+        selectedCategoryId = categories.stream()
+                .filter(category -> category.name().equals(categoryName))
+                .map(CategoryData::id)
+                .findFirst()
+                .orElse(null);
+        if ("همه".equals(categoryName)) {
+            selectedCategoryId = null;
+        }
+        applyFilter();
     }
 
     @FXML private void applyFilter() {
-        statusLabel.setText("فیلتر قیمت اعمال شد");
+        if (showingMyAds) {
+            showingMyAds = false;
+            if (myAdsBtn != null) myAdsBtn.setText("دیوار من");
+        }
+        page = 0;
+        loadPage();
+    }
+
+    private void loadFilterOptions() {
+        categoryService.listAll(
+                loaded -> {
+                    categories.clear();
+                    categories.addAll(loaded);
+                },
+                error -> {
+                    if (statusLabel != null) statusLabel.setText("خطا در دریافت دسته‌بندی‌ها: " + error);
+                }
+        );
+        cityService.listAll(
+                loaded -> {
+                    cities.clear();
+                    cities.addAll(loaded);
+                    if (cityCombo != null) {
+                        cityCombo.getItems().setAll("همه شهرها");
+                        cityCombo.getItems().addAll(loaded.stream().map(CityData::name).toList());
+                        cityCombo.getSelectionModel().selectFirst();
+                    }
+                },
+                error -> {
+                    if (statusLabel != null) statusLabel.setText("خطا در دریافت شهرها: " + error);
+                }
+        );
+    }
+
+    private String searchText() {
+        return searchField == null ? null : searchField.getText();
+    }
+
+    private Long selectedCityId() {
+        if (cityCombo == null || cityCombo.getValue() == null || "همه شهرها".equals(cityCombo.getValue())) {
+            return null;
+        }
+        return cities.stream()
+                .filter(city -> city.name().equals(cityCombo.getValue()))
+                .map(CityData::id)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Double parsePrice(TextField field) {
+        if (field == null || field.getText() == null || field.getText().isBlank()) {
+            return null;
+        }
+        try {
+            return Double.parseDouble(field.getText().trim());
+        } catch (NumberFormatException e) {
+            if (statusLabel != null) statusLabel.setText("قیمت باید عدد باشد");
+            return null;
+        }
+    }
+
+    private String selectedCondition() {
+        if (conditionCombo == null || conditionCombo.getValue() == null || "همه".equals(conditionCombo.getValue())) {
+            return null;
+        }
+        return switch (conditionCombo.getValue()) {
+            case "نو" -> "NEW";
+            default -> "USED";
+        };
+    }
+
+    private String selectedSort() {
+        if (sortCombo == null || sortCombo.getValue() == null) {
+            return "newest";
+        }
+        return switch (sortCombo.getValue()) {
+            case "ارزان‌ترین" -> "cheapest";
+            case "گران‌ترین" -> "expensive";
+            default -> "newest";
+        };
     }
     @FXML
     private void onAdminPanel() {

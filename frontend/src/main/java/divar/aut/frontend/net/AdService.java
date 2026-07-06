@@ -8,7 +8,9 @@ import divar.aut.frontend.model.AdRequestData;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -19,6 +21,22 @@ public class AdService {
 
     public void fetchAds(int page, Consumer<List<AdData>> onSuccess, Consumer<String> onError) {
         ApiClient.send("GET", "/ads?page=" + page, null,
+                response -> handleList(response, onSuccess, onError), onError);
+    }
+
+
+    public void searchAds(String keyword, Long categoryId, Long cityId, Double minPrice, Double maxPrice,
+                          String condition, String sortBy, Consumer<List<AdData>> onSuccess,
+                          Consumer<String> onError) {
+        StringBuilder path = new StringBuilder("/ads");
+        appendQuery(path, "keyword", keyword);
+        appendQuery(path, "categoryId", categoryId);
+        appendQuery(path, "cityId", cityId);
+        appendQuery(path, "minPrice", minPrice);
+        appendQuery(path, "maxPrice", maxPrice);
+        appendQuery(path, "condition", condition);
+        appendQuery(path, "sortBy", sortBy);
+        ApiClient.send("GET", path.toString(), null,
                 response -> handleList(response, onSuccess, onError), onError);
     }
 
@@ -120,6 +138,15 @@ public class AdService {
                         onError.accept(ApiClient.extractErrorMessage(response, "خطا در تغییر وضعیت: "));
                     }
                 }, onError);
+    }
+
+    private void appendQuery(StringBuilder path, String key, Object value) {
+        if (value == null || (value instanceof String text && text.isBlank())) {
+            return;
+        }
+        path.append(path.indexOf("?") >= 0 ? "&" : "?");
+        path.append(key).append("=")
+                .append(URLEncoder.encode(String.valueOf(value), StandardCharsets.UTF_8));
     }
 
     private void handleList(HttpResponse<String> response, Consumer<List<AdData>> onSuccess, Consumer<String> onError) {
