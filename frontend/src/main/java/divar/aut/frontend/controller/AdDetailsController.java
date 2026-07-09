@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -28,7 +29,7 @@ public class AdDetailsController {
     @FXML private Label conditionLabel;
     @FXML private Label statusLabel;
     @FXML private HBox imageGalleryBox;
-    @FXML private TextArea descriptionArea;
+    @FXML private Label descriptionLabel;
     @FXML private HBox adminActionBox;
     @FXML private HBox ownerActionBox;
     @FXML private HBox viewerActionBox;
@@ -37,6 +38,8 @@ public class AdDetailsController {
     @FXML private Button markAsSoldButton;
     @FXML private Button favoriteButton;
     @FXML private Button messageButton;
+    @FXML private ImageView mainImageView;
+    @FXML private VBox imageContainer;
 
     private AdDetailData adDetail;
     private AdService adService;
@@ -57,7 +60,7 @@ public class AdDetailsController {
         locationLabel.setText(ad.cityName());
         categoryLabel.setText(ad.categoryName());
         conditionLabel.setText(mapCondition(ad.itemCondition()));
-        descriptionArea.setText(ad.description());
+        descriptionLabel.setText(ad.description());
         statusLabel.setText(ad.status());
 
         renderImages(ad);
@@ -76,20 +79,29 @@ public class AdDetailsController {
 
     private void renderImages(AdDetailData ad) {
         imageGalleryBox.getChildren().clear();
+
         if (ad.imageFileNames() == null || ad.imageFileNames().isEmpty()) {
-            Label emptyImageLabel = new Label("بدون عکس");
-            emptyImageLabel.setStyle("-fx-text-fill: #888; -fx-padding: 30;");
-            imageGalleryBox.getChildren().add(emptyImageLabel);
+            imageContainer.setVisible(false);
+            imageContainer.setManaged(false);
             return;
         }
+
+        imageContainer.setVisible(true);
+        imageContainer.setManaged(true);
+
+        String firstImageUrl = "http://localhost:8080/uploads/" + ad.imageFileNames().get(0);
+        mainImageView.setImage(new Image(firstImageUrl));
+
         for (String fileName : ad.imageFileNames()) {
             String fullUrl = ("http://localhost:8080/uploads/" + fileName).replace(" ", "%20");
-            ImageView imageView = new ImageView(new Image(fullUrl, 180, 140, true, true, true));
-            imageView.setPreserveRatio(true);
-            StackPane frame = new StackPane(imageView);
-            frame.setMinSize(190, 150);
-            frame.setStyle("-fx-background-color: #111; -fx-background-radius: 8; -fx-padding: 5;");
-            imageGalleryBox.getChildren().add(frame);
+            ImageView thumb = new ImageView(new Image(fullUrl, 80, 80, true, true, true));
+            thumb.setPreserveRatio(true);
+
+            StackPane thumbFrame = new StackPane(thumb);
+            thumbFrame.getStyleClass().add("thumbnail-frame");
+
+            thumbFrame.setOnMouseClicked(e -> mainImageView.setImage(new Image(fullUrl)));
+            imageGalleryBox.getChildren().add(thumbFrame);
         }
     }
 
@@ -153,10 +165,6 @@ public class AdDetailsController {
                     success -> Platform.runLater(() -> finishAction(success)),
                     error -> Platform.runLater(() -> showError(error)));
         });
-        setUiDisabled(true);
-        adService.updateAdStatus(adDetail.id(), "REJECTED",
-                success -> Platform.runLater(() -> finishAction(success)),
-                error -> Platform.runLater(() -> showError(error)));
     }
 
     @FXML
