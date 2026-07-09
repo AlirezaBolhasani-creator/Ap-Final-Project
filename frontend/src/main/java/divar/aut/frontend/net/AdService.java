@@ -163,4 +163,10 @@ public class AdService {
             onError.accept(ApiClient.extractErrorMessage(response, "Error fetching ads: "));
         }
     }
+    public void rejectAd(Long adId, String reason, Consumer<String> onSuccess, Consumer<String> onError) {
+        //just fix at frontend for now after that we will fix this at backend.
+        String requestBody = String.format("{\"rejectionReason\": \"%s\"}", reason);
+
+
+    }
 }

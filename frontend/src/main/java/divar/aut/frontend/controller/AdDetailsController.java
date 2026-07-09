@@ -18,6 +18,8 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.util.Optional;
+
 public class AdDetailsController {
     @FXML private Label titleLabel;
     @FXML private Label priceLabel;
@@ -131,6 +133,26 @@ public class AdDetailsController {
 
     @FXML
     private void handleReject() {
+
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("رد آگهی");
+        dialog.setHeaderText("رد کردن آگهی: " + adDetail.title());
+        dialog.setContentText("لطفاً دلیل رد کردن این آگهی را بنویسید:");
+
+        Optional<String> result = dialog.showAndWait();
+
+        result.ifPresent(reason -> {
+            if (reason.trim().isEmpty()) {
+                showError("برای رد آگهی، وارد کردن دلیل الزامی است.");
+                return;
+            }
+
+            setUiDisabled(true);
+
+            adService.rejectAd(adDetail.id(), reason,
+                    success -> Platform.runLater(() -> finishAction(success)),
+                    error -> Platform.runLater(() -> showError(error)));
+        });
         setUiDisabled(true);
         adService.updateAdStatus(adDetail.id(), "REJECTED",
                 success -> Platform.runLater(() -> finishAction(success)),
