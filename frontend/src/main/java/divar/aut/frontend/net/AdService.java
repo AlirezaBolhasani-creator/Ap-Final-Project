@@ -8,7 +8,9 @@ import divar.aut.frontend.model.AdRequestData;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.net.URLEncoder;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -164,9 +166,15 @@ public class AdService {
         }
     }
     public void rejectAd(Long adId, String reason, Consumer<String> onSuccess, Consumer<String> onError) {
-        //just fix at frontend for now after that we will fix this at backend.
-        String requestBody = String.format("{\"rejectionReason\": \"%s\"}", reason);
+        String jsonBody = GSON.toJson(java.util.Map.of("reason", reason));
 
-
+        ApiClient.send("PUT", "/ads/" + adId + "/reject", jsonBody,
+                response -> {
+                    if (response.statusCode() == 200 || response.statusCode() == 201) {
+                        onSuccess.accept("آگهی با موفقیت رد شد.");
+                    } else {
+                        onError.accept(ApiClient.extractErrorMessage(response, "خطا در رد آگهی: "));
+                    }
+                }, onError);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import divar.aut.backend.dto.RejectAdRequest;
 
 import java.util.List;
 
@@ -135,7 +136,8 @@ public class AdController {
      */
     @PutMapping("/{id}/reject")
     public AdDetailResponse rejectPendingAd(@PathVariable Long id,
-                                            @RequestParam(required = false) String reason) {
-        return adService.rejectPendingAd(id, reason != null ? reason : "");
+                                            @Valid @RequestBody RejectAdRequest request) {
+
+        return adService.rejectPendingAd(id, request.reason());
     }
 }
