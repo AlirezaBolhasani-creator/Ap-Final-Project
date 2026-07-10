@@ -1,28 +1,64 @@
 package divar.aut.backend.service;
 
+import divar.aut.backend.dto.RatingRequest;
+import divar.aut.backend.dto.RatingResponse;
+import divar.aut.backend.entity.Ad;
+import divar.aut.backend.entity.SellerRating;
 import divar.aut.backend.entity.User;
+import divar.aut.backend.exception.ApiException;
+import divar.aut.backend.repository.AdRepository;
+import divar.aut.backend.repository.SellerRatingRepository;
+import divar.aut.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-/**
- * Handles seller rating calculations and retrieval.
- * Stub for now; full implementation comes in Step 13.
- */
+import java.util.List;
+
 @Service
 public class SellerRatingService {
 
-    /**
-     * Get average rating for a seller. Returns 0 if no ratings exist.
-     */
-    public double getAverageRating(User seller) {
-        // TODO: implement when Step 13 adds SellerRating entity
-        return 0.0;
+    private final SellerRatingRepository sellerRatingRepository;
+    private final AdRepository adRepository;
+    private final UserRepository userRepository;
+
+    public SellerRatingService(SellerRatingRepository sellerRatingRepository, AdRepository adRepository,
+                               UserRepository userRepository) {
+        this.sellerRatingRepository = sellerRatingRepository;
+        this.adRepository = adRepository;
+        this.userRepository = userRepository;
     }
 
-    /**
-     * Get count of ratings for a seller.
-     */
+    public RatingResponse rateSeller(User buyer, Long adId, RatingRequest request) {
+        Ad ad = adRepository.findById(adId)
+                .orElseThrow(() -> ApiException.notFound("Advertisement not found"));
+        User seller = ad.getOwner();
+
+        if (seller.getId().equals(buyer.getId())) {
+            throw ApiException.badRequest("You cannot rate yourself");
+        }
+        if (sellerRatingRepository.existsByBuyerAndSellerAndAd(buyer, seller, ad)) {
+            throw ApiException.badRequest("You have already rated this seller for this ad");
+        }
+
+        SellerRating rating = new SellerRating(seller, buyer, ad, request.getScore(), request.getComment());
+        sellerRatingRepository.save(rating);
+        return new RatingResponse(rating);
+    }
+
+    public double getAverageRating(User seller) {
+        return ratingsFor(seller).stream().mapToInt(SellerRating::getScore).average().orElse(0.0);
+    }
+
     public int getRatingCount(User seller) {
-        // TODO: implement when Step 13 adds SellerRating entity
-        return 0;
+        return ratingsFor(seller).size();
+    }
+
+    public List<RatingResponse> listRatingsForSellerId(Long sellerId) {
+        User seller = userRepository.findById(sellerId)
+                .orElseThrow(() -> ApiException.notFound("User not found"));
+        return ratingsFor(seller).stream().map(RatingResponse::new).toList();
+    }
+
+    private List<SellerRating> ratingsFor(User seller) {
+        return sellerRatingRepository.findBySellerOrderByCreatedAtDesc(seller);
     }
 }
