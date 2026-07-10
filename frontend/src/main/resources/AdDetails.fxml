@@ -51,6 +51,15 @@
             </HBox>
         </VBox>
 
+
+        <VBox spacing="8" style="-fx-background-color: #2a2a2a; -fx-padding: 12; -fx-background-radius: 6;">
+            <HBox spacing="8" alignment="CENTER_RIGHT">
+                <Label text="امتیاز فروشنده:" textFill="#aaa"/>
+                <Label fx:id="sellerRatingLabel" text="بدون امتیاز" textFill="WHITE" style="-fx-font-weight: bold;"/>
+            </HBox>
+            <Label fx:id="sellerNameLabel" text="فروشنده" textFill="#ccc"/>
+        </VBox>
+
         <Separator style="-fx-opacity: 0.1;"/>
 
         <VBox spacing="8">
@@ -65,6 +74,7 @@
 
         <HBox fx:id="viewerActionBox" spacing="15" alignment="CENTER_RIGHT" visible="false" managed="false">
             <Button fx:id="messageButton" text="پیام به فروشنده" onAction="#handleMessageSeller" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
+            <Button fx:id="ratingButton" text="ثبت امتیاز" onAction="#handleRateSeller" style="-fx-background-color: #ca8a04; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
             <Button fx:id="favoriteButton" text="افزودن به علاقه‌مندی‌ها" onAction="#handleAddFavorite" style="-fx-background-color: #a62626; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
         </HBox>
 

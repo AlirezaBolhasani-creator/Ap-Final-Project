@@ -4,6 +4,7 @@ import divar.aut.frontend.model.AdDetailData;
 import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.FavoriteService;
 import divar.aut.frontend.net.ConversationService;
+import divar.aut.frontend.net.RatingService;
 import divar.aut.frontend.ui.ConversationDetailScreen;
 import divar.aut.frontend.ui.PostAdScreen;
 import divar.aut.frontend.ui.ViewManager;
@@ -28,6 +29,8 @@ public class AdDetailsController {
     @FXML private Label categoryLabel;
     @FXML private Label conditionLabel;
     @FXML private Label statusLabel;
+    @FXML private Label sellerRatingLabel;
+    @FXML private Label sellerNameLabel;
     @FXML private HBox imageGalleryBox;
     @FXML private Label descriptionLabel;
     @FXML private HBox adminActionBox;
@@ -38,6 +41,7 @@ public class AdDetailsController {
     @FXML private Button markAsSoldButton;
     @FXML private Button favoriteButton;
     @FXML private Button messageButton;
+    @FXML private Button ratingButton;
     @FXML private ImageView mainImageView;
     @FXML private VBox imageContainer;
 
@@ -45,6 +49,7 @@ public class AdDetailsController {
     private AdService adService;
     private final FavoriteService favoriteService = new FavoriteService();
     private final ConversationService conversationService = new ConversationService();
+    private final RatingService ratingService = new RatingService();
     private Runnable onActionCompleted;
     private ViewManager viewManager;
 
@@ -62,6 +67,10 @@ public class AdDetailsController {
         conditionLabel.setText(mapCondition(ad.itemCondition()));
         descriptionLabel.setText(ad.description());
         statusLabel.setText(ad.status());
+        sellerNameLabel.setText("فروشنده: " + ad.seller().fullname() + " (@" + ad.seller().username() + ")");
+        sellerRatingLabel.setText(ad.ratingCount() == 0
+                ? "بدون امتیاز"
+                : String.format("%.1f از 5 (%d نظر)", ad.averageRating(), ad.ratingCount()));
 
         renderImages(ad);
 
@@ -103,6 +112,39 @@ public class AdDetailsController {
             thumbFrame.setOnMouseClicked(e -> mainImageView.setImage(new Image(fullUrl)));
             imageGalleryBox.getChildren().add(thumbFrame);
         }
+    }
+
+    @FXML
+    private void handleRateSeller() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("ثبت امتیاز فروشنده");
+        dialog.setHeaderText("امتیاز شما به " + adDetail.seller().fullname());
+
+        ComboBox<Integer> scoreCombo = new ComboBox<>();
+        scoreCombo.getItems().addAll(1, 2, 3, 4, 5);
+        scoreCombo.getSelectionModel().select(Integer.valueOf(5));
+        TextArea commentArea = new TextArea();
+        commentArea.setPromptText("نظر شما (اختیاری)");
+        commentArea.setWrapText(true);
+        commentArea.setPrefRowCount(3);
+
+        VBox content = new VBox(10, new Label("امتیاز از ۱ تا ۵:"), scoreCombo, commentArea);
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        dialog.showAndWait().filter(ButtonType.OK::equals).ifPresent(button -> {
+            ratingButton.setDisable(true);
+            ratingService.submitRating(adDetail.id(), scoreCombo.getValue(), commentArea.getText().trim(),
+                    rating -> Platform.runLater(() -> {
+                        sellerRatingLabel.setText("امتیاز ثبت شد");
+                        ratingButton.setDisable(true);
+                        statusLabel.setText("امتیاز شما با موفقیت ثبت شد");
+                    }),
+                    error -> Platform.runLater(() -> {
+                        showError(error);
+                        ratingButton.setDisable(false);
+                    }));
+        });
     }
 
     @FXML
@@ -214,6 +256,7 @@ public class AdDetailsController {
         if (markAsSoldButton != null) markAsSoldButton.setDisable(disabled);
         if (favoriteButton != null) favoriteButton.setDisable(disabled);
         if (messageButton != null) messageButton.setDisable(disabled);
+        if (ratingButton != null) ratingButton.setDisable(disabled);
     }
 
     private String mapCondition(String condition) {
