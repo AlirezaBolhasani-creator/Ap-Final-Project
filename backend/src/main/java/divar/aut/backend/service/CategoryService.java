@@ -5,7 +5,6 @@ import divar.aut.backend.dto.CategoryResponse;
 import divar.aut.backend.entity.Category;
 import divar.aut.backend.exception.ApiException;
 import divar.aut.backend.repository.CategoryRepository;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,14 +41,4 @@ public class CategoryService {
         return new CategoryResponse(categoryRepository.save(category));
     }
 
-    public void delete(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> ApiException.notFound("Category not found"));
-        try {
-            categoryRepository.delete(category);
-            categoryRepository.flush();
-        } catch (DataIntegrityViolationException e) {
-            throw ApiException.badRequest("Category is used by advertisements and cannot be deleted");
-        }
-    }
 }

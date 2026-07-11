@@ -27,6 +27,18 @@ public interface AdRepository extends JpaRepository<Ad, Long> {
      */
     List<Ad> findByOwnerOrderByCreatedAtDesc(User owner);
 
+    boolean existsByCategoryId(Long categoryId);
+
+    boolean existsByCityId(Long cityId);
+
+    long countByCategoryId(Long categoryId);
+
+    long countByCityId(Long cityId);
+
+    List<Ad> findByCategoryId(Long categoryId);
+
+    List<Ad> findByCityId(Long cityId);
+
     /**
      * Advanced search for ACTIVE ads only. Deliberately restricted at the query
      * level so non-active ads are never accidentally leaked. Supports filtering

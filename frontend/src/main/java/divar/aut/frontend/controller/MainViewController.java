@@ -35,6 +35,7 @@ public class MainViewController implements Initializable {
     @FXML private Label            statusLabel;
     @FXML private Button           myAdsBtn;
     @FXML private Button           adminPanelBtn;
+    @FXML private HBox             categoryBar;
     @FXML private ComboBox<String> cityCombo;
     @FXML private ComboBox<String> conditionCombo;
     @FXML private TextField        minPriceField;
@@ -244,17 +245,24 @@ public class MainViewController implements Initializable {
         viewManager.toConversations();
     }
 
-    @FXML private void filterCategory(javafx.event.ActionEvent e) {
-        String categoryName = ((Button) e.getSource()).getText();
-        selectedCategoryId = categories.stream()
-                .filter(category -> category.name().equals(categoryName))
-                .map(CategoryData::id)
-                .findFirst()
-                .orElse(null);
-        if ("همه".equals(categoryName)) {
-            selectedCategoryId = null;
-        }
+    private void selectCategory(Long categoryId) {
+        selectedCategoryId = categoryId;
         applyFilter();
+    }
+
+    private void renderCategoryButtons() {
+        if (categoryBar == null) return;
+        categoryBar.getChildren().removeIf(node -> node instanceof Button);
+        categoryBar.getChildren().add(categoryButton("همه", null));
+        categories.forEach(category ->
+                categoryBar.getChildren().add(categoryButton(category.name(), category.id())));
+    }
+
+    private Button categoryButton(String name, Long categoryId) {
+        Button button = new Button(name);
+        button.getStyleClass().add("cat-chip");
+        button.setOnAction(event -> selectCategory(categoryId));
+        return button;
     }
 
     @FXML private void applyFilter() {
@@ -271,6 +279,11 @@ public class MainViewController implements Initializable {
                 loaded -> {
                     categories.clear();
                     categories.addAll(loaded);
+                    if (selectedCategoryId != null && categories.stream()
+                            .noneMatch(category -> category.id().equals(selectedCategoryId))) {
+                        selectedCategoryId = null;
+                    }
+                    renderCategoryButtons();
                 },
                 error -> {
                     if (statusLabel != null) statusLabel.setText("خطا در دریافت دسته‌بندی‌ها: " + error);

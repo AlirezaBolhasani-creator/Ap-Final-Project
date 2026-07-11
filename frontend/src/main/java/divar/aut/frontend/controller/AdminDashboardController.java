@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.geometry.Pos;
+import javafx.geometry.NodeOrientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
@@ -167,8 +168,16 @@ public class AdminDashboardController {
         styleDialog(dialog);
         Optional<String> result = dialog.showAndWait();
         result.map(String::trim).filter(name -> !name.isEmpty()).ifPresent(name -> {
-            if (category) adminService.updateCategory(id, name, c -> loadCategories(), this::showError);
-            else adminService.updateCity(id, name, c -> loadCities(), this::showError);
+            if (category) adminService.updateCategory(id, name, c -> {
+                loadCategories();
+                loadAds();
+                showSuccess("دسته‌بندی با موفقیت ویرایش شد");
+            }, this::showError);
+            else adminService.updateCity(id, name, c -> {
+                loadCities();
+                loadAds();
+                showSuccess("شهر با موفقیت ویرایش شد");
+            }, this::showError);
         });
     }
 
@@ -180,8 +189,129 @@ public class AdminDashboardController {
     }
 
     private void deleteMetadata(boolean category, Long id) {
-        if (category) adminService.deleteCategory(id, ok -> { loadCategories(); loadStats(); }, this::showError);
-        else adminService.deleteCity(id, ok -> { loadCities(); loadStats(); }, this::showError);
+        if (category) {
+            adminService.getCategoryUsage(id,
+                    usage -> showMetadataDeleteDialog(true, id, usage.affectedAds()), this::showError);
+        } else {
+            adminService.getCityUsage(id,
+                    usage -> showMetadataDeleteDialog(false, id, usage.affectedAds()), this::showError);
+        }
+    }
+
+    private void showMetadataDeleteDialog(boolean category, Long id, long affectedAds) {
+        String typeName = category ? "دسته‌بندی" : "شهر";
+        if (affectedAds == 0) {
+            Dialog<ButtonType> confirmation = new Dialog<>();
+            confirmation.setTitle("حذف " + typeName);
+            confirmation.setHeaderText("این " + typeName + " در هیچ آگهی‌ای استفاده نشده است.");
+            Label message = new Label("آیا از حذف آن مطمئن هستید؟");
+            message.getStyleClass().add("dialog-label");
+            VBox content = new VBox(message);
+            content.getStyleClass().add("dialog-content");
+            confirmation.getDialogPane().setContent(content);
+            ButtonType delete = new ButtonType("حذف", ButtonBar.ButtonData.OK_DONE);
+            confirmation.getDialogPane().getButtonTypes().addAll(delete,
+                    new ButtonType("انصراف", ButtonBar.ButtonData.CANCEL_CLOSE));
+            styleDialog(confirmation);
+            confirmation.showAndWait().filter(delete::equals).ifPresent(button ->
+                    executeMetadataDeletion(category, id, "DELETE_ADS", null));
+            return;
+        }
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("حذف " + typeName);
+        dialog.setHeaderText(affectedAds + " آگهی از این " + typeName + " استفاده می‌کنند");
+
+        RadioButton reassignOption = new RadioButton("انتقال آگهی‌ها به " + typeName + " دیگر");
+        RadioButton deleteAdsOption = new RadioButton("حذف دائمی آگهی‌ها همراه با " + typeName);
+        reassignOption.getStyleClass().add("dialog-label");
+        deleteAdsOption.getStyleClass().add("danger-option");
+        ToggleGroup choices = new ToggleGroup();
+        reassignOption.setToggleGroup(choices);
+        deleteAdsOption.setToggleGroup(choices);
+        reassignOption.setSelected(true);
+
+        ComboBox<MetadataOption> replacementCombo = new ComboBox<>();
+        replacementCombo.setMaxWidth(Double.MAX_VALUE);
+        replacementCombo.setPromptText(typeName + " جایگزین را انتخاب کنید");
+        if (category) {
+            categoriesList.getItems().stream()
+                    .filter(item -> !item.id().equals(id))
+                    .map(item -> new MetadataOption(item.id(), item.name()))
+                    .forEach(replacementCombo.getItems()::add);
+        } else {
+            citiesList.getItems().stream()
+                    .filter(item -> !item.id().equals(id))
+                    .map(item -> new MetadataOption(item.id(), item.name()))
+                    .forEach(replacementCombo.getItems()::add);
+        }
+        replacementCombo.setCellFactory(list -> metadataOptionCell());
+        replacementCombo.setButtonCell(metadataOptionCell());
+        replacementCombo.disableProperty().bind(deleteAdsOption.selectedProperty());
+
+        Label warning = new Label("حذف آگهی‌ها دائمی است و پیام‌ها، علاقه‌مندی‌ها، امتیازها و تصاویر مرتبط را نیز حذف می‌کند.");
+        warning.setWrapText(true);
+        warning.getStyleClass().add("danger-message");
+        warning.visibleProperty().bind(deleteAdsOption.selectedProperty());
+        warning.managedProperty().bind(deleteAdsOption.selectedProperty());
+
+        Label validationMessage = new Label();
+        validationMessage.setWrapText(true);
+        validationMessage.getStyleClass().add("danger-message");
+        validationMessage.setVisible(false);
+        validationMessage.setManaged(false);
+
+        VBox content = new VBox(12, reassignOption, replacementCombo, deleteAdsOption, warning, validationMessage);
+        content.getStyleClass().add("dialog-content");
+        content.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        dialog.getDialogPane().setContent(content);
+        ButtonType confirm = new ButtonType("ادامه", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(confirm,
+                new ButtonType("انصراف", ButtonBar.ButtonData.CANCEL_CLOSE));
+        styleDialog(dialog);
+
+        Button confirmButton = (Button) dialog.getDialogPane().lookupButton(confirm);
+        confirmButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            if (reassignOption.isSelected() && replacementCombo.getValue() == null) {
+                validationMessage.setText("لطفاً " + typeName + " جایگزین را انتخاب کنید.");
+                validationMessage.setVisible(true);
+                validationMessage.setManaged(true);
+                event.consume();
+            }
+        });
+
+        dialog.showAndWait().filter(confirm::equals).ifPresent(button -> {
+            if (deleteAdsOption.isSelected()) {
+                executeMetadataDeletion(category, id, "DELETE_ADS", null);
+            } else {
+                executeMetadataDeletion(category, id, "REASSIGN", replacementCombo.getValue().id());
+            }
+        });
+    }
+
+    private ListCell<MetadataOption> metadataOptionCell() {
+        return new ListCell<>() {
+            @Override protected void updateItem(MetadataOption item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.name());
+            }
+        };
+    }
+
+    private void executeMetadataDeletion(boolean category, Long id, String strategy, Long replacementId) {
+        java.util.function.Consumer<String> success = message -> {
+            refreshAll();
+            showSuccess(category ? "دسته‌بندی با موفقیت حذف شد" : "شهر با موفقیت حذف شد");
+        };
+        if (category) {
+            adminService.deleteCategory(id, strategy, replacementId, success, this::showError);
+        } else {
+            adminService.deleteCity(id, strategy, replacementId, success, this::showError);
+        }
+    }
+
+    private record MetadataOption(Long id, String name) {
+        @Override public String toString() { return name; }
     }
 
     private void showSuccess(String message) { statusLabel.setText(message); statusLabel.setStyle("-fx-text-fill: #4ade80;"); }

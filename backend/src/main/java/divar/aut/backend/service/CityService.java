@@ -5,7 +5,6 @@ import divar.aut.backend.dto.CityResponse;
 import divar.aut.backend.entity.City;
 import divar.aut.backend.exception.ApiException;
 import divar.aut.backend.repository.CityRepository;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,14 +41,4 @@ public class CityService {
         return new CityResponse(cityRepository.save(city));
     }
 
-    public void delete(Long id) {
-        City city = cityRepository.findById(id)
-                .orElseThrow(() -> ApiException.notFound("City not found"));
-        try {
-            cityRepository.delete(city);
-            cityRepository.flush();
-        } catch (DataIntegrityViolationException e) {
-            throw ApiException.badRequest("City is used by advertisements and cannot be deleted");
-        }
-    }
 }

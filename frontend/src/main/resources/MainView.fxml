@@ -55,17 +55,8 @@
             </HBox>
 
             <!-- Category Bar -->
-            <HBox styleClass="category-bar" alignment="CENTER_RIGHT" spacing="4">
-                <Label text="دسته‌ها ▼" styleClass="cat-label"/>
-                <Button text="املاک"             styleClass="cat-chip" onAction="#filterCategory"/>
-                <Button text="وسایل نقلیه"       styleClass="cat-chip" onAction="#filterCategory"/>
-                <Button text="کالای دیجیتال"     styleClass="cat-chip" onAction="#filterCategory"/>
-                <Button text="خانه و آشپزخانه"  styleClass="cat-chip" onAction="#filterCategory"/>
-                <Button text="خدمات"             styleClass="cat-chip" onAction="#filterCategory"/>
-                <Button text="وسایل شخصی"        styleClass="cat-chip" onAction="#filterCategory"/>
-                <Button text="سرگرمی و فراغت"   styleClass="cat-chip" onAction="#filterCategory"/>
-                <Button text="تجهیزات و صنعتی"  styleClass="cat-chip" onAction="#filterCategory"/>
-                <Button text="استخدام"           styleClass="cat-chip" onAction="#filterCategory"/>
+            <HBox fx:id="categoryBar" styleClass="category-bar" alignment="CENTER_RIGHT" spacing="4">
+                <Label text="دسته‌ها" styleClass="cat-label"/>
             </HBox>
 
         </VBox>
