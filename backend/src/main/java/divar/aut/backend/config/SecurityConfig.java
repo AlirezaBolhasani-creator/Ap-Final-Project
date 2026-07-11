@@ -54,6 +54,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                     // Public endpoints
                     .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/cities/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/ads/pending").hasRole("ADMIN")
