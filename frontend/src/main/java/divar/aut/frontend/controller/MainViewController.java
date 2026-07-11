@@ -1,5 +1,6 @@
 package divar.aut.frontend.controller;
 
+import divar.aut.frontend.SessionManager;
 import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.CategoryService;
 import divar.aut.frontend.net.CityService;
@@ -342,5 +343,12 @@ public class MainViewController implements Initializable {
     private void onAdminPanel() {
         if(viewManager == null || viewManager.getUserToken() == null) return;
         viewManager.toAdminDashboard();
+    }
+
+    @FXML
+    private void onLogout() {
+        if (viewManager == null) return;
+        SessionManager.getInstance().endSession();
+        viewManager.toWelcome();
     }
 }

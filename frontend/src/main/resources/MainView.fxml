@@ -43,6 +43,11 @@
                     <Button text="علاقه‌مندی‌ها" styleClass="nav-btn" onAction="#onFavorites"/>
 
                     <Button fx:id="adminPanelBtn" text="پنل مدیریت" styleClass="nav-btn" onAction="#onAdminPanel"/>
+                    <Button text="خروج" styleClass="nav-btn" onAction="#onLogout">
+                        <graphic>
+                            <FontIcon iconLiteral="fas-sign-out-alt" iconSize="14" iconColor="#aaa"/>
+                        </graphic>
+                    </Button>
 
                     <Button text="ثبت آگهی" styleClass="post-btn" onAction="#onPostAd"/>
                 </HBox>
