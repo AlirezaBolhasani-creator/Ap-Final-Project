@@ -23,10 +23,24 @@ public class AdminService {
     }
     public void createCategory(String name, Consumer<CategoryData> ok, Consumer<String> error) { jsonAction("POST", "/api/admin/categories", name, CategoryData.class, ok, error); }
     public void updateCategory(Long id, String name, Consumer<CategoryData> ok, Consumer<String> error) { jsonAction("PUT", "/api/admin/categories/" + id, name, CategoryData.class, ok, error); }
-    public void deleteCategory(Long id, Consumer<String> ok, Consumer<String> error) { action("DELETE", "/api/admin/categories/" + id, null, ok, error); }
+    public void getCategoryUsage(Long id, Consumer<MetadataUsageData> ok, Consumer<String> error) {
+        ApiClient.send("GET", "/api/admin/categories/" + id + "/usage", null,
+                response -> parse(response, MetadataUsageData.class, ok, error), error);
+    }
+    public void deleteCategory(Long id, String strategy, Long replacementId, Consumer<String> ok, Consumer<String> error) {
+        action("DELETE", "/api/admin/categories/" + id,
+                GSON.toJson(new MetadataDeleteBody(strategy, replacementId)), ok, error);
+    }
     public void createCity(String name, Consumer<CityData> ok, Consumer<String> error) { jsonAction("POST", "/api/admin/cities", name, CityData.class, ok, error); }
     public void updateCity(Long id, String name, Consumer<CityData> ok, Consumer<String> error) { jsonAction("PUT", "/api/admin/cities/" + id, name, CityData.class, ok, error); }
-    public void deleteCity(Long id, Consumer<String> ok, Consumer<String> error) { action("DELETE", "/api/admin/cities/" + id, null, ok, error); }
+    public void getCityUsage(Long id, Consumer<MetadataUsageData> ok, Consumer<String> error) {
+        ApiClient.send("GET", "/api/admin/cities/" + id + "/usage", null,
+                response -> parse(response, MetadataUsageData.class, ok, error), error);
+    }
+    public void deleteCity(Long id, String strategy, Long replacementId, Consumer<String> ok, Consumer<String> error) {
+        action("DELETE", "/api/admin/cities/" + id,
+                GSON.toJson(new MetadataDeleteBody(strategy, replacementId)), ok, error);
+    }
 
     private <T> void getList(String path, Class<T> type, Consumer<List<T>> ok, Consumer<String> error) {
         ApiClient.send("GET", path, null, response -> {
@@ -54,4 +68,5 @@ public class AdminService {
     }
 
     private record NameBody(String name) {}
+    private record MetadataDeleteBody(String strategy, Long replacementId) {}
 }

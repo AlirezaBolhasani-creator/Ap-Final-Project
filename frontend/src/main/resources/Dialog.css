@@ -83,3 +83,27 @@
 .dialog-pane .danger-field:focused {
     -fx-border-color: #ef3f3f;
 }
+.dialog-pane .radio-button {
+    -fx-text-fill: #d4d4d8;
+    -fx-padding: 4 0;
+}
+.dialog-pane .radio-button .radio {
+    -fx-background-color: #242427;
+    -fx-border-color: rgba(255,255,255,0.20);
+    -fx-border-radius: 20;
+}
+.dialog-pane .radio-button:selected .dot {
+    -fx-background-color: #ef3f3f;
+}
+.dialog-pane .danger-option {
+    -fx-text-fill: #ff7474;
+    -fx-font-weight: bold;
+}
+.dialog-pane .danger-message {
+    -fx-text-fill: #ff8b8b;
+    -fx-background-color: rgba(239,63,63,0.10);
+    -fx-border-color: rgba(239,63,63,0.24);
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10;
+}
