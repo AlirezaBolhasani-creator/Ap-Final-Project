@@ -1,7 +1,11 @@
 package divar.aut.backend.service;
 
+import divar.aut.backend.dto.CityRequest;
 import divar.aut.backend.dto.CityResponse;
+import divar.aut.backend.entity.City;
+import divar.aut.backend.exception.ApiException;
 import divar.aut.backend.repository.CityRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,8 +20,36 @@ public class CityService {
     }
 
     public List<CityResponse> listAll() {
-        return cityRepository.findAllByOrderByNameAsc().stream()
-                .map(CityResponse::new)
-                .toList();
+        return cityRepository.findAllByOrderByNameAsc().stream().map(CityResponse::new).toList();
+    }
+
+    public CityResponse create(CityRequest request) {
+        String name = request.getName().trim();
+        if (cityRepository.existsByNameIgnoreCase(name)) {
+            throw ApiException.badRequest("City already exists");
+        }
+        return new CityResponse(cityRepository.save(new City(name)));
+    }
+
+    public CityResponse update(Long id, CityRequest request) {
+        City city = cityRepository.findById(id)
+                .orElseThrow(() -> ApiException.notFound("City not found"));
+        String name = request.getName().trim();
+        if (!city.getName().equalsIgnoreCase(name) && cityRepository.existsByNameIgnoreCase(name)) {
+            throw ApiException.badRequest("City already exists");
+        }
+        city.setName(name);
+        return new CityResponse(cityRepository.save(city));
+    }
+
+    public void delete(Long id) {
+        City city = cityRepository.findById(id)
+                .orElseThrow(() -> ApiException.notFound("City not found"));
+        try {
+            cityRepository.delete(city);
+            cityRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw ApiException.badRequest("City is used by advertisements and cannot be deleted");
+        }
     }
 }
