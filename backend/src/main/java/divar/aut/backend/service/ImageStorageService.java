@@ -53,4 +53,14 @@ public class ImageStorageService {
                     "Error saving file: " + e.getMessage());
         }
     }
+    public void delete(String fileName) {
+        if (fileName == null || fileName.isBlank()) {
+            return;
+        }
+        try {
+            Files.deleteIfExists(Paths.get(UPLOAD_DIRECTORY).resolve(fileName));
+        } catch (IOException ignored) {
+        }
+    }
+
 }

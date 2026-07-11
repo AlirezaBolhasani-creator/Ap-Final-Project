@@ -9,4 +9,5 @@ import java.util.List;
 public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findByConversationOrderBySentAtAsc(Conversation conversation);
     Message findFirstByConversationOrderBySentAtDesc(Conversation conversation);
+    void deleteByConversationIn(List<Conversation> conversations);
 }

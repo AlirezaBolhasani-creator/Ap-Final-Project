@@ -4,6 +4,7 @@ import divar.aut.backend.dto.*;
 import divar.aut.backend.service.AdminService;
 import divar.aut.backend.service.CategoryService;
 import divar.aut.backend.service.CityService;
+import divar.aut.backend.service.MetadataDeletionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +18,14 @@ public class AdminController {
     private final AdminService adminService;
     private final CategoryService categoryService;
     private final CityService cityService;
+    private final MetadataDeletionService metadataDeletionService;
 
-    public AdminController(AdminService adminService, CategoryService categoryService, CityService cityService) {
+    public AdminController(AdminService adminService, CategoryService categoryService, CityService cityService,
+                           MetadataDeletionService metadataDeletionService) {
         this.adminService = adminService;
         this.categoryService = categoryService;
         this.cityService = cityService;
+        this.metadataDeletionService = metadataDeletionService;
     }
 
     @GetMapping("/ads")
@@ -58,9 +62,15 @@ public class AdminController {
         return categoryService.update(id, request);
     }
 
+    @GetMapping("/categories/{id}/usage")
+    public MetadataUsageResponse getCategoryUsage(@PathVariable Long id) {
+        return new MetadataUsageResponse(metadataDeletionService.countCategoryAds(id));
+    }
+
     @DeleteMapping("/categories/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
-        categoryService.delete(id);
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id,
+                                               @Valid @RequestBody MetadataDeleteRequest request) {
+        metadataDeletionService.deleteCategory(id, request);
         return ResponseEntity.noContent().build();
     }
 
@@ -74,9 +84,15 @@ public class AdminController {
         return cityService.update(id, request);
     }
 
+    @GetMapping("/cities/{id}/usage")
+    public MetadataUsageResponse getCityUsage(@PathVariable Long id) {
+        return new MetadataUsageResponse(metadataDeletionService.countCityAds(id));
+    }
+
     @DeleteMapping("/cities/{id}")
-    public ResponseEntity<Void> deleteCity(@PathVariable Long id) {
-        cityService.delete(id);
+    public ResponseEntity<Void> deleteCity(@PathVariable Long id,
+                                           @Valid @RequestBody MetadataDeleteRequest request) {
+        metadataDeletionService.deleteCity(id, request);
         return ResponseEntity.noContent().build();
     }
 

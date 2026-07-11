@@ -10,4 +10,5 @@ import java.util.List;
 public interface SellerRatingRepository extends JpaRepository<SellerRating, Long> {
     List<SellerRating> findBySellerOrderByCreatedAtDesc(User seller);
     boolean existsByBuyerAndSellerAndAd(User buyer, User seller, Ad ad);
+    void deleteByAdIn(List<Ad> ads);
 }

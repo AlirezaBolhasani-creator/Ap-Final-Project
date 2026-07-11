@@ -15,4 +15,5 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
 
     @Query("SELECT c FROM Conversation c WHERE c.buyer = :user OR c.seller = :user ORDER BY c.createdAt DESC")
     List<Conversation> findAllForUser(@Param("user") User user);
+    List<Conversation> findByAdIn(List<Ad> ads);
 }
