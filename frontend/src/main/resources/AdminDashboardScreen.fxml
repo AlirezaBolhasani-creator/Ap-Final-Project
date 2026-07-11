@@ -2,43 +2,70 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="divar.aut.frontend.controller.AdminDashboardController"
-            style="-fx-background-color: #0d0d0d;" nodeOrientation="RIGHT_TO_LEFT">
+            stylesheets="@AdminDashboard.css" styleClass="admin-root" nodeOrientation="RIGHT_TO_LEFT">
     <top>
-        <BorderPane style="-fx-background-color: #242424; -fx-padding: 20;">
-            <right><Label text="پنل مدیریت" textFill="WHITE"><font><Font name="System Bold" size="20"/></font></Label></right>
-            <left><Button text="بازگشت" onAction="#goBack" style="-fx-background-color: transparent; -fx-border-color: #555; -fx-text-fill: #aaa; -fx-padding: 6 16;"/></left>
+        <BorderPane styleClass="admin-header">
+            <right>
+                <VBox spacing="3">
+                    <Label text="پنل مدیریت" styleClass="admin-title"/>
+                    <Label text="مدیریت آگهی‌ها، کاربران و اطلاعات پایه" styleClass="admin-subtitle"/>
+                </VBox>
+            </right>
+            <left>
+                <Button text="بازگشت" onAction="#goBack" styleClass="admin-back-button">
+                    <graphic><FontIcon iconLiteral="fas-arrow-left" iconSize="13" iconColor="#aaa"/></graphic>
+                </Button>
+            </left>
         </BorderPane>
     </top>
     <center>
-        <TabPane tabClosingPolicy="UNAVAILABLE" style="-fx-padding: 15;">
+        <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="admin-tabs">
             <tabs>
                 <Tab text="آمار">
-                    <FlowPane fx:id="statsPane" hgap="15" vgap="15" style="-fx-padding: 20;"/>
+                    <ScrollPane fitToWidth="true" styleClass="admin-scroll">
+                        <FlowPane fx:id="statsPane" hgap="16" vgap="16" styleClass="admin-content"/>
+                    </ScrollPane>
                 </Tab>
                 <Tab text="همه آگهی‌ها">
-                    <ScrollPane fitToWidth="true"><FlowPane fx:id="adminAdGrid" hgap="16" vgap="16" style="-fx-padding: 15; -fx-background-color: #0d0d0d;"/></ScrollPane>
+                    <ScrollPane fitToWidth="true" styleClass="admin-scroll">
+                        <FlowPane fx:id="adminAdGrid" hgap="16" vgap="16" styleClass="admin-content"/>
+                    </ScrollPane>
                 </Tab>
                 <Tab text="کاربران">
-                    <ListView fx:id="usersList"/>
+                    <ListView fx:id="usersList" styleClass="admin-list"/>
                 </Tab>
                 <Tab text="دسته‌بندی‌ها">
-                    <VBox spacing="10" style="-fx-padding: 15;">
-                        <HBox spacing="10"><TextField fx:id="categoryNameField" promptText="نام دسته‌بندی" HBox.hgrow="ALWAYS"/><Button text="افزودن" onAction="#addCategory"/></HBox>
-                        <ListView fx:id="categoriesList" VBox.vgrow="ALWAYS"/>
+                    <VBox spacing="14" styleClass="admin-content">
+                        <HBox spacing="10">
+                            <TextField fx:id="categoryNameField" promptText="نام دسته‌بندی جدید" styleClass="admin-input" HBox.hgrow="ALWAYS"/>
+                            <Button text="افزودن" onAction="#addCategory" styleClass="admin-primary-button">
+                                <graphic><FontIcon iconLiteral="fas-plus" iconSize="12" iconColor="white"/></graphic>
+                            </Button>
+                        </HBox>
+                        <ListView fx:id="categoriesList" styleClass="admin-list" VBox.vgrow="ALWAYS"/>
                     </VBox>
                 </Tab>
                 <Tab text="شهرها">
-                    <VBox spacing="10" style="-fx-padding: 15;">
-                        <HBox spacing="10"><TextField fx:id="cityNameField" promptText="نام شهر" HBox.hgrow="ALWAYS"/><Button text="افزودن" onAction="#addCity"/></HBox>
-                        <ListView fx:id="citiesList" VBox.vgrow="ALWAYS"/>
+                    <VBox spacing="14" styleClass="admin-content">
+                        <HBox spacing="10">
+                            <TextField fx:id="cityNameField" promptText="نام شهر جدید" styleClass="admin-input" HBox.hgrow="ALWAYS"/>
+                            <Button text="افزودن" onAction="#addCity" styleClass="admin-primary-button">
+                                <graphic><FontIcon iconLiteral="fas-plus" iconSize="12" iconColor="white"/></graphic>
+                            </Button>
+                        </HBox>
+                        <ListView fx:id="citiesList" styleClass="admin-list" VBox.vgrow="ALWAYS"/>
                     </VBox>
                 </Tab>
             </tabs>
         </TabPane>
     </center>
-    <bottom><HBox style="-fx-padding: 10; -fx-background-color: #242424;"><Label fx:id="statusLabel" textFill="#ff5a5a"/></HBox></bottom>
+    <bottom>
+        <HBox styleClass="admin-statusbar">
+            <Label fx:id="statusLabel" styleClass="admin-status"/>
+        </HBox>
+    </bottom>
 </BorderPane>

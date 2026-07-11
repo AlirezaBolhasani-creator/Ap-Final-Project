@@ -1,0 +1,85 @@
+.dialog-pane {
+    -fx-font-family: "Vazirmatn", "B Nazanin", "Tahoma", sans-serif;
+    -fx-background-color: #171719;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-width: 1;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 0;
+}
+.dialog-pane > .header-panel {
+    -fx-background-color: linear-gradient(to bottom right, #26262a, #1d1d20);
+    -fx-padding: 20 24;
+    -fx-background-radius: 14 14 0 0;
+}
+.dialog-pane > .header-panel .label {
+    -fx-text-fill: #f4f4f5;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+.dialog-pane > .content.label {
+    -fx-text-fill: #b3b3ba;
+    -fx-padding: 20 24 8 24;
+}
+.dialog-pane .dialog-content {
+    -fx-padding: 22 24 10 24;
+    -fx-background-color: #171719;
+}
+.dialog-pane .dialog-label {
+    -fx-text-fill: #c7c7cd;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+.dialog-pane .text-field,
+.dialog-pane .text-area,
+.dialog-pane .combo-box {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-text-fill: #f4f4f5;
+    -fx-prompt-text-fill: #686870;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+.dialog-pane .text-field {
+    -fx-padding: 10 12;
+}
+.dialog-pane .text-area .content {
+    -fx-background-color: #202023;
+    -fx-background-radius: 9;
+}
+.dialog-pane .combo-box .list-cell {
+    -fx-text-fill: #f4f4f5;
+    -fx-background-color: #202023;
+}
+.dialog-pane .button-bar {
+    -fx-padding: 14 24 20 24;
+}
+.dialog-pane .button {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-text-fill: #d4d4d8;
+    -fx-background-radius: 9;
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-border-radius: 9;
+    -fx-padding: 8 22;
+    -fx-cursor: hand;
+}
+.dialog-pane .button:hover {
+    -fx-background-color: rgba(255,255,255,0.14);
+}
+.dialog-pane .button:default {
+    -fx-background-color: #ef3f3f;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent;
+}
+.dialog-pane .button:default:hover {
+    -fx-background-color: #ff5555;
+}
+.dialog-pane .rating-combo {
+    -fx-pref-width: 120;
+}
+.dialog-pane .danger-field:focused {
+    -fx-border-color: #ef3f3f;
+}

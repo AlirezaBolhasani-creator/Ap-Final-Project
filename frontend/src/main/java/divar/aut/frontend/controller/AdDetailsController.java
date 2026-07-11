@@ -17,6 +17,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
+import javafx.geometry.NodeOrientation;
+import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -118,21 +120,38 @@ public class AdDetailsController {
     private void handleRateSeller() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("ثبت امتیاز فروشنده");
-        dialog.setHeaderText("امتیاز شما به " + adDetail.seller().fullname());
+        dialog.setHeaderText("تجربه شما از معامله با " + adDetail.seller().fullname());
 
         ComboBox<Integer> scoreCombo = new ComboBox<>();
         scoreCombo.getItems().addAll(1, 2, 3, 4, 5);
         scoreCombo.getSelectionModel().select(Integer.valueOf(5));
+        scoreCombo.getStyleClass().add("rating-combo");
+
         TextArea commentArea = new TextArea();
-        commentArea.setPromptText("نظر شما (اختیاری)");
+        commentArea.setPromptText("نظر شما درباره پاسخ‌گویی و نحوه معامله (اختیاری)");
         commentArea.setWrapText(true);
-        commentArea.setPrefRowCount(3);
+        commentArea.setPrefRowCount(4);
 
-        VBox content = new VBox(10, new Label("امتیاز از ۱ تا ۵:"), scoreCombo, commentArea);
+        FontIcon starIcon = new FontIcon("fas-star");
+        starIcon.setIconColor(javafx.scene.paint.Color.web("#facc15"));
+        starIcon.setIconSize(22);
+        Label scoreLabel = new Label("امتیاز از ۱ تا ۵");
+        scoreLabel.getStyleClass().add("dialog-label");
+        HBox scoreRow = new HBox(10, starIcon, scoreLabel, scoreCombo);
+        scoreRow.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+
+        Label commentLabel = new Label("توضیح کوتاه");
+        commentLabel.getStyleClass().add("dialog-label");
+        VBox content = new VBox(12, scoreRow, commentLabel, commentArea);
+        content.getStyleClass().add("dialog-content");
+        content.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         dialog.getDialogPane().setContent(content);
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        ButtonType submitRating = new ButtonType("ثبت امتیاز", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("انصراف", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(submitRating, cancel);
+        styleDialog(dialog);
 
-        dialog.showAndWait().filter(ButtonType.OK::equals).ifPresent(button -> {
+        dialog.showAndWait().filter(submitRating::equals).ifPresent(button -> {
             ratingButton.setDisable(true);
             ratingService.submitRating(adDetail.id(), scoreCombo.getValue(), commentArea.getText().trim(),
                     rating -> Platform.runLater(() -> {
@@ -188,12 +207,31 @@ public class AdDetailsController {
     @FXML
     private void handleReject() {
 
-        TextInputDialog dialog = new TextInputDialog();
+        Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("رد آگهی");
-        dialog.setHeaderText("رد کردن آگهی: " + adDetail.title());
-        dialog.setContentText("لطفاً دلیل رد کردن این آگهی را بنویسید:");
+        dialog.setHeaderText("دلیل رد شدن «" + adDetail.title() + "»");
 
-        Optional<String> result = dialog.showAndWait();
+        Label guidance = new Label("دلیل واضحی بنویسید تا آگهی‌دهنده بتواند مشکل را اصلاح کند.");
+        guidance.setWrapText(true);
+        guidance.getStyleClass().add("dialog-label");
+        TextArea reasonArea = new TextArea();
+        reasonArea.setPromptText("برای مثال: تصاویر یا توضیحات آگهی با قوانین مطابقت ندارد");
+        reasonArea.setWrapText(true);
+        reasonArea.setPrefRowCount(5);
+        reasonArea.getStyleClass().add("danger-field");
+
+        VBox content = new VBox(12, guidance, reasonArea);
+        content.getStyleClass().add("dialog-content");
+        content.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
+        dialog.getDialogPane().setContent(content);
+        ButtonType reject = new ButtonType("رد آگهی", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("انصراف", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(reject, cancel);
+        styleDialog(dialog);
+
+        Optional<String> result = dialog.showAndWait()
+                .filter(reject::equals)
+                .map(button -> reasonArea.getText());
 
         result.ifPresent(reason -> {
             if (reason.trim().isEmpty()) {
@@ -235,6 +273,13 @@ public class AdDetailsController {
         } catch (Exception e) {
             showError("خطا در باز کردن صفحه ویرایش");
         }
+    }
+
+    private void styleDialog(Dialog<?> dialog) {
+        dialog.initOwner(titleLabel.getScene().getWindow());
+        dialog.getDialogPane().getStylesheets().add(
+                getClass().getResource("/Dialog.css").toExternalForm());
+        dialog.getDialogPane().setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
     }
 
     private void finishAction(String successMessage) {

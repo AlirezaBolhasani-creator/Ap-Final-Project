@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
@@ -47,11 +48,18 @@ public class AdminDashboardController {
                 super.updateItem(user, empty);
                 if (empty || user == null) { setGraphic(null); return; }
                 Label label = new Label(user.fullname() + " (@" + user.username() + ") - " + user.role());
+                label.getStyleClass().add("admin-list-label");
                 Button action = new Button(user.blocked() ? "رفع مسدودی" : "مسدود کردن");
+                action.getStyleClass().add(user.blocked() ? "admin-action-button" : "admin-danger-button");
                 action.setDisable("ADMIN".equals(user.role()));
                 action.setOnAction(e -> adminService.setUserBlocked(user.id(), !user.blocked(),
                         ok -> { showSuccess(ok); loadUsers(); }, AdminDashboardController.this::showError));
-                HBox row = new HBox(12, label, action); row.setStyle("-fx-padding: 8;"); setGraphic(row);
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                HBox row = new HBox(12, label, spacer, action);
+                row.setAlignment(Pos.CENTER_RIGHT);
+                row.getStyleClass().add("admin-list-row");
+                setGraphic(row);
             }
         });
         categoriesList.setCellFactory(list -> metadataCell(true));
@@ -67,11 +75,19 @@ public class AdminDashboardController {
                 Long id = category ? ((CategoryData) item).id() : ((CityData) item).id();
                 String name = category ? ((CategoryData) item).name() : ((CityData) item).name();
                 Label label = new Label(name);
+                label.getStyleClass().add("admin-list-label");
                 Button edit = new Button("ویرایش");
                 Button delete = new Button("حذف");
+                edit.getStyleClass().add("admin-action-button");
+                delete.getStyleClass().add("admin-danger-button");
                 edit.setOnAction(e -> editMetadata(category, id, name));
                 delete.setOnAction(e -> deleteMetadata(category, id));
-                HBox row = new HBox(10, label, edit, delete); row.setStyle("-fx-padding: 8;"); setGraphic(row);
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                HBox row = new HBox(10, label, spacer, edit, delete);
+                row.setAlignment(Pos.CENTER_RIGHT);
+                row.getStyleClass().add("admin-list-row");
+                setGraphic(row);
             }
         };
     }
@@ -89,9 +105,14 @@ public class AdminDashboardController {
     }
 
     private VBox stat(String title, long value) {
-        Label number = new Label(String.valueOf(value)); number.setStyle("-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;");
-        Label name = new Label(title); name.setStyle("-fx-text-fill: #aaa;");
-        VBox card = new VBox(5, number, name); card.setPrefWidth(150); card.setStyle("-fx-background-color: #242424; -fx-padding: 18; -fx-background-radius: 10;"); return card;
+        Label number = new Label(String.valueOf(value));
+        number.getStyleClass().add("admin-stat-number");
+        Label name = new Label(title);
+        name.getStyleClass().add("admin-stat-title");
+        VBox card = new VBox(5, number, name);
+        card.setPrefWidth(160);
+        card.getStyleClass().add("admin-stat-card");
+        return card;
     }
 
     private void loadAds() { adminService.listAds(this::renderAds, this::showError); }
@@ -137,12 +158,25 @@ public class AdminDashboardController {
     @FXML private void addCity() { String name = cityNameField.getText().trim(); if (!name.isEmpty()) adminService.createCity(name, c -> { cityNameField.clear(); loadCities(); loadStats(); }, this::showError); }
 
     private void editMetadata(boolean category, Long id, String currentName) {
-        TextInputDialog dialog = new TextInputDialog(currentName); dialog.setHeaderText(category ? "ویرایش دسته‌بندی" : "ویرایش شهر");
+        TextInputDialog dialog = new TextInputDialog(currentName);
+        dialog.setTitle(category ? "ویرایش دسته‌بندی" : "ویرایش شهر");
+        dialog.setHeaderText(category ? "ویرایش نام دسته‌بندی" : "ویرایش نام شهر");
+        dialog.setContentText("نام جدید:");
+        ((Button) dialog.getDialogPane().lookupButton(ButtonType.OK)).setText("ذخیره");
+        ((Button) dialog.getDialogPane().lookupButton(ButtonType.CANCEL)).setText("انصراف");
+        styleDialog(dialog);
         Optional<String> result = dialog.showAndWait();
         result.map(String::trim).filter(name -> !name.isEmpty()).ifPresent(name -> {
             if (category) adminService.updateCategory(id, name, c -> loadCategories(), this::showError);
             else adminService.updateCity(id, name, c -> loadCities(), this::showError);
         });
+    }
+
+    private void styleDialog(Dialog<?> dialog) {
+        dialog.initOwner(statusLabel.getScene().getWindow());
+        dialog.getDialogPane().getStylesheets().add(
+                getClass().getResource("/Dialog.css").toExternalForm());
+        dialog.getDialogPane().setNodeOrientation(javafx.geometry.NodeOrientation.RIGHT_TO_LEFT);
     }
 
     private void deleteMetadata(boolean category, Long id) {
