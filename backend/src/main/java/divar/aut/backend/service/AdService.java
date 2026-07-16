@@ -98,12 +98,21 @@ public class AdService {
                                                    Double minPrice, Double maxPrice,
                                                    String conditionText, String sortBy) {
         String normalizedKeyword = (keyword == null || keyword.isBlank()) ? null : keyword.trim();
-        ItemCondition condition = (conditionText == null || conditionText.isBlank()) ? 
-                                   null : parseCondition(conditionText);
+        ItemCondition condition = (conditionText == null || conditionText.isBlank()) ?
+                null : parseCondition(conditionText);
         Sort sort = resolveSort(sortBy);
 
         List<Ad> ads = adRepository.searchActiveAds(normalizedKeyword, categoryId, cityId,
-                                                    minPrice, maxPrice, condition, sort);
+                minPrice, maxPrice, condition, sort);
+
+        if ("highest_rating".equals(sortBy)) {
+            ads.sort((ad1, ad2) -> {
+                double rating1 = sellerRatingService.getAverageRating(ad1.getOwner());
+                double rating2 = sellerRatingService.getAverageRating(ad2.getOwner());
+                return Double.compare(rating2, rating1);
+            });
+        }
+
         return ads.stream().map(AdSummaryResponse::new).toList();
     }
 
@@ -230,7 +239,8 @@ public class AdService {
         return switch (sortBy) {
             case "cheapest" -> Sort.by(Sort.Direction.ASC, "price");
             case "expensive" -> Sort.by(Sort.Direction.DESC, "price");
-            default -> Sort.by(Sort.Direction.DESC, "createdAt");  // "newest"
+            case "highest_rating" -> Sort.unsorted();
+            default -> Sort.by(Sort.Direction.DESC, "createdAt");
         };
     }
 

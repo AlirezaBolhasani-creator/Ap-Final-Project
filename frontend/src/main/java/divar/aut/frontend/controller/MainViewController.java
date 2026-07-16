@@ -60,7 +60,7 @@ public class MainViewController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if (sortCombo != null) {
-            sortCombo.getItems().addAll("جدیدترین", "ارزان‌ترین", "گران‌ترین");
+            sortCombo.getItems().addAll("جدیدترین", "ارزان‌ترین", "گران‌ترین", "بیشترین امتیاز");
             sortCombo.getSelectionModel().selectFirst();
             sortCombo.setOnAction(e -> applyFilter());
         }
@@ -349,6 +349,7 @@ public class MainViewController implements Initializable {
         return switch (sortCombo.getValue()) {
             case "ارزان‌ترین" -> "cheapest";
             case "گران‌ترین" -> "expensive";
+            case "بیشترین امتیاز" -> "highest_rating";
             default -> "newest";
         };
     }

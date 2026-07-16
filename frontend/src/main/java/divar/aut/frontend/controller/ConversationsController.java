@@ -78,8 +78,7 @@ public class ConversationsController {
             }
         }
 
-        // ردیف افقی بدون فاصله دهنده اضافی (spacer حذف شد)
-        HBox bottomRow = new HBox(5); // فاصله ۵ پیکسلی بین متن پیام و زمان
+        HBox bottomRow = new HBox(5);
         bottomRow.getChildren().addAll(preview, timeLabel);
         bottomRow.setAlignment(Pos.CENTER_LEFT);
 
