@@ -38,6 +38,12 @@ public class ConversationService {
             throw ApiException.badRequest("You cannot message yourself about your own ad");
         }
 
+        if (buyer.isBlocked()) {
+            throw ApiException.forbidden("You cannot start a conversation because you are blocked.");
+        } else if (seller.isBlocked()) {
+            throw ApiException.forbidden("You cannot start a conversation with a blocked user.");
+        }
+
         Conversation conversation = conversationRepository.findByAdAndBuyerAndSeller(ad, buyer, seller)
                 .orElseGet(() -> conversationRepository.save(new Conversation(ad, buyer, seller)));
         return toConversationResponse(conversation);
@@ -60,8 +66,16 @@ public class ConversationService {
     public MessageResponse sendMessage(User sender, Long conversationId, MessageRequest request) {
         Conversation conversation = findConversationOrThrow(conversationId);
         requireParticipant(sender, conversation);
+
+        User receiver = conversation.getBuyer().getId().equals(sender.getId())
+                ? conversation.getSeller()
+                : conversation.getBuyer();
+
         if (sender.isBlocked()) {
             throw ApiException.forbidden("Blocked users cannot send messages");
+        }
+        else if(receiver.isBlocked()) {
+            throw ApiException.forbidden("Receiver is blocked you cannot send messages");
         }
         Message message = new Message(conversation, sender, request.getContent());
         messageRepository.save(message);
