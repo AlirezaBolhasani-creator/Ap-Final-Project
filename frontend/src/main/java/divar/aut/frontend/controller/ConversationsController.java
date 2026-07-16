@@ -1,5 +1,11 @@
 package divar.aut.frontend.controller;
 
+import javafx.geometry.Pos;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import divar.aut.frontend.model.ConversationData;
 import divar.aut.frontend.net.ConversationService;
 import divar.aut.frontend.ui.ConversationDetailScreen;
@@ -59,7 +65,25 @@ public class ConversationsController {
         Label preview = new Label(conversation.lastMessagePreview() == null ? "هنوز پیامی ارسال نشده" : conversation.lastMessagePreview());
         preview.setStyle("-fx-text-fill: #ddd;");
 
-        VBox card = new VBox(6, title, parties, preview);
+        Label timeLabel = new Label("");
+        timeLabel.setStyle("-fx-text-fill: #777; -fx-font-size: 11px;");
+
+        if (conversation.lastMessageAt() != null) {
+            try {
+                LocalDateTime dateTime = LocalDateTime.parse(conversation.lastMessageAt());
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+                timeLabel.setText(" - " + dateTime.format(formatter));
+            } catch (Exception e) {
+                System.err.println("خطا در پارس زمان آخرین پیام: " + e.getMessage());
+            }
+        }
+
+        // ردیف افقی بدون فاصله دهنده اضافی (spacer حذف شد)
+        HBox bottomRow = new HBox(5); // فاصله ۵ پیکسلی بین متن پیام و زمان
+        bottomRow.getChildren().addAll(preview, timeLabel);
+        bottomRow.setAlignment(Pos.CENTER_LEFT);
+
+        VBox card = new VBox(6, title, parties, bottomRow);
         card.setStyle("-fx-background-color: rgba(255,255,255,0.06); -fx-padding: 14; -fx-background-radius: 10; -fx-cursor: hand;");
         card.setOnMouseClicked(event -> openConversation(conversation));
         return card;
