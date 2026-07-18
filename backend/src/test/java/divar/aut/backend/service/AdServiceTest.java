@@ -28,6 +28,7 @@ class AdServiceTest {
     @Mock private CityRepository cityRepository;
     @Mock private ImageStorageService imageStorageService;
     @Mock private SellerRatingService sellerRatingService;
+    @Mock private ConversationService conversationService;
 
     @InjectMocks
     private AdService adService;

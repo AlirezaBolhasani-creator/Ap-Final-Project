@@ -27,8 +27,13 @@ public class AdDetailResponse {
     private final List<String> imageFileNames;
     private final double averageRating;
     private final int ratingCount;
+    private final List<RatingResponse> ratings;
 
     public AdDetailResponse(Ad ad, double averageRating, int ratingCount) {
+        this(ad, averageRating, ratingCount, List.of());
+    }
+
+    public AdDetailResponse(Ad ad, double averageRating, int ratingCount, List<RatingResponse> ratings) {
         this.id = ad.getId();
         this.title = ad.getTitle();
         this.description = ad.getDescription();
@@ -46,6 +51,7 @@ public class AdDetailResponse {
                 .collect(Collectors.toList());
         this.averageRating = averageRating;
         this.ratingCount = ratingCount;
+        this.ratings = ratings;
     }
 
     // Nested DTO for seller info
@@ -131,5 +137,9 @@ public class AdDetailResponse {
 
     public int getRatingCount() {
         return ratingCount;
+    }
+
+    public List<RatingResponse> getRatings() {
+        return ratings;
     }
 }

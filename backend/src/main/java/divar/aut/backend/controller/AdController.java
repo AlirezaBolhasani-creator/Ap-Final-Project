@@ -136,8 +136,9 @@ public class AdController {
      */
     @PutMapping("/{id}/reject")
     public AdDetailResponse rejectPendingAd(@PathVariable Long id,
-                                            @Valid @RequestBody RejectAdRequest request) {
+                                            @Valid @RequestBody RejectAdRequest request,
+                                            @AuthenticationPrincipal UserPrincipal principal) {
 
-        return adService.rejectPendingAd(id, request.reason());
+        return adService.rejectPendingAd(id, request.reason(), principal.getUser());
     }
 }

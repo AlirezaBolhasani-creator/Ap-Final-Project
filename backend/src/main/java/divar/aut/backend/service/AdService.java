@@ -34,15 +34,17 @@ public class AdService {
     private final CityRepository cityRepository;
     private final ImageStorageService imageStorageService;
     private final SellerRatingService sellerRatingService;
+    private final ConversationService conversationService;
 
     public AdService(AdRepository adRepository, CategoryRepository categoryRepository,
                      CityRepository cityRepository, ImageStorageService imageStorageService,
-                     SellerRatingService sellerRatingService) {
+                     SellerRatingService sellerRatingService, ConversationService conversationService) {
         this.adRepository = adRepository;
         this.categoryRepository = categoryRepository;
         this.cityRepository = cityRepository;
         this.imageStorageService = imageStorageService;
         this.sellerRatingService = sellerRatingService;
+        this.conversationService = conversationService;
     }
 
     public AdDetailResponse createAd(User owner, AdRequest request) {
@@ -191,13 +193,15 @@ public class AdService {
     /**
      * Admin-only: reject a pending ad with a reason (moves to REJECTED).
      */
-    public AdDetailResponse rejectPendingAd(Long adId, String reason) {
+    public AdDetailResponse rejectPendingAd(Long adId, String reason, User admin) {
         Ad ad = findAdOrThrow(adId);
         if (ad.getStatus() != AdStatus.PENDING_REVIEW) {
             throw ApiException.badRequest("Only a pending ad can be rejected");
         }
         ad.reject(reason);
         adRepository.save(ad);
+        String content = "آگهی شما با عنوان «" + ad.getTitle() + "» به دلیل «" + reason + "» رد شد.";
+        conversationService.sendAdminMessageForRejectedAd(admin, ad, content);
         return toDetailResponse(ad);
     }
 
@@ -247,7 +251,8 @@ public class AdService {
     private AdDetailResponse toDetailResponse(Ad ad) {
         double avgRating = sellerRatingService.getAverageRating(ad.getOwner());
         int ratingCount = sellerRatingService.getRatingCount(ad.getOwner());
-        return new AdDetailResponse(ad, avgRating, ratingCount);
+        return new AdDetailResponse(ad, avgRating, ratingCount,
+                sellerRatingService.listRatingsForSeller(ad.getOwner()));
     }
 }
 

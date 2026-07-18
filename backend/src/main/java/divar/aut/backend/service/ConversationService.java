@@ -49,6 +49,17 @@ public class ConversationService {
         return toConversationResponse(conversation);
     }
 
+    /**
+     * Sends a system-style notification from an admin to a seller about a rejected ad,
+     * creating the conversation if it does not exist yet.
+     */
+    public void sendAdminMessageForRejectedAd(User admin, Ad ad, String content) {
+        User seller = ad.getOwner();
+        Conversation conversation = conversationRepository.findByAdAndBuyerAndSeller(ad, admin, seller)
+                .orElseGet(() -> conversationRepository.save(new Conversation(ad, admin, seller)));
+        messageRepository.save(new Message(conversation, admin, content));
+    }
+
     public List<ConversationResponse> listConversationsForUser(User user) {
         return conversationRepository.findAllForUser(user).stream()
                 .map(this::toConversationResponse)
