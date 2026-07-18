@@ -35,8 +35,8 @@ public class SellerRatingService {
         if (seller.getId().equals(buyer.getId())) {
             throw ApiException.badRequest("You cannot rate yourself");
         }
-        if (sellerRatingRepository.existsByBuyerAndSellerAndAd(buyer, seller, ad)) {
-            throw ApiException.badRequest("You have already rated this seller for this ad");
+        if (sellerRatingRepository.existsByBuyerAndSeller(buyer, seller)) {
+            throw ApiException.badRequest("You have already rated this seller");
         }
 
         SellerRating rating = new SellerRating(seller, buyer, ad, request.getScore(), request.getComment());
@@ -50,6 +50,10 @@ public class SellerRatingService {
 
     public int getRatingCount(User seller) {
         return ratingsFor(seller).size();
+    }
+
+    public List<RatingResponse> listRatingsForSeller(User seller) {
+        return ratingsFor(seller).stream().map(RatingResponse::new).toList();
     }
 
     public List<RatingResponse> listRatingsForSellerId(Long sellerId) {

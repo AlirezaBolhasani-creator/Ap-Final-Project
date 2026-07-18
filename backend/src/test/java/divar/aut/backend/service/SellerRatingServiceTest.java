@@ -77,7 +77,7 @@ class SellerRatingServiceTest {
     @Test
     void rateSeller_ThrowsException_WhenRatingExists() {
         when(adRepository.findById(10L)).thenReturn(Optional.of(ad));
-        when(sellerRatingRepository.existsByBuyerAndSellerAndAd(buyer, seller, ad)).thenReturn(true);
+        when(sellerRatingRepository.existsByBuyerAndSeller(buyer, seller)).thenReturn(true);
 
         ApiException exception = assertThrows(ApiException.class, () ->
                 sellerRatingService.rateSeller(buyer, 10L, ratingRequest)
@@ -88,7 +88,7 @@ class SellerRatingServiceTest {
     @Test
     void rateSeller_SavesAndReturnsResponse_WhenValid() {
         when(adRepository.findById(10L)).thenReturn(Optional.of(ad));
-        when(sellerRatingRepository.existsByBuyerAndSellerAndAd(buyer, seller, ad)).thenReturn(false);
+        when(sellerRatingRepository.existsByBuyerAndSeller(buyer, seller)).thenReturn(false);
 
         RatingResponse response = sellerRatingService.rateSeller(buyer, 10L, ratingRequest);
 
