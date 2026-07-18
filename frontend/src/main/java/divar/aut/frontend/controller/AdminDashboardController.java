@@ -123,9 +123,31 @@ public class AdminDashboardController {
 
     private void renderAds(List<AdData> ads) {
         adminAdGrid.getChildren().clear();
-        for (AdData ad : ads) {
-            Node card = buildCard(ad);
-            if (card != null) adminAdGrid.getChildren().add(card);
+        java.util.List<String> order = java.util.List.of("PENDING_REVIEW", "ACTIVE", "REJECTED", "DELETED", "SOLD");
+        java.util.Map<String, String> titles = java.util.Map.of(
+                "PENDING_REVIEW", "در انتظار بررسی",
+                "ACTIVE", "فعال",
+                "REJECTED", "رد شده",
+                "DELETED", "حذف شده",
+                "SOLD", "فروخته شده");
+        for (String status : order) {
+            List<AdData> group = ads.stream().filter(ad -> status.equals(ad.status())).toList();
+            if (group.isEmpty()) continue;
+            Label header = new Label(titles.get(status) + " (" + group.size() + ")");
+            header.setStyle("-fx-text-fill: #f0f0f0; -fx-font-weight: bold; -fx-font-size: 15px; -fx-padding: 8 0 2 0;");
+            HBox headerBox = new HBox(header);
+            headerBox.setPrefWidth(Double.MAX_VALUE);
+            headerBox.setMaxWidth(Double.MAX_VALUE);
+            adminAdGrid.getChildren().add(headerBox);
+            for (AdData ad : group) {
+                Node card = buildCard(ad);
+                if (card != null) adminAdGrid.getChildren().add(card);
+            }
+        }
+        if (adminAdGrid.getChildren().isEmpty()) {
+            Label empty = new Label("آگهی‌ای وجود ندارد");
+            empty.setStyle("-fx-text-fill: #777; -fx-font-size: 14px;");
+            adminAdGrid.getChildren().add(empty);
         }
     }
 
@@ -136,7 +158,7 @@ public class AdminDashboardController {
             loader.<AdCardController>getController().setData(data);
             ContextMenu menu = new ContextMenu();
             MenuItem delete = new MenuItem("حذف توسط مدیر");
-            delete.setOnAction(e -> adminService.deleteAd(data.id(), ok -> { showSuccess(ok); refreshAll(); }, this::showError));
+            delete.setOnAction(e -> requestAdminDelete(data.id()));
             menu.getItems().add(delete);
             card.setOnContextMenuRequested(e -> menu.show(card, e.getScreenX(), e.getScreenY()));
             card.setOnMouseClicked(e -> openAdDetails(data));
@@ -144,12 +166,19 @@ public class AdminDashboardController {
         } catch (IOException e) { showError("خطا در نمایش آگهی"); return null; }
     }
 
+    private void requestAdminDelete(Long adId) {
+        adminService.deleteAd(adId,
+                ok -> { showSuccess(ok); refreshAll(); },
+                error -> Platform.runLater(() -> showError(error)));
+    }
+
     private void openAdDetails(AdData data) {
         adService.fetchAdDetails(data.id(), detail -> Platform.runLater(() -> {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
                 Parent root = loader.load();
-                loader.<AdDetailsController>getController().setData(detail, adService, "ADMIN", false, this::refreshAll, viewManager);
+                loader.<AdDetailsController>getController().setData(detail, adService, "ADMIN", false,
+                        this::refreshAll, viewManager, this::requestAdminDelete);
                 Stage stage = new Stage(); stage.setTitle("مدیریت آگهی: " + data.title()); stage.setScene(new Scene(root)); stage.initModality(Modality.APPLICATION_MODAL); stage.show();
             } catch (IOException e) { showError("خطا در باز کردن آگهی"); }
         }), this::showError);

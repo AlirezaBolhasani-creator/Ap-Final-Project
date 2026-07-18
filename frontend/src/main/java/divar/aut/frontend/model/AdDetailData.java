@@ -15,7 +15,8 @@ public record AdDetailData(
         SellerProfile seller,
         List<String> imageFileNames,
         double averageRating,
-        int ratingCount
+        int ratingCount,
+        List<RatingData> ratings
 ) {
     public record SellerProfile(Long id, String username, String fullname) {
     }

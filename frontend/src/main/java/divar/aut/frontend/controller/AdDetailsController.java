@@ -1,6 +1,7 @@
 package divar.aut.frontend.controller;
 
 import divar.aut.frontend.model.AdDetailData;
+import divar.aut.frontend.model.RatingData;
 import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.FavoriteService;
 import divar.aut.frontend.net.ConversationService;
@@ -22,6 +23,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.util.List;
 import java.util.Optional;
 
 public class AdDetailsController {
@@ -44,6 +46,11 @@ public class AdDetailsController {
     @FXML private Button favoriteButton;
     @FXML private Button messageButton;
     @FXML private Button ratingButton;
+    @FXML private Button approveButton;
+    @FXML private Button rejectButton;
+    @FXML private Button adminDeleteButton;
+    @FXML private VBox commentsSection;
+    @FXML private VBox commentsBox;
     @FXML private ImageView mainImageView;
     @FXML private VBox imageContainer;
 
@@ -53,14 +60,22 @@ public class AdDetailsController {
     private final ConversationService conversationService = new ConversationService();
     private final RatingService ratingService = new RatingService();
     private Runnable onActionCompleted;
+    private java.util.function.Consumer<Long> adminDeleteHandler;
     private ViewManager viewManager;
 
     public void setData(AdDetailData ad, AdService adService, String userRole,
                         boolean isOwner, Runnable onActionCompleted, ViewManager viewManager) {
+        setData(ad, adService, userRole, isOwner, onActionCompleted, viewManager, null);
+    }
+
+    public void setData(AdDetailData ad, AdService adService, String userRole,
+                        boolean isOwner, Runnable onActionCompleted, ViewManager viewManager,
+                        java.util.function.Consumer<Long> adminDeleteHandler) {
         this.adDetail = ad;
         this.adService = adService;
         this.onActionCompleted = onActionCompleted;
         this.viewManager = viewManager;
+        this.adminDeleteHandler = adminDeleteHandler;
 
         titleLabel.setText(ad.title());
         priceLabel.setText(String.valueOf(ad.price()));
@@ -76,16 +91,56 @@ public class AdDetailsController {
 
         renderImages(ad);
 
-        adminActionBox.setVisible("ADMIN".equals(userRole));
-        adminActionBox.setManaged("ADMIN".equals(userRole));
+        boolean isAdmin = "ADMIN".equals(userRole);
+        String status = ad.status();
+        adminActionBox.setVisible(isAdmin);
+        adminActionBox.setManaged(isAdmin);
+        if (isAdmin) {
+            boolean pending = "PENDING_REVIEW".equals(status);
+            approveButton.setVisible(pending);
+            approveButton.setManaged(pending);
+            rejectButton.setVisible(pending);
+            rejectButton.setManaged(pending);
+            boolean deletable = !"DELETED".equals(status);
+            adminDeleteButton.setVisible(deletable);
+            adminDeleteButton.setManaged(deletable);
+        }
         ownerActionBox.setVisible(isOwner);
         ownerActionBox.setManaged(isOwner);
-        boolean canFavorite = !isOwner && !"DELETED".equals(ad.status());
+        boolean canFavorite = !isOwner && !"DELETED".equals(status);
         viewerActionBox.setVisible(canFavorite);
         viewerActionBox.setManaged(canFavorite);
-        boolean canMarkAsSold = isOwner && "ACTIVE".equals(ad.status());
+        boolean canMarkAsSold = isOwner && "ACTIVE".equals(status);
         markAsSoldButton.setVisible(canMarkAsSold);
         markAsSoldButton.setManaged(canMarkAsSold);
+
+        renderComments(ad.ratings());
+    }
+
+    private void renderComments(List<RatingData> ratings) {
+        if (commentsBox == null || commentsSection == null) return;
+        commentsBox.getChildren().clear();
+        List<RatingData> withComments = ratings == null ? List.of() :
+                ratings.stream()
+                        .filter(rating -> rating.comment() != null && !rating.comment().isBlank())
+                        .toList();
+        if (withComments.isEmpty()) {
+            commentsSection.setVisible(false);
+            commentsSection.setManaged(false);
+            return;
+        }
+        commentsSection.setVisible(true);
+        commentsSection.setManaged(true);
+        for (RatingData rating : withComments) {
+            Label header = new Label("@" + rating.buyerUsername() + " - " + rating.score() + "/5");
+            header.setStyle("-fx-text-fill: #f0f0f0; -fx-font-weight: bold; -fx-font-size: 12px;");
+            Label body = new Label(rating.comment());
+            body.setWrapText(true);
+            body.setStyle("-fx-text-fill: #c7c7cd; -fx-font-size: 12px;");
+            VBox card = new VBox(3, header, body);
+            card.setStyle("-fx-background-color: rgba(255,255,255,0.04); -fx-padding: 10; -fx-background-radius: 8;");
+            commentsBox.getChildren().add(card);
+        }
     }
 
     private void renderImages(AdDetailData ad) {
@@ -205,6 +260,17 @@ public class AdDetailsController {
     }
 
     @FXML
+    private void handleAdminDelete() {
+        if (adminDeleteHandler == null) {
+            showError("امکان حذف آگهی از اینجا وجود ندارد");
+            return;
+        }
+        setUiDisabled(true);
+        adminDeleteHandler.accept(adDetail.id());
+        closeWindow();
+    }
+
+    @FXML
     private void handleReject() {
 
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -302,6 +368,9 @@ public class AdDetailsController {
         if (favoriteButton != null) favoriteButton.setDisable(disabled);
         if (messageButton != null) messageButton.setDisable(disabled);
         if (ratingButton != null) ratingButton.setDisable(disabled);
+        if (approveButton != null) approveButton.setDisable(disabled);
+        if (rejectButton != null) rejectButton.setDisable(disabled);
+        if (adminDeleteButton != null) adminDeleteButton.setDisable(disabled);
     }
 
     private String mapCondition(String condition) {
