@@ -19,9 +19,14 @@
                 </Label>
             </right>
             <left>
-                <Button fx:id="clearBtn" onAction="#handleClear" style="-fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 5; -fx-text-fill: #aaa; -fx-padding: 5 15; -fx-cursor: hand;" text="پاک کردن" BorderPane.alignment="CENTER">
-                    <graphic><FontIcon iconLiteral="fas-redo" iconSize="13" iconColor="#aaa"/></graphic>
-                </Button>
+                <HBox spacing="10" BorderPane.alignment="CENTER">
+                    <Button onAction="#handleBack" style="-fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 5; -fx-text-fill: #aaa; -fx-padding: 5 15; -fx-cursor: hand;" text="بازگشت">
+                        <graphic><FontIcon iconLiteral="fas-arrow-left" iconSize="13" iconColor="#aaa"/></graphic>
+                    </Button>
+                    <Button fx:id="clearBtn" onAction="#handleClear" style="-fx-background-color: transparent; -fx-border-color: #555; -fx-border-radius: 5; -fx-text-fill: #aaa; -fx-padding: 5 15; -fx-cursor: hand;" text="پاک کردن">
+                        <graphic><FontIcon iconLiteral="fas-redo" iconSize="13" iconColor="#aaa"/></graphic>
+                    </Button>
+                </HBox>
             </left>
         </BorderPane>
 

@@ -131,6 +131,11 @@ public class PostAdController implements Initializable {
     }
 
     @FXML
+    private void handleBack() {
+        if (viewManager != null) viewManager.toMain();
+    }
+
+    @FXML
     public void handleClear() {
         titleField.clear();
         descriptionArea.clear();
