@@ -11,6 +11,7 @@ public class MessageResponse {
     private final String senderUsername;
     private final String content;
     private final LocalDateTime sentAt;
+    private final boolean senderAdmin;
 
     public MessageResponse(Message message) {
         this.id = message.getId();
@@ -19,6 +20,7 @@ public class MessageResponse {
         this.senderUsername = message.getSender().getUsername();
         this.content = message.getContent();
         this.sentAt = message.getSentAt();
+        this.senderAdmin = message.getSender().isAdmin();
     }
 
     public Long getId() { return id; }

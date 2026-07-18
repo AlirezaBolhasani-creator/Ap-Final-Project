@@ -16,6 +16,8 @@ public class ConversationResponse {
     private final LocalDateTime createdAt;
     private final String lastMessagePreview;
     private final LocalDateTime lastMessageAt;
+    private final boolean buyerAdmin;
+    private final boolean sellerAdmin;
 
     public ConversationResponse(Conversation conversation, Message lastMessageOrNull) {
         this.id = conversation.getId();
@@ -28,6 +30,8 @@ public class ConversationResponse {
         this.createdAt = conversation.getCreatedAt();
         this.lastMessagePreview = lastMessageOrNull != null ? lastMessageOrNull.getContent() : null;
         this.lastMessageAt = lastMessageOrNull != null ? lastMessageOrNull.getSentAt() : null;
+        this.buyerAdmin = conversation.getBuyer().isAdmin();
+        this.sellerAdmin = conversation.getSeller().isAdmin();
     }
 
     public Long getId() { return id; }
