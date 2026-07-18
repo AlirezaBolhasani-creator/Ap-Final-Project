@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -57,11 +58,30 @@ public class ConversationsController {
         }
     }
 
+    private Label adminBadge() {
+        FontIcon icon = new FontIcon("fas-shield-alt");
+        icon.setIconSize(9);
+        icon.setIconColor(javafx.scene.paint.Color.web("#ff6b6b"));
+        Label badge = new Label("ادمین", icon);
+        badge.setStyle("-fx-background-color: rgba(239,63,63,0.18); -fx-text-fill: #ff6b6b; "
+                        + "-fx-padding: 1 8; -fx-background-radius: 10; -fx-font-size: 10px; -fx-font-weight: bold;");
+        return badge;
+    }
+
+    private HBox partyNode(String role, String username, boolean isAdmin) {
+        Label label = new Label(isAdmin ? role + ": ادمین" : role + ": " + username);
+        label.setStyle(isAdmin ? "-fx-text-fill: #ff6b6b;" : "-fx-text-fill: #aaa;");
+        HBox box = isAdmin ? new HBox(6, label, adminBadge()) : new HBox(6, label);
+        box.setAlignment(Pos.CENTER_LEFT);
+        return box;
+    }
+
     private VBox conversationCard(ConversationData conversation) {
         Label title = new Label("آگهی: " + conversation.adTitle());
         title.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 15px;");
-        Label parties = new Label("خریدار: " + conversation.buyerUsername() + " | فروشنده: " + conversation.sellerUsername());
-        parties.setStyle("-fx-text-fill: #aaa;");
+        HBox parties = new HBox(6, partyNode("خریدار", conversation.buyerUsername(), conversation.buyerAdmin()),
+                new Label("|"), partyNode("فروشنده", conversation.sellerUsername(), conversation.sellerAdmin()));
+        parties.setAlignment(Pos.CENTER_LEFT);
         Label preview = new Label(conversation.lastMessagePreview() == null ? "هنوز پیامی ارسال نشده" : conversation.lastMessagePreview());
         preview.setStyle("-fx-text-fill: #ddd;");
 

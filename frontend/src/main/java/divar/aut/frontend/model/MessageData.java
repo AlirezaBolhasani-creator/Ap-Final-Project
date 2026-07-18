@@ -6,6 +6,7 @@ public record MessageData(
         Long senderId,
         String senderUsername,
         String content,
-        String sentAt
+        String sentAt,
+        boolean senderAdmin
 ) {
 }

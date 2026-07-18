@@ -10,6 +10,8 @@ public record ConversationData(
         String sellerUsername,
         String createdAt,
         String lastMessagePreview,
-        String lastMessageAt
+        String lastMessageAt,
+        boolean buyerAdmin,
+        boolean sellerAdmin
 ) {
 }

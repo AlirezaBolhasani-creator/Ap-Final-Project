@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 
@@ -78,7 +79,25 @@ public class ConversationDetailController {
                 lastDate = messageDate;
             }
 
-            Label textLabel = new Label(message.senderUsername() + ": " + message.content());
+            boolean admin = message.senderAdmin();
+            Label senderLabel = new Label(admin ? "ادمین" : message.senderUsername());
+            senderLabel.setStyle("-fx-text-fill: #f0f0f0; -fx-font-size: 12px; -fx-font-weight: bold;");
+            HBox senderRow;
+            if (admin) {
+                FontIcon icon = new FontIcon("fas-shield-alt");
+                icon.setIconSize(9);
+                icon.setIconColor(javafx.scene.paint.Color.web("#ff6b6b"));
+                Label badge = new Label("ادمین", icon);
+                badge.setStyle("-fx-background-color: rgba(239,63,63,0.18); -fx-text-fill: #ff6b6b; "
+                        + "-fx-padding: 1 8; -fx-background-radius: 10; -fx-font-size: 10px; -fx-font-weight: bold;");
+                senderLabel.setStyle("-fx-text-fill: #ff6b6b; -fx-font-size: 12px; -fx-font-weight: bold;");
+                senderRow = new HBox(6, senderLabel, badge);
+            } else {
+                senderRow = new HBox(6, senderLabel);
+            }
+            senderRow.setAlignment(Pos.CENTER_LEFT);
+
+            Label textLabel = new Label(message.content());
             textLabel.setWrapText(true);
             textLabel.setStyle("-fx-text-fill: white; -fx-font-size: 13px;");
 
@@ -86,7 +105,7 @@ public class ConversationDetailController {
             Label timeLabel = new Label(timeText);
             timeLabel.setStyle("-fx-text-fill: #999; -fx-font-size: 10px;");
 
-            VBox bubbleContent = new VBox(5, textLabel, timeLabel);
+            VBox bubbleContent = new VBox(5, senderRow, textLabel, timeLabel);
 
             bubbleContent.setAlignment(Pos.BOTTOM_RIGHT);
             bubbleContent.setMaxWidth(480);
