@@ -89,7 +89,7 @@ public class PostAdController implements Initializable {
                 },
                 error -> {
                     statusLabel.setText("خطا در دریافت دسته‌بندی‌ها: " + error);
-                    statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
+                    setStatusError();
                 }
         );
     }
@@ -109,7 +109,7 @@ public class PostAdController implements Initializable {
                 },
                 error -> {
                     statusLabel.setText("خطا در دریافت شهرها: " + error);
-                    statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
+                    setStatusError();
                 }
         );
     }
@@ -126,7 +126,7 @@ public class PostAdController implements Initializable {
             selectedImageFiles.clear();
             selectedImageFiles.addAll(files);
             statusLabel.setText(files.size() + " عکس انتخاب شد");
-            statusLabel.setStyle("-fx-text-fill: #4CAF50;");
+            setStatusOk();
         }
     }
 
@@ -145,7 +145,7 @@ public class PostAdController implements Initializable {
         if (categoryCombo != null) categoryCombo.getSelectionModel().clearSelection();
         selectedImageFiles.clear();
         statusLabel.setText("");
-        statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
+        setStatusError();
     }
 
     @FXML
@@ -154,7 +154,7 @@ public class PostAdController implements Initializable {
         if (titleField.getText().isBlank() || priceField.getText().isBlank() ||
                 locationCombo.getValue() == null || categoryCombo.getValue() == null) {
             statusLabel.setText("لطفا تمام فیلدهای ستاره‌دار را پر کنید!");
-            statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
+            setStatusError();
             return;
         }
 
@@ -163,18 +163,18 @@ public class PostAdController implements Initializable {
             priceValue = Double.parseDouble(priceField.getText());
         } catch (NumberFormatException e) {
             statusLabel.setText("قیمت باید عدد باشد!");
-            statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
+            setStatusError();
             return;
         }
 
         statusLabel.setText("در حال ارسال...");
-        statusLabel.setStyle("-fx-text-fill: white;");
+        setStatusInfo();
 
         long selectedCategoryId = findSelectedCategoryId();
         long selectedCityId = findSelectedCityId();
         if (selectedCategoryId <= 0 || selectedCityId <= 0) {
             statusLabel.setText("لطفا دسته‌بندی و شهر معتبر انتخاب کنید.");
-            statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
+            setStatusError();
             return;
         }
 
@@ -211,7 +211,7 @@ public class PostAdController implements Initializable {
 
     private void handleError(String message) {
         statusLabel.setText(message);
-        statusLabel.setStyle("-fx-text-fill: #ff5a5a;");
+        setStatusError();
     }
 
     private long findSelectedCategoryId() {
@@ -248,5 +248,17 @@ public class PostAdController implements Initializable {
             case "USED" -> "در حد نو";
             default -> condition;
         };
+    }
+
+    private void setStatusError() {
+        statusLabel.getStyleClass().setAll("status-danger");
+    }
+
+    private void setStatusOk() {
+        statusLabel.getStyleClass().setAll("status-success");
+    }
+
+    private void setStatusInfo() {
+        statusLabel.getStyleClass().setAll("status-warning");
     }
 }
