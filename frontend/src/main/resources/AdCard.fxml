@@ -3,87 +3,62 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.shape.*?>
 
 <!--
-    AdCard.fxml
-    ──────────────────────────────────────────────────────────
-    Standalone card component.  Load via FXMLLoader inside
-    MainViewController and pass data with AdCardController.
-    ──────────────────────────────────────────────────────────
+    AdCard.fxml — marketplace ad card.
+    Loaded via FXMLLoader inside MainViewController and populated
+    with AdCardController.setData(...).
 -->
-<StackPane xmlns="http://javafx.com/javafx/17"
-           xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="divar.aut.frontend.controller.AdCardController"
-           stylesheets="@MainView.css"
-           styleClass="ad-card-root"
-           prefWidth="220"
-           prefHeight="300"
-           style="-fx-cursor: hand;">
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="divar.aut.frontend.controller.AdCardController"
+      stylesheets="@theme.css"
+      styleClass="ad-card"
+      prefWidth="240"
+      spacing="0"
+      alignment="TOP_CENTER"
+      style="-fx-cursor: hand;">
 
-    <!-- Glass background layer -->
-    <Rectangle fx:id="glassRect"
-               width="220" height="300"
-               arcWidth="18" arcHeight="18"
-               styleClass="glass-bg"/>
+    <!-- ── Thumbnail ── -->
+    <StackPane styleClass="ad-card-thumb">
+        <ImageView fx:id="adImage"
+                   fitWidth="240"
+                   fitHeight="160"
+                   preserveRatio="false"/>
 
-    <!-- Glass border layer -->
-    <Rectangle fx:id="borderRect"
-               width="220" height="300"
-               arcWidth="18" arcHeight="18"
-               styleClass="glass-border"/>
+        <!-- Category badge (bottom-right in RTL) -->
+        <HBox alignment="BOTTOM_LEFT" styleClass="overlay-pad">
+            <Label fx:id="photoCount" text="" styleClass="badge badge-neutral ad-card-obadge"/>
+        </HBox>
 
-    <!-- Card Content -->
-    <VBox styleClass="card-content" spacing="0" alignment="TOP_CENTER">
+        <!-- Condition chip (top-left in RTL) -->
+        <HBox alignment="TOP_RIGHT" styleClass="overlay-pad">
+            <Label fx:id="conditionLabel" text="نو" styleClass="badge badge-success ad-card-obadge"/>
+        </HBox>
+    </StackPane>
 
-        <!-- ── Thumbnail ── -->
-        <StackPane styleClass="thumb-wrapper">
-            <ImageView fx:id="adImage"
-                       fitWidth="220"
-                       fitHeight="155"
-                       preserveRatio="false"
-                       styleClass="ad-thumb"/>
+    <!-- ── Info ── -->
+    <VBox styleClass="ad-card-info" spacing="6" VBox.vgrow="ALWAYS">
 
-            <!-- Photo count badge -->
-            <HBox alignment="BOTTOM_LEFT" styleClass="badge-overlay">
-                <Label fx:id="photoCount" text="📷 2" styleClass="photo-badge"/>
-            </HBox>
+        <Label fx:id="adTitle"
+               text="عنوان آگهی"
+               styleClass="ad-card-title"
+               wrapText="true"
+               maxHeight="42"/>
 
-            <!-- Condition chip -->
-            <HBox alignment="TOP_RIGHT" styleClass="condition-overlay">
-                <Label fx:id="conditionLabel" text="نو" styleClass="condition-chip"/>
-            </HBox>
-        </StackPane>
+        <Region VBox.vgrow="ALWAYS"/>
 
-        <!-- ── Info ── -->
-        <VBox styleClass="card-info" spacing="6" VBox.vgrow="ALWAYS">
+        <HBox alignment="CENTER_RIGHT" spacing="4">
+            <Label fx:id="adPrice" text="۵۰۰٬۰۰۰" styleClass="ad-card-price"/>
+            <Label text="تومان" styleClass="text-caption"/>
+        </HBox>
 
-            <!-- Title -->
-            <Label fx:id="adTitle"
-                   text="عنوان آگهی"
-                   styleClass="card-title"
-                   wrapText="true"
-                   maxHeight="40"/>
-
-            <Region VBox.vgrow="ALWAYS"/>
-
-            <!-- Price -->
-            <HBox alignment="CENTER_RIGHT" spacing="4">
-                <Label fx:id="adPrice" text="۵۰۰٬۰۰۰" styleClass="card-price"/>
-                <Label text="تومان"                   styleClass="card-currency"/>
-            </HBox>
-
-            <!-- Location + Time -->
-            <HBox alignment="CENTER_RIGHT" spacing="6">
-                <Label fx:id="adTime"     text="لحظاتی پیش" styleClass="card-time"/>
-                <Label text="·"                              styleClass="card-dot"/>
-                <Label fx:id="adLocation" text="تهران"      styleClass="card-location"/>
-            </HBox>
-
-        </VBox>
+        <HBox alignment="CENTER_RIGHT" spacing="6">
+            <Label fx:id="adTime"     text="لحظاتی پیش" styleClass="text-caption"/>
+            <Label text="·"           styleClass="text-lo"/>
+            <Label fx:id="adLocation" text="تهران"      styleClass="text-caption"/>
+        </HBox>
 
     </VBox>
 
-</StackPane>
+</VBox>

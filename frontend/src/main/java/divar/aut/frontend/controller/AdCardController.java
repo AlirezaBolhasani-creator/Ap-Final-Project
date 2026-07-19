@@ -6,15 +6,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.shape.Rectangle;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class AdCardController implements Initializable {
 
-    @FXML private Rectangle  glassRect;
-    @FXML private Rectangle  borderRect;
     @FXML private ImageView  adImage;
     @FXML private Label      adTitle;
     @FXML private Label      adPrice;
@@ -42,13 +39,12 @@ public class AdCardController implements Initializable {
             };
             conditionLabel.setText(labelText);
             conditionLabel.setVisible(true);
-            String chipStyle = switch (labelText) {
-                case "نو" -> "-fx-background-color:rgba(74,222,128,.18);-fx-text-fill:#4ade80;-fx-border-color:rgba(74,222,128,.3);";
-                case "کارکرده" -> "-fx-background-color:rgba(168,85,247,.18);-fx-text-fill:#a855f7;-fx-border-color:rgba(168,85,247,.3);";
-                default -> "-fx-background-color:rgba(96,165,250,.18);-fx-text-fill:#60a5fa;-fx-border-color:rgba(96,165,250,.3);";
+            String badgeClass = switch (labelText) {
+                case "نو" -> "badge-success";
+                case "کارکرده" -> "badge-warning";
+                default -> "badge-info";
             };
-            conditionLabel.setStyle(chipStyle +
-                    "-fx-padding:3 8 3 8;-fx-background-radius:12;-fx-border-radius:12;-fx-border-width:1;");
+            conditionLabel.getStyleClass().setAll("badge", badgeClass, "ad-card-obadge");
         } else {
             conditionLabel.setVisible(false);
         }
