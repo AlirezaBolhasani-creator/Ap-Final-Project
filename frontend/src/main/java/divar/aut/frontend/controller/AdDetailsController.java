@@ -343,9 +343,8 @@ public class AdDetailsController {
 
     private void styleDialog(Dialog<?> dialog) {
         dialog.initOwner(titleLabel.getScene().getWindow());
-        java.net.URL themeUrl = getClass().getResource("/theme.css");
-        if (themeUrl == null) themeUrl = getClass().getResource("/Dialog.css");
-        dialog.getDialogPane().getStylesheets().add(themeUrl.toExternalForm());
+        dialog.getDialogPane().getStylesheets().add(
+                getClass().getResource("/theme.css").toExternalForm());
         dialog.getDialogPane().setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
     }
 
