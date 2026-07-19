@@ -44,7 +44,7 @@ public class ConversationDetailController {
         messagesBox.getChildren().clear();
         if (messages.isEmpty()) {
             Label emptyLabel = new Label("هنوز پیامی ارسال نشده است.");
-            emptyLabel.setStyle("-fx-text-fill: #888;");
+            emptyLabel.getStyleClass().add("empty-state");
             messagesBox.getChildren().add(emptyLabel);
             return;
         }
@@ -68,12 +68,10 @@ public class ConversationDetailController {
 
             if (messageDate != null && (lastDate == null || !lastDate.equals(messageDate))) {
                 Label dateLabel = new Label(messageDate.format(dateFormatter));
-                dateLabel.setStyle("-fx-background-color: rgba(255,255,255,0.15); " +
-                        "-fx-text-fill: #ddd; -fx-padding: 5 12; " +
-                        "-fx-background-radius: 12; -fx-font-size: 11px;");
+                dateLabel.getStyleClass().add("chat-date");
                 HBox dateBox = new HBox(dateLabel);
                 dateBox.setAlignment(Pos.CENTER);
-                dateBox.setStyle("-fx-padding: 10 0 10 0;");
+                dateBox.getStyleClass().add("chat-date-box");
                 messagesBox.getChildren().add(dateBox);
 
                 lastDate = messageDate;
@@ -81,16 +79,15 @@ public class ConversationDetailController {
 
             boolean admin = message.senderAdmin();
             Label senderLabel = new Label(admin ? "ادمین" : message.senderUsername());
-            senderLabel.setStyle("-fx-text-fill: #f0f0f0; -fx-font-size: 12px; -fx-font-weight: bold;");
+            senderLabel.getStyleClass().add("chat-sender");
             HBox senderRow;
             if (admin) {
                 FontIcon icon = new FontIcon("fas-shield-alt");
                 icon.setIconSize(9);
-                icon.setIconColor(javafx.scene.paint.Color.web("#ff6b6b"));
+                icon.setIconColor(javafx.scene.paint.Color.web("#fbbf24"));
                 Label badge = new Label("ادمین", icon);
-                badge.setStyle("-fx-background-color: rgba(239,63,63,0.18); -fx-text-fill: #ff6b6b; "
-                        + "-fx-padding: 1 8; -fx-background-radius: 10; -fx-font-size: 10px; -fx-font-weight: bold;");
-                senderLabel.setStyle("-fx-text-fill: #ff6b6b; -fx-font-size: 12px; -fx-font-weight: bold;");
+                badge.getStyleClass().addAll("badge", "badge-warning", "admin-badge");
+                senderLabel.getStyleClass().add("chat-sender-admin");
                 senderRow = new HBox(6, senderLabel, badge);
             } else {
                 senderRow = new HBox(6, senderLabel);
@@ -99,18 +96,17 @@ public class ConversationDetailController {
 
             Label textLabel = new Label(message.content());
             textLabel.setWrapText(true);
-            textLabel.setStyle("-fx-text-fill: white; -fx-font-size: 13px;");
+            textLabel.getStyleClass().add("chat-text");
 
             String timeText = (dateTime != null) ? dateTime.format(timeFormatter) : "";
             Label timeLabel = new Label(timeText);
-            timeLabel.setStyle("-fx-text-fill: #999; -fx-font-size: 10px;");
+            timeLabel.getStyleClass().add("chat-time");
 
             VBox bubbleContent = new VBox(5, senderRow, textLabel, timeLabel);
 
             bubbleContent.setAlignment(Pos.BOTTOM_RIGHT);
             bubbleContent.setMaxWidth(480);
-            bubbleContent.setStyle("-fx-background-color: rgba(255,255,255,0.08); " +
-                    "-fx-padding: 8 12; -fx-background-radius: 8;");
+            bubbleContent.getStyleClass().add("chat-bubble");
 
             messagesBox.getChildren().add(bubbleContent);
         }
@@ -133,7 +129,7 @@ public class ConversationDetailController {
                     if (error.contains("403") || error.toLowerCase().contains("forbidden")) {
                         messageField.setDisable(true); // برای همیشه دیزیبل می‌ماند
                         messageField.setPromptText("شما امکان ارسال پیام در این گفتگو را ندارید.");
-                        messageField.setStyle("-fx-background-color: #1a1a1a; -fx-border-color: #333;");
+                        messageField.getStyleClass().add("chat-input-disabled");
                         statusLabel.setText("امکان ارسال پیام وجود ندارد (مسدود).");
                     } else {
                         messageField.setDisable(false);

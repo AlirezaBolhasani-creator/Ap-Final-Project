@@ -48,7 +48,7 @@ public class ConversationsController {
         conversationList.getChildren().clear();
         if (conversations.isEmpty()) {
             Label emptyLabel = new Label("هنوز گفت‌وگویی ندارید.");
-            emptyLabel.setStyle("-fx-text-fill: #777; -fx-font-size: 14px;");
+            emptyLabel.getStyleClass().add("empty-state");
             conversationList.getChildren().add(emptyLabel);
             return;
         }
@@ -61,16 +61,15 @@ public class ConversationsController {
     private Label adminBadge() {
         FontIcon icon = new FontIcon("fas-shield-alt");
         icon.setIconSize(9);
-        icon.setIconColor(javafx.scene.paint.Color.web("#ff6b6b"));
+        icon.setIconColor(javafx.scene.paint.Color.web("#fbbf24"));
         Label badge = new Label("ادمین", icon);
-        badge.setStyle("-fx-background-color: rgba(239,63,63,0.18); -fx-text-fill: #ff6b6b; "
-                        + "-fx-padding: 1 8; -fx-background-radius: 10; -fx-font-size: 10px; -fx-font-weight: bold;");
+        badge.getStyleClass().addAll("badge", "badge-warning", "admin-badge");
         return badge;
     }
 
     private HBox partyNode(String role, String username, boolean isAdmin) {
         Label label = new Label(isAdmin ? role + ": ادمین" : role + ": " + username);
-        label.setStyle(isAdmin ? "-fx-text-fill: #ff6b6b;" : "-fx-text-fill: #aaa;");
+        label.getStyleClass().add(isAdmin ? "party-admin" : "party-name");
         HBox box = isAdmin ? new HBox(6, label, adminBadge()) : new HBox(6, label);
         box.setAlignment(Pos.CENTER_LEFT);
         return box;
@@ -78,15 +77,15 @@ public class ConversationsController {
 
     private VBox conversationCard(ConversationData conversation) {
         Label title = new Label("آگهی: " + conversation.adTitle());
-        title.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 15px;");
+        title.getStyleClass().add("convo-title");
         HBox parties = new HBox(6, partyNode("خریدار", conversation.buyerUsername(), conversation.buyerAdmin()),
                 new Label("|"), partyNode("فروشنده", conversation.sellerUsername(), conversation.sellerAdmin()));
         parties.setAlignment(Pos.CENTER_LEFT);
         Label preview = new Label(conversation.lastMessagePreview() == null ? "هنوز پیامی ارسال نشده" : conversation.lastMessagePreview());
-        preview.setStyle("-fx-text-fill: #ddd;");
+        preview.getStyleClass().add("convo-preview");
 
         Label timeLabel = new Label("");
-        timeLabel.setStyle("-fx-text-fill: #777; -fx-font-size: 11px;");
+        timeLabel.getStyleClass().add("text-caption");
 
         if (conversation.lastMessageAt() != null) {
             try {
@@ -103,7 +102,7 @@ public class ConversationsController {
         bottomRow.setAlignment(Pos.CENTER_LEFT);
 
         VBox card = new VBox(6, title, parties, bottomRow);
-        card.setStyle("-fx-background-color: rgba(255,255,255,0.06); -fx-padding: 14; -fx-background-radius: 10; -fx-cursor: hand;");
+        card.getStyleClass().addAll("card", "card-hover", "convo-card");
         card.setOnMouseClicked(event -> openConversation(conversation));
         return card;
     }
@@ -112,7 +111,7 @@ public class ConversationsController {
         ConversationDetailScreen screen = new ConversationDetailScreen(conversation, this::loadConversations);
         Stage stage = new Stage();
         stage.setTitle("گفت‌وگو: " + conversation.adTitle());
-        stage.setScene(new Scene(screen.getView()));
+        stage.setScene(new Scene(screen.getView(), javafx.scene.paint.Color.web("#0a1120")));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();
     }

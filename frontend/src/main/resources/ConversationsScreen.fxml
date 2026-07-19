@@ -2,30 +2,37 @@
 
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="divar.aut.frontend.controller.ConversationsController"
-            stylesheets="@MainView.css"
-            style="-fx-background-color: #0d0d0d;">
+            stylesheets="@theme.css">
 
     <top>
-        <HBox styleClass="navbar" alignment="CENTER_LEFT" spacing="12">
-            <Label text="گفت‌وگوها" styleClass="logo-text"/>
+        <HBox styleClass="app-nav" alignment="CENTER_LEFT" spacing="12">
+            <FontIcon iconLiteral="fas-comments" iconSize="22" iconColor="#6b93ff"/>
+            <Label text="گفت‌وگوها" styleClass="text-h2"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="بازگشت" styleClass="nav-btn" onAction="#goBack"/>
+            <Button text="بازگشت" styleClass="btn btn-ghost" onAction="#goBack">
+                <graphic><FontIcon iconLiteral="fas-arrow-left" iconSize="14" iconColor="#a9b8de"/></graphic>
+            </Button>
         </HBox>
     </top>
 
     <center>
-        <ScrollPane styleClass="ads-scroll" fitToWidth="true">
-            <VBox fx:id="conversationList" spacing="12" style="-fx-padding: 20;"/>
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="0" styleClass="list-page">
+                <Label text="پیام‌های خریداران و فروشندگان اینجاست" styleClass="text-small list-sub"/>
+                <VBox fx:id="conversationList" spacing="12"/>
+            </VBox>
         </ScrollPane>
     </center>
 
     <bottom>
-        <HBox styleClass="statusbar" alignment="CENTER_LEFT" spacing="12">
-            <Label fx:id="statusLabel" text="در حال دریافت گفت‌وگوها..." styleClass="status-text"/>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="12">
+            <FontIcon iconLiteral="fas-circle" iconSize="7" iconColor="#34d399"/>
+            <Label fx:id="statusLabel" text="در حال دریافت گفت‌وگوها..." styleClass="text-caption"/>
         </HBox>
     </bottom>
 </BorderPane>
