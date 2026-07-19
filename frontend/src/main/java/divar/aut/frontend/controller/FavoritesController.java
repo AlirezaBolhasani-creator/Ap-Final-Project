@@ -48,7 +48,7 @@ public class FavoritesController {
         favoritesGrid.getChildren().clear();
         if (favorites.isEmpty()) {
             Label emptyLabel = new Label("هنوز آگهی‌ای به علاقه‌مندی‌ها اضافه نکرده‌اید.");
-            emptyLabel.setStyle("-fx-text-fill: #777; -fx-font-size: 14px;");
+            emptyLabel.getStyleClass().add("empty-state");
             favoritesGrid.getChildren().add(emptyLabel);
             return;
         }
@@ -82,7 +82,7 @@ public class FavoritesController {
 
                 Stage stage = new Stage();
                 stage.setTitle("جزئیات آگهی: " + detail.title());
-                stage.setScene(new Scene(root));
+                stage.setScene(new Scene(root, javafx.scene.paint.Color.web("#0a1120")));
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.show();
             } catch (IOException e) {

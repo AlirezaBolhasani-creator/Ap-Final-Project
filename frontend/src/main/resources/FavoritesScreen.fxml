@@ -2,30 +2,39 @@
 
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="divar.aut.frontend.controller.FavoritesController"
-            stylesheets="@MainView.css"
-            style="-fx-background-color: #0d0d0d;">
+            stylesheets="@theme.css">
 
     <top>
-        <HBox styleClass="navbar" alignment="CENTER_LEFT" spacing="12">
-            <Label text="علاقه‌مندی‌ها" styleClass="logo-text"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button text="بازگشت" styleClass="nav-btn" onAction="#goBack"/>
-        </HBox>
+        <VBox>
+            <HBox styleClass="app-nav" alignment="CENTER_LEFT" spacing="12">
+                <FontIcon iconLiteral="fas-heart" iconSize="22" iconColor="#fb6f6f"/>
+                <Label text="علاقه‌مندی‌ها" styleClass="text-h2"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="بازگشت" styleClass="btn btn-ghost" onAction="#goBack">
+                    <graphic><FontIcon iconLiteral="fas-arrow-left" iconSize="14" iconColor="#a9b8de"/></graphic>
+                </Button>
+            </HBox>
+        </VBox>
     </top>
 
     <center>
-        <ScrollPane styleClass="ads-scroll" fitToWidth="true">
-            <FlowPane fx:id="favoritesGrid" styleClass="ad-grid" hgap="16" vgap="16" prefWrapLength="800"/>
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="0" styleClass="list-page">
+                <Label text="آگهی‌هایی که ذخیره کردی اینجا نمایش داده می‌شوند" styleClass="text-small list-sub"/>
+                <FlowPane fx:id="favoritesGrid" hgap="20" vgap="20" prefWrapLength="820"/>
+            </VBox>
         </ScrollPane>
     </center>
 
     <bottom>
-        <HBox styleClass="statusbar" alignment="CENTER_LEFT" spacing="12">
-            <Label fx:id="statusLabel" text="در حال دریافت علاقه‌مندی‌ها..." styleClass="status-text"/>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="12">
+            <FontIcon iconLiteral="fas-circle" iconSize="7" iconColor="#34d399"/>
+            <Label fx:id="statusLabel" text="در حال دریافت علاقه‌مندی‌ها..." styleClass="text-caption"/>
         </HBox>
     </bottom>
 </BorderPane>
