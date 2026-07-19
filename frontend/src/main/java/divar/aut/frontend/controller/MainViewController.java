@@ -166,7 +166,7 @@ public class MainViewController implements Initializable {
             card.setOnMouseEntered(e -> {
                 card.setScaleX(1.03);
                 card.setScaleY(1.03);
-                card.setStyle("-fx-effect:dropshadow(gaussian,rgba(239,63,63,0.3),24,0.1,0,6);");
+                card.setStyle("-fx-effect:dropshadow(gaussian,rgba(76,125,255,0.35),24,0.1,0,6);");
             });
             card.setOnMouseExited(e -> {
                 card.setScaleX(1.0);

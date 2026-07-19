@@ -2,61 +2,59 @@
 
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
-<?import javafx.scene.text.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="divar.aut.frontend.controller.MainViewController"
-            stylesheets="@MainView.css"
-            style="-fx-background-color: #0d0d0d;">
+            stylesheets="@theme.css">
 
     <!-- ═══════════════════  TOP NAV BAR  ═══════════════════ -->
     <top>
-        <VBox styleClass="nav-wrapper">
+        <VBox>
 
-            <!-- Primary Navbar -->
-            <HBox styleClass="navbar" alignment="CENTER_LEFT" spacing="0">
+            <!-- Primary navbar -->
+            <HBox styleClass="app-nav" alignment="CENTER_LEFT" spacing="8">
 
-                <!-- Logo -->
-                <Label text="دیوار" styleClass="logo-text"/>
+                <Label text="دیوار" styleClass="brand-logo"/>
 
                 <Region HBox.hgrow="ALWAYS"/>
 
-                <!-- Search Bar -->
-                <HBox styleClass="search-bar" alignment="CENTER" spacing="8">
-                    <FontIcon iconLiteral="fas-search" iconSize="16" iconColor="#999" styleClass="search-icon"/>
+                <!-- Search -->
+                <HBox styleClass="input-icon" alignment="CENTER" spacing="8" minWidth="360">
+                    <FontIcon iconLiteral="fas-search" iconSize="16" iconColor="#6b7ba3"/>
                     <TextField fx:id="searchField"
-                               promptText="جستجو در همه آگهی‌ها"
-                               styleClass="search-input"
-                               onAction="#applyFilter"/>
+                               promptText="جستجو در همه آگهی‌ها…"
+                               onAction="#applyFilter"
+                               HBox.hgrow="ALWAYS"/>
                 </HBox>
 
                 <Region HBox.hgrow="ALWAYS"/>
 
-                <!-- Nav Actions -->
+                <!-- Nav actions -->
                 <HBox spacing="4" alignment="CENTER">
-                    <Button fx:id="myAdsBtn" text="دیوار من" styleClass="nav-btn" onAction="#onMyAds"/>
-                    <Button text="چت و تماس" styleClass="nav-btn" onAction="#onConversations"/>
-                    <Button text="علاقه‌مندی‌ها" styleClass="nav-btn" onAction="#onFavorites"/>
-
-                    <Button fx:id="adminPanelBtn" text="پنل مدیریت" styleClass="nav-btn" onAction="#onAdminPanel"/>
-                    <Button text="خروج" styleClass="nav-btn" onAction="#onLogout">
+                    <Button fx:id="myAdsBtn" text="دیوار من" styleClass="btn btn-ghost" onAction="#onMyAds"/>
+                    <Button text="گفتگوها" styleClass="btn btn-ghost" onAction="#onConversations"/>
+                    <Button text="علاقه‌مندی‌ها" styleClass="btn btn-ghost" onAction="#onFavorites"/>
+                    <Button fx:id="adminPanelBtn" text="پنل مدیریت" styleClass="btn btn-ghost" onAction="#onAdminPanel"/>
+                    <Button text="خروج" styleClass="btn btn-ghost" onAction="#onLogout">
                         <graphic>
-                            <FontIcon iconLiteral="fas-sign-out-alt" iconSize="14" iconColor="#aaa"/>
+                            <FontIcon iconLiteral="fas-sign-out-alt" iconSize="15" iconColor="#a9b8de"/>
                         </graphic>
                     </Button>
-
-                    <Button text="ثبت آگهی" styleClass="post-btn" onAction="#onPostAd"/>
+                    <Button text="ثبت آگهی" styleClass="btn btn-primary" onAction="#onPostAd">
+                        <graphic>
+                            <FontIcon iconLiteral="fas-plus" iconSize="14" iconColor="#ffffff"/>
+                        </graphic>
+                    </Button>
                 </HBox>
 
             </HBox>
 
-            <!-- Category Bar -->
-            <HBox fx:id="categoryBar" styleClass="category-bar" alignment="CENTER_RIGHT" spacing="4">
-                <Label text="دسته‌ها" styleClass="cat-label"/>
+            <!-- Category chips bar -->
+            <HBox fx:id="categoryBar" styleClass="chip-bar" alignment="CENTER_RIGHT" spacing="8">
+                <Label text="دسته‌ها" styleClass="text-small"/>
             </HBox>
 
         </VBox>
@@ -66,67 +64,87 @@
     <center>
         <HBox spacing="0" alignment="TOP_RIGHT">
 
-            <!-- ───── Ad Grid (scrollable) ───── -->
+            <!-- ───── Ads area (scrollable) ───── -->
             <ScrollPane fx:id="adScrollPane"
-                        styleClass="ads-scroll"
                         fitToWidth="true"
                         HBox.hgrow="ALWAYS">
 
                 <VBox spacing="0" styleClass="ads-container">
 
-                    <!-- Section Header -->
-                    <HBox styleClass="section-header" alignment="CENTER_RIGHT">
-                        <Label text="آگهی‌های شهر" styleClass="section-title"/>
+                    <!-- Hero header -->
+                    <VBox styleClass="hero" spacing="14" alignment="CENTER_RIGHT" nodeOrientation="RIGHT_TO_LEFT">
+                        <Label text="هرچی بخوای، نزدیکته" styleClass="text-display"/>
+                        <Label text="میان هزاران آگهی تاییدشده در شهر خودت جستجو کن — از موبایل و ماشین تا خانه و کار."
+                               styleClass="hero-sub" wrapText="true"/>
+                        <HBox spacing="18" alignment="CENTER_RIGHT" nodeOrientation="RIGHT_TO_LEFT">
+                            <HBox spacing="8" alignment="CENTER">
+                                <FontIcon iconLiteral="fas-shield-alt" iconSize="16" iconColor="#34d399"/>
+                                <Label text="آگهی‌های تاییدشده" styleClass="text-small"/>
+                            </HBox>
+                            <HBox spacing="8" alignment="CENTER">
+                                <FontIcon iconLiteral="fas-comments" iconSize="16" iconColor="#6b93ff"/>
+                                <Label text="گفتگوی مستقیم با فروشنده" styleClass="text-small"/>
+                            </HBox>
+                            <HBox spacing="8" alignment="CENTER">
+                                <FontIcon iconLiteral="fas-map-marker-alt" iconSize="16" iconColor="#fbbf24"/>
+                                <Label text="فیلتر بر اساس شهر و قیمت" styleClass="text-small"/>
+                            </HBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Section header -->
+                    <HBox alignment="CENTER_RIGHT" styleClass="section-header">
+                        <Label text="جدیدترین آگهی‌ها" styleClass="text-h2"/>
                         <Region HBox.hgrow="ALWAYS"/>
-                        <ComboBox fx:id="sortCombo"
-                                  promptText="مرتب‌سازی"
-                                  styleClass="sort-combo"/>
+                        <ComboBox fx:id="sortCombo" promptText="مرتب‌سازی"/>
                     </HBox>
 
-                    <!-- Ad Grid -->
+                    <!-- Ad grid -->
                     <FlowPane fx:id="adGrid"
-                              styleClass="ad-grid"
-                              hgap="16"
-                              vgap="16"
-                              prefWrapLength="800">
+                              hgap="20"
+                              vgap="20"
+                              prefWrapLength="820">
                         <!-- AdCards are injected programmatically in MainViewController -->
                     </FlowPane>
 
-                    <!-- Load More -->
+                    <!-- Load more -->
                     <HBox alignment="CENTER" styleClass="load-more-wrapper">
                         <Button fx:id="loadMoreBtn"
                                 text="نمایش بیشتر"
-                                styleClass="load-more-btn"
+                                styleClass="btn btn-secondary btn-lg"
                                 onAction="#loadMore"/>
                     </HBox>
 
                 </VBox>
             </ScrollPane>
 
-            <!-- ───── Right Sidebar ───── -->
-            <VBox styleClass="sidebar" spacing="16" minWidth="220" maxWidth="220">
+            <!-- ───── Filters sidebar ───── -->
+            <VBox styleClass="filter-sidebar" spacing="16" minWidth="260" maxWidth="260">
 
-                <!-- Location -->
-                <VBox styleClass="sidebar-card" spacing="8">
-                    <HBox alignment="CENTER_RIGHT" spacing="6">
-                        <FontIcon iconLiteral="fas-map-marker-alt" iconSize="14" iconColor="#aaa"/>
-                        <Label text="شهر" styleClass="sidebar-title"/>
+                <VBox styleClass="card" spacing="10">
+                    <HBox alignment="CENTER_RIGHT" spacing="8">
+                        <FontIcon iconLiteral="fas-map-marker-alt" iconSize="15" iconColor="#6b93ff"/>
+                        <Label text="شهر" styleClass="text-h3"/>
                     </HBox>
-                    <ComboBox fx:id="cityCombo" promptText="همه شهرها" styleClass="sort-combo" maxWidth="Infinity" onAction="#applyFilter"/>
+                    <ComboBox fx:id="cityCombo" promptText="همه شهرها" maxWidth="Infinity" onAction="#applyFilter"/>
                 </VBox>
 
-                <!-- Price Filter -->
-                <VBox styleClass="sidebar-card" spacing="10">
-                    <Label text="قیمت (تومان)" styleClass="sidebar-title"/>
-                    <TextField fx:id="minPriceField" promptText="از" styleClass="price-field" onAction="#applyFilter"/>
-                    <TextField fx:id="maxPriceField" promptText="تا" styleClass="price-field" onAction="#applyFilter"/>
-                    <Button text="اعمال فیلتر" styleClass="apply-btn" onAction="#applyFilter"/>
+                <VBox styleClass="card" spacing="12">
+                    <HBox alignment="CENTER_RIGHT" spacing="8">
+                        <FontIcon iconLiteral="fas-tag" iconSize="15" iconColor="#34d399"/>
+                        <Label text="قیمت (تومان)" styleClass="text-h3"/>
+                    </HBox>
+                    <TextField fx:id="minPriceField" promptText="از" onAction="#applyFilter"/>
+                    <TextField fx:id="maxPriceField" promptText="تا" onAction="#applyFilter"/>
+                    <Button text="اعمال فیلتر" styleClass="btn btn-primary" maxWidth="Infinity" onAction="#applyFilter"/>
                 </VBox>
 
-                <!-- Condition Filter -->
-                <VBox styleClass="sidebar-card" spacing="8">
-                    <Label text="وضعیت کالا" styleClass="sidebar-title"/>
-                    <ComboBox fx:id="conditionCombo" promptText="همه وضعیت‌ها" styleClass="sort-combo" maxWidth="Infinity" onAction="#applyFilter"/>
+                <VBox styleClass="card" spacing="10">
+                    <HBox alignment="CENTER_RIGHT" spacing="8">
+                        <FontIcon iconLiteral="fas-box-open" iconSize="15" iconColor="#fbbf24"/>
+                        <Label text="وضعیت کالا" styleClass="text-h3"/>
+                    </HBox>
+                    <ComboBox fx:id="conditionCombo" promptText="همه وضعیت‌ها" maxWidth="Infinity" onAction="#applyFilter"/>
                 </VBox>
 
             </VBox>
@@ -136,8 +154,9 @@
 
     <!-- ═══════════════════  STATUS BAR  ═══════════════════ -->
     <bottom>
-        <HBox styleClass="statusbar" alignment="CENTER_LEFT" spacing="12">
-            <Label fx:id="statusLabel" text="آماده" styleClass="status-text"/>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="12">
+            <FontIcon iconLiteral="fas-circle" iconSize="7" iconColor="#34d399"/>
+            <Label fx:id="statusLabel" text="آماده" styleClass="text-caption"/>
         </HBox>
     </bottom>
 
