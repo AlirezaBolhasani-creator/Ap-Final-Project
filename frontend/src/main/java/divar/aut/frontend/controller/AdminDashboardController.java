@@ -134,7 +134,7 @@ public class AdminDashboardController {
             List<AdData> group = ads.stream().filter(ad -> status.equals(ad.status())).toList();
             if (group.isEmpty()) continue;
             Label header = new Label(titles.get(status) + " (" + group.size() + ")");
-            header.setStyle("-fx-text-fill: #f0f0f0; -fx-font-weight: bold; -fx-font-size: 15px; -fx-padding: 8 0 2 0;");
+            header.getStyleClass().add("admin-group-header");
             HBox headerBox = new HBox(header);
             headerBox.setPrefWidth(Double.MAX_VALUE);
             headerBox.setMaxWidth(Double.MAX_VALUE);
@@ -146,7 +146,7 @@ public class AdminDashboardController {
         }
         if (adminAdGrid.getChildren().isEmpty()) {
             Label empty = new Label("آگهی‌ای وجود ندارد");
-            empty.setStyle("-fx-text-fill: #777; -fx-font-size: 14px;");
+            empty.getStyleClass().add("empty-state");
             adminAdGrid.getChildren().add(empty);
         }
     }
@@ -213,7 +213,7 @@ public class AdminDashboardController {
     private void styleDialog(Dialog<?> dialog) {
         dialog.initOwner(statusLabel.getScene().getWindow());
         dialog.getDialogPane().getStylesheets().add(
-                getClass().getResource("/Dialog.css").toExternalForm());
+                getClass().getResource("/theme.css").toExternalForm());
         dialog.getDialogPane().setNodeOrientation(javafx.geometry.NodeOrientation.RIGHT_TO_LEFT);
     }
 
@@ -343,7 +343,7 @@ public class AdminDashboardController {
         @Override public String toString() { return name; }
     }
 
-    private void showSuccess(String message) { statusLabel.setText(message); statusLabel.setStyle("-fx-text-fill: #4ade80;"); }
-    private void showError(String message) { statusLabel.setText("خطا: " + message); statusLabel.setStyle("-fx-text-fill: #ff5a5a;"); }
+    private void showSuccess(String message) { statusLabel.setText(message); statusLabel.getStyleClass().setAll("status-success"); }
+    private void showError(String message) { statusLabel.setText("خطا: " + message); statusLabel.getStyleClass().setAll("status-danger"); }
     @FXML private void goBack() { viewManager.toMain(); }
 }
