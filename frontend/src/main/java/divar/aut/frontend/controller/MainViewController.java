@@ -209,7 +209,7 @@ public class MainViewController implements Initializable {
 
             javafx.stage.Stage stage = new javafx.stage.Stage();
             stage.setTitle("جزئیات آگهی: " + adDetail.title());
-            stage.setScene(new javafx.scene.Scene(root));
+            stage.setScene(new javafx.scene.Scene(root, javafx.scene.paint.Color.web("#0a1120")));
             stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
             stage.show();
         } catch (IOException ex) {

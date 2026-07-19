@@ -339,7 +339,10 @@
 }
 
 /* ── Ad details screen ────────────────────────────────────────────────── */
-.detail-page { -fx-padding: 28; }
+.detail-page {
+    -fx-padding: 28;
+    -fx-background-color: linear-gradient(to bottom, #0c1830, #0a1120 40%, #0a1120);
+}
 .detail-main-frame {
     -fx-background-color: #182442;
     -fx-background-radius: 18;
