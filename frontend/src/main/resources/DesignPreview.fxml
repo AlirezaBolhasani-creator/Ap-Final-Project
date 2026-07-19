@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="divar.aut.frontend.preview.DesignPreviewController"
+            stylesheets="@theme.css"
+            nodeOrientation="RIGHT_TO_LEFT">
+
+    <!-- ── Persistent nav ── -->
+    <top>
+        <HBox styleClass="app-nav" alignment="CENTER_LEFT" spacing="6">
+            <Label text="دیوار" styleClass="brand-logo"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="خانه" styleClass="nav-link"/>
+            <Button text="علاقه‌مندی‌ها" styleClass="nav-link"/>
+            <Button text="پیام‌ها" styleClass="nav-link"/>
+            <Button text="ثبت آگهی" styleClass="btn btn-primary"/>
+        </HBox>
+    </top>
+
+    <!-- ── Component gallery ── -->
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox spacing="40" style="-fx-padding: 32 40 56 40;" maxWidth="1100">
+
+                <!-- Hero -->
+                <VBox styleClass="hero" spacing="18">
+                    <Label text="خرید و فروش، ساده و سریع" styleClass="text-display"/>
+                    <Label text="هزاران آگهی دست دوم در اطراف شما — با اطمینان معامله کنید."
+                           styleClass="text-body" style="-fx-text-fill: #a6a6ad;" wrapText="true"/>
+                    <HBox spacing="12">
+                        <Button text="شروع کنید" styleClass="btn btn-primary btn-lg"/>
+                        <Button text="بیشتر بدانید" styleClass="btn btn-ghost btn-lg"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Typography -->
+                <VBox spacing="10">
+                    <Label text="تایپوگرافی" styleClass="text-h2"/>
+                    <Label text="تیتر نمایشی — Display 30" styleClass="text-display"/>
+                    <Label text="تیتر اصلی — H1 24" styleClass="text-h1"/>
+                    <Label text="تیتر دوم — H2 19" styleClass="text-h2"/>
+                    <Label text="تیتر سوم — H3 16" styleClass="text-h3"/>
+                    <Label text="متن بدنه — Body 14. این متن برای توضیحات و محتوای اصلی استفاده می‌شود." styleClass="text-body"/>
+                    <Label text="متن کوچک — Small 12" styleClass="text-small"/>
+                    <Label text="زیرنویس — Caption 11" styleClass="text-caption"/>
+                </VBox>
+
+                <!-- Buttons -->
+                <VBox spacing="14">
+                    <Label text="دکمه‌ها" styleClass="text-h2"/>
+                    <FlowPane hgap="12" vgap="12">
+                        <Button text="اصلی" styleClass="btn btn-primary"/>
+                        <Button text="فرعی" styleClass="btn btn-secondary"/>
+                        <Button text="شبح" styleClass="btn btn-ghost"/>
+                        <Button text="خطر" styleClass="btn btn-danger"/>
+                        <Button text="موفقیت" styleClass="btn btn-success"/>
+                        <Button text="بزرگ" styleClass="btn btn-primary btn-lg"/>
+                        <Button text="کوچک" styleClass="btn btn-secondary btn-sm"/>
+                        <Button text="غیرفعال" styleClass="btn btn-primary" disable="true"/>
+                    </FlowPane>
+                </VBox>
+
+                <!-- Inputs -->
+                <VBox spacing="14">
+                    <Label text="ورودی‌ها" styleClass="text-h2"/>
+                    <GridPane hgap="16" vgap="14">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+                        <TextField promptText="نام کاربری" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <PasswordField promptText="رمز عبور" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <ComboBox promptText="شهر" GridPane.columnIndex="0" GridPane.rowIndex="1" maxWidth="Infinity">
+                            <items><javafx.collections.FXCollections fx:factory="observableArrayList">
+                                <String fx:value="تهران"/><String fx:value="مشهد"/><String fx:value="اصفهان"/>
+                            </javafx.collections.FXCollections></items>
+                        </ComboBox>
+                        <HBox spacing="18" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <CheckBox text="نو" selected="true"/>
+                            <RadioButton text="کارکرده"/>
+                        </HBox>
+                    </GridPane>
+                    <TextArea promptText="توضیحات آگهی…" prefRowCount="3" wrapText="true"/>
+                </VBox>
+
+                <!-- Badges -->
+                <VBox spacing="14">
+                    <Label text="نشان‌ها و چیپ‌ها" styleClass="text-h2"/>
+                    <FlowPane hgap="10" vgap="10">
+                        <Label text="فعال" styleClass="badge badge-success"/>
+                        <Label text="در انتظار" styleClass="badge badge-warning"/>
+                        <Label text="رد شده" styleClass="badge badge-danger"/>
+                        <Label text="ادمین" styleClass="badge badge-brand"/>
+                        <Label text="اطلاع" styleClass="badge badge-info"/>
+                        <Label text="پیش‌فرض" styleClass="badge badge-neutral"/>
+                    </FlowPane>
+                    <FlowPane hgap="10" vgap="10">
+                        <Button text="همه" styleClass="chip chip-active"/>
+                        <Button text="املاک" styleClass="chip"/>
+                        <Button text="وسایل نقلیه" styleClass="chip"/>
+                        <Button text="کالای دیجیتال" styleClass="chip"/>
+                        <Button text="خانه و آشپزخانه" styleClass="chip"/>
+                    </FlowPane>
+                </VBox>
+
+                <!-- Ad card -->
+                <VBox spacing="14">
+                    <Label text="کارت آگهی" styleClass="text-h2"/>
+                    <FlowPane hgap="16" vgap="16">
+                        <VBox styleClass="card card-hover" spacing="10" prefWidth="240">
+                            <StackPane style="-fx-background-color: #232328; -fx-background-radius: 12;" prefHeight="140">
+                                <FontIcon iconLiteral="fas-image" iconSize="34" iconColor="#6a6a72"/>
+                                <StackPane alignment="TOP_RIGHT">
+                                    <Label text="نو" styleClass="badge badge-success" StackPane.alignment="CENTER">
+                                        <StackPane.margin><Insets top="10" right="10"/></StackPane.margin>
+                                    </Label>
+                                </StackPane>
+                            </StackPane>
+                            <Label text="گوشی آیفون ۱۳ — تمیز" styleClass="text-h3"/>
+                            <HBox alignment="CENTER_LEFT" spacing="6">
+                                <Label text="۲۸٬۵۰۰٬۰۰۰" styleClass="text-price"/>
+                                <Label text="تومان" styleClass="text-caption"/>
+                            </HBox>
+                            <Label text="تهران · لحظاتی پیش" styleClass="text-caption"/>
+                        </VBox>
+
+                        <VBox styleClass="card card-hover" spacing="10" prefWidth="240">
+                            <StackPane style="-fx-background-color: #232328; -fx-background-radius: 12;" prefHeight="140">
+                                <FontIcon iconLiteral="fas-couch" iconSize="34" iconColor="#6a6a72"/>
+                                <StackPane alignment="TOP_RIGHT">
+                                    <Label text="کارکرده" styleClass="badge badge-warning" StackPane.alignment="CENTER">
+                                        <StackPane.margin><Insets top="10" right="10"/></StackPane.margin>
+                                    </Label>
+                                </StackPane>
+                            </StackPane>
+                            <Label text="مبل راحتی هفت نفره" styleClass="text-h3"/>
+                            <HBox alignment="CENTER_LEFT" spacing="6">
+                                <Label text="۱۲٬۰۰۰٬۰۰۰" styleClass="text-price"/>
+                                <Label text="تومان" styleClass="text-caption"/>
+                            </HBox>
+                            <Label text="مشهد · دیروز" styleClass="text-caption"/>
+                        </VBox>
+                    </FlowPane>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>
