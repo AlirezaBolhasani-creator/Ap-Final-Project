@@ -107,14 +107,6 @@
                         <!-- AdCards are injected programmatically in MainViewController -->
                     </FlowPane>
 
-                    <!-- Load more -->
-                    <HBox alignment="CENTER" styleClass="load-more-wrapper">
-                        <Button fx:id="loadMoreBtn"
-                                text="نمایش بیشتر"
-                                styleClass="btn btn-secondary btn-lg"
-                                onAction="#loadMore"/>
-                    </HBox>
-
                 </VBox>
             </ScrollPane>
 

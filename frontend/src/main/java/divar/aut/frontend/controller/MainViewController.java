@@ -31,7 +31,6 @@ public class MainViewController implements Initializable {
     @FXML private ScrollPane       adScrollPane;
     @FXML private TextField        searchField;
     @FXML private ComboBox<String> sortCombo;
-    @FXML private Button           loadMoreBtn;
     @FXML private Label            statusLabel;
     @FXML private Button           myAdsBtn;
     @FXML private Button           adminPanelBtn;
@@ -88,22 +87,15 @@ public class MainViewController implements Initializable {
 
     private void loadPage() {
         if (statusLabel != null) statusLabel.setText(showingMyAds ? "در حال دریافت آگهی‌های من..." : "در حال دریافت آگهی‌ها...");
-        if (loadMoreBtn != null) {
-            loadMoreBtn.setDisable(true);
-            loadMoreBtn.setVisible(!showingMyAds);
-            loadMoreBtn.setManaged(!showingMyAds);
-        }
 
         if (showingMyAds) {
             adService.fetchMyAds(
                     ads -> {
                         if (statusLabel != null) statusLabel.setText(ads.size() + " آگهی دریافت شد");
-                        if (loadMoreBtn != null) loadMoreBtn.setDisable(true);
                         renderAds(ads);
                     },
                     error -> {
                         if (statusLabel != null) statusLabel.setText("خطا در ارتباط با سرور: " + error);
-                        if (loadMoreBtn != null) loadMoreBtn.setDisable(false);
                     }
             );
         } else {
@@ -111,22 +103,10 @@ public class MainViewController implements Initializable {
                     parsePrice(maxPriceField), selectedCondition(), selectedSort(),
                     ads -> {
                         if (statusLabel != null) statusLabel.setText(ads.size() + " آگهی دریافت شد");
-                        if (ads.isEmpty()) {
-                            if (loadMoreBtn != null) {
-                                loadMoreBtn.setDisable(true);
-                                loadMoreBtn.setText("پایان آگهی‌ها");
-                            }
-                        } else {
-                            if (loadMoreBtn != null) {
-                                loadMoreBtn.setDisable(false);
-                                loadMoreBtn.setText("نمایش بیشتر");
-                            }
-                            renderAds(ads);
-                        }
+                        renderAds(ads);
                     },
                     error -> {
                         if (statusLabel != null) statusLabel.setText("خطا در ارتباط با سرور: " + error);
-                        if (loadMoreBtn != null) loadMoreBtn.setDisable(false);
                     }
             );
         }
@@ -188,12 +168,6 @@ public class MainViewController implements Initializable {
             e.printStackTrace();
             return null;
         }
-    }
-
-    @FXML
-    private void loadMore() {
-        page++;
-        loadPage();
     }
 
     private void openAdDetails(divar.aut.frontend.model.AdDetailData adDetail) {
