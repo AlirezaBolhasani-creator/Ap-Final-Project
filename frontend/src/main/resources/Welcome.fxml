@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="divar.aut.frontend.controller.WelcomeController"
+           stylesheets="@theme.css" styleClass="auth-backdrop"
+           nodeOrientation="RIGHT_TO_LEFT">
+
+    <VBox alignment="CENTER" spacing="0" maxWidth="560">
+        <VBox styleClass="auth-card" alignment="CENTER" spacing="26" maxWidth="560">
+
+            <Label text="دیوار" styleClass="brand-logo" style="-fx-font-size: 56px;"/>
+            <Label text="خرید و فروش کالای دست دوم، ساده و مطمئن"
+                   styleClass="text-body text-muted" wrapText="true"/>
+
+            <Separator/>
+
+            <Button text="ورود به حساب" styleClass="btn btn-primary btn-lg" maxWidth="Infinity"
+                    onAction="#goLogin">
+                <graphic><FontIcon iconLiteral="fas-sign-in-alt" iconSize="18" iconColor="white"/></graphic>
+            </Button>
+            <Button text="ساخت حساب جدید" styleClass="btn btn-secondary btn-lg" maxWidth="Infinity"
+                    onAction="#goRegister">
+                <graphic><FontIcon iconLiteral="fas-user-plus" iconSize="18" iconColor="#a9b8de"/></graphic>
+            </Button>
+        </VBox>
+    </VBox>
+</StackPane>

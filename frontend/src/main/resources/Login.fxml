@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="divar.aut.frontend.controller.LoginController"
+           stylesheets="@theme.css" styleClass="auth-backdrop"
+           nodeOrientation="RIGHT_TO_LEFT">
+
+    <VBox alignment="CENTER" spacing="0" maxWidth="540">
+        <VBox styleClass="auth-card" alignment="CENTER" spacing="20" maxWidth="540">
+
+            <Label text="دیوار" styleClass="brand-logo"/>
+            <Label text="ورود به حساب کاربری" styleClass="text-h2"/>
+
+            <VBox spacing="8" maxWidth="Infinity" alignment="CENTER_LEFT">
+                <Label text="نام کاربری" styleClass="text-small"/>
+                <TextField fx:id="usernameField" promptText="نام کاربری خود را وارد کنید" maxWidth="Infinity"/>
+            </VBox>
+
+            <VBox spacing="8" maxWidth="Infinity" alignment="CENTER_LEFT">
+                <Label text="رمز عبور" styleClass="text-small"/>
+                <PasswordField fx:id="passwordField" promptText="رمز عبور خود را وارد کنید" maxWidth="Infinity"/>
+            </VBox>
+
+            <Label fx:id="statusLabel" text="" styleClass="status-danger" wrapText="true"/>
+
+            <Button text="ورود" styleClass="btn btn-primary btn-lg" maxWidth="Infinity" onAction="#handleLogin"/>
+
+            <Button text="بازگشت" styleClass="btn btn-ghost" onAction="#goWelcome">
+                <graphic><FontIcon iconLiteral="fas-arrow-right" iconSize="14" iconColor="#a9b8de"/></graphic>
+            </Button>
+        </VBox>
+    </VBox>
+</StackPane>

@@ -1,9 +1,13 @@
 package divar.aut.frontend.ui;
 import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.SessionManager;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import divar.aut.frontend.DivarApplication;
 import javafx.scene.layout.StackPane;
+
+import java.io.IOException;
+import java.net.URL;
 
 public class ViewManager
 {
@@ -21,9 +25,29 @@ public class ViewManager
             root.getChildren().removeFirst();
         root.getChildren().add(newView);
     }
-    public void toWelcome() { show(new WelcomeScreen(this).getView()); }
-    public void toLogin() { show(new LoginScreen(this).getView()); }
-    public void toRegister() { show(new RegisterScreen(this).getView()); }
+    public void toWelcome() { show(loadAuth("/Welcome.fxml")); }
+    public void toLogin() { show(loadAuth("/Login.fxml")); }
+    public void toRegister() { show(loadAuth("/Register.fxml")); }
+
+    private Parent loadAuth(String resource) {
+        try {
+            URL url = getClass().getResource(resource);
+            if (url == null) throw new IllegalStateException("FXML not found: " + resource);
+            FXMLLoader loader = new FXMLLoader(url);
+            Parent root = loader.load();
+            Object controller = loader.getController();
+            try {
+                controller.getClass().getMethod("setViewManager", ViewManager.class).invoke(controller, this);
+            } catch (NoSuchMethodException ignored) {
+                // controller has no setViewManager — nothing to wire
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return root;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load " + resource, e);
+        }
+    }
     public void toMain(){
         MainView mainView = new MainView(this);
         show(mainView.getView());
