@@ -2,105 +2,139 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="divar.aut.frontend.controller.AdDetailsController"
+            stylesheets="@theme.css"
             fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
-            style="-fx-background-color: #242424; -fx-background: #242424;"
-            prefWidth="520" prefHeight="700">
+            prefWidth="560" prefHeight="760">
 
-    <VBox spacing="20" style="-fx-background-color: #242424; -fx-padding: 30;"
-          nodeOrientation="RIGHT_TO_LEFT">
+    <VBox spacing="18" styleClass="detail-page" nodeOrientation="RIGHT_TO_LEFT">
 
-        <HBox alignment="CENTER_LEFT">
-            <Label fx:id="titleLabel" text="عنوان آگهی" textFill="WHITE" style="-fx-font-weight: bold;">
-                <font><Font size="22.0" /></font>
-            </Label>
-        </HBox>
+        <!-- Title -->
+        <Label fx:id="titleLabel" text="عنوان آگهی" styleClass="text-h1" wrapText="true"/>
 
-        <VBox fx:id="imageContainer" spacing="10" alignment="CENTER">
-            <StackPane styleClass="main-image-frame" maxWidth="440" maxHeight="300">
-                <ImageView fx:id="mainImageView" fitWidth="440" fitHeight="300" preserveRatio="true" smooth="true" cache="true" />
+        <!-- Image gallery -->
+        <VBox fx:id="imageContainer" spacing="12" alignment="CENTER">
+            <StackPane styleClass="detail-main-frame" maxWidth="480" maxHeight="320">
+                <ImageView fx:id="mainImageView" fitWidth="480" fitHeight="320"
+                           preserveRatio="true" smooth="true" cache="true"/>
             </StackPane>
 
             <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER"
-                        style="-fx-background-color: #1a1a1a; -fx-background: #1a1a1a; -fx-background-radius: 8;" maxWidth="440">
-                <HBox fx:id="imageGalleryBox" styleClass="image-gallery-box" />
+                        styleClass="detail-thumb-scroll" maxWidth="480">
+                <HBox fx:id="imageGalleryBox" styleClass="image-gallery-box"/>
             </ScrollPane>
         </VBox>
 
-        <VBox spacing="10">
-            <HBox spacing="10">
-                <Label text="قیمت:" textFill="#aaa" />
-                <Label fx:id="priceLabel" text="۰" textFill="WHITE" style="-fx-font-weight: bold;"/>
-                <Label text="تومان" textFill="#aaa"/>
-            </HBox>
-            <HBox spacing="10">
-                <Label text="مکان:" textFill="#aaa" />
-                <Label fx:id="locationLabel" text="نامشخص" textFill="WHITE"/>
-            </HBox>
-            <HBox spacing="10">
-                <Label text="دسته‌بندی:" textFill="#aaa" />
-                <Label fx:id="categoryLabel" text="نامشخص" textFill="WHITE"/>
-            </HBox>
-            <HBox spacing="10">
-                <Label text="وضعیت کالا:" textFill="#aaa" />
-                <Label fx:id="conditionLabel" text="نامشخص" textFill="WHITE"/>
-            </HBox>
-        </VBox>
+        <!-- Price banner -->
+        <HBox styleClass="detail-price-banner" alignment="CENTER_RIGHT" spacing="8">
+            <FontIcon iconLiteral="fas-tag" iconSize="18" iconColor="#34d399"/>
+            <Label fx:id="priceLabel" text="۰" styleClass="detail-price"/>
+            <Label text="تومان" styleClass="text-small"/>
+        </HBox>
 
+        <!-- Meta grid -->
+        <GridPane styleClass="card detail-meta" hgap="18" vgap="14">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="33"/>
+                <ColumnConstraints percentWidth="34"/>
+                <ColumnConstraints percentWidth="33"/>
+            </columnConstraints>
 
-        <VBox spacing="8" style="-fx-background-color: #2a2a2a; -fx-padding: 12; -fx-background-radius: 6;">
-            <HBox spacing="8" alignment="CENTER_RIGHT">
-                <Label text="امتیاز فروشنده:" textFill="#aaa"/>
-                <Label fx:id="sellerRatingLabel" text="بدون امتیاز" textFill="WHITE" style="-fx-font-weight: bold;"/>
-            </HBox>
-            <Label fx:id="sellerNameLabel" text="فروشنده" textFill="#ccc"/>
-        </VBox>
+            <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <HBox spacing="6" alignment="CENTER_RIGHT">
+                    <FontIcon iconLiteral="fas-map-marker-alt" iconSize="14" iconColor="#6b93ff"/>
+                    <Label text="مکان" styleClass="text-caption"/>
+                </HBox>
+                <Label fx:id="locationLabel" text="نامشخص" styleClass="text-body"/>
+            </VBox>
 
-        <Separator style="-fx-opacity: 0.1;"/>
+            <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <HBox spacing="6" alignment="CENTER_RIGHT">
+                    <FontIcon iconLiteral="fas-th-large" iconSize="14" iconColor="#6b93ff"/>
+                    <Label text="دسته‌بندی" styleClass="text-caption"/>
+                </HBox>
+                <Label fx:id="categoryLabel" text="نامشخص" styleClass="text-body"/>
+            </VBox>
 
+            <VBox spacing="4" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                <HBox spacing="6" alignment="CENTER_RIGHT">
+                    <FontIcon iconLiteral="fas-box-open" iconSize="14" iconColor="#fbbf24"/>
+                    <Label text="وضعیت کالا" styleClass="text-caption"/>
+                </HBox>
+                <Label fx:id="conditionLabel" text="نامشخص" styleClass="text-body"/>
+            </VBox>
+        </GridPane>
+
+        <!-- Seller card -->
+        <HBox styleClass="card detail-seller" alignment="CENTER_RIGHT" spacing="12">
+            <StackPane styleClass="detail-avatar">
+                <FontIcon iconLiteral="fas-user" iconSize="22" iconColor="#6b93ff"/>
+            </StackPane>
+            <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <Label fx:id="sellerNameLabel" text="فروشنده" styleClass="text-h3"/>
+                <HBox spacing="6" alignment="CENTER_RIGHT">
+                    <FontIcon iconLiteral="fas-star" iconSize="13" iconColor="#fbbf24"/>
+                    <Label fx:id="sellerRatingLabel" text="بدون امتیاز" styleClass="text-small"/>
+                </HBox>
+            </VBox>
+        </HBox>
+
+        <!-- Description -->
         <VBox spacing="8">
-            <Label text="توضیحات:" textFill="#aaa" />
-
-            <VBox style="-fx-background-color: #2a2a2a; -fx-padding: 12; -fx-background-radius: 6;"
-                  minHeight="80">
-                <Label fx:id="descriptionLabel" wrapText="true" textFill="WHITE"
-                       style="-fx-line-spacing: 5px; -fx-font-size: 13px;" />
+            <Label text="توضیحات" styleClass="text-h3"/>
+            <VBox styleClass="card detail-desc" minHeight="90">
+                <Label fx:id="descriptionLabel" wrapText="true" styleClass="text-body detail-desc-text"/>
             </VBox>
         </VBox>
 
-        <VBox spacing="8" fx:id="commentsSection" visible="false" managed="false">
-            <Label text="نظرات کاربران درباره فروشنده:" textFill="#aaa" />
-            <VBox fx:id="commentsBox" spacing="6"/>
+        <!-- Comments -->
+        <VBox spacing="10" fx:id="commentsSection" visible="false" managed="false">
+            <Label text="نظرات کاربران درباره فروشنده" styleClass="text-h3"/>
+            <VBox fx:id="commentsBox" spacing="8"/>
         </VBox>
 
-        <HBox fx:id="viewerActionBox" spacing="15" alignment="CENTER_RIGHT" visible="false" managed="false">
-            <Button fx:id="messageButton" text="پیام به فروشنده" onAction="#handleMessageSeller" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
-            <Button fx:id="ratingButton" text="ثبت امتیاز" onAction="#handleRateSeller" style="-fx-background-color: #ca8a04; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
-            <Button fx:id="favoriteButton" text="افزودن به علاقه‌مندی‌ها" onAction="#handleAddFavorite" style="-fx-background-color: #a62626; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
-        </HBox>
-
-        <HBox fx:id="adminActionBox" spacing="15" alignment="CENTER_RIGHT" visible="false" managed="false">
-            <Button fx:id="adminDeleteButton" text="حذف آگهی" onAction="#handleAdminDelete" style="-fx-background-color: #991b1b; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;">
-                <graphic><FontIcon iconLiteral="fas-trash" iconSize="14" iconColor="white"/></graphic>
+        <!-- Viewer actions -->
+        <HBox fx:id="viewerActionBox" spacing="12" alignment="CENTER_RIGHT" visible="false" managed="false">
+            <Button fx:id="messageButton" text="پیام به فروشنده" onAction="#handleMessageSeller" styleClass="btn btn-primary">
+                <graphic><FontIcon iconLiteral="fas-comment-dots" iconSize="14" iconColor="#ffffff"/></graphic>
             </Button>
-            <Button fx:id="approveButton" text="تایید آگهی" onAction="#handleApprove" style="-fx-background-color: #15803d; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;">
-                <graphic><FontIcon iconLiteral="fas-check" iconSize="14" iconColor="white"/></graphic>
+            <Button fx:id="ratingButton" text="ثبت امتیاز" onAction="#handleRateSeller" styleClass="btn btn-secondary">
+                <graphic><FontIcon iconLiteral="fas-star" iconSize="14" iconColor="#fbbf24"/></graphic>
             </Button>
-            <Button fx:id="rejectButton" text="رد کردن" onAction="#handleReject" style="-fx-background-color: #b45309; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;">
-                <graphic><FontIcon iconLiteral="fas-times" iconSize="14" iconColor="white"/></graphic>
+            <Button fx:id="favoriteButton" text="علاقه‌مندی" onAction="#handleAddFavorite" styleClass="btn btn-danger">
+                <graphic><FontIcon iconLiteral="fas-heart" iconSize="14" iconColor="#fb6f6f"/></graphic>
             </Button>
         </HBox>
 
-        <HBox fx:id="ownerActionBox" spacing="15" alignment="CENTER_RIGHT" visible="false" managed="false">
-            <Button fx:id="editButton" text="ویرایش" onAction="#handleEdit" style="-fx-background-color: #2563eb; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
-            <Button fx:id="markAsSoldButton" text="فروخته شد" onAction="#handleMarkAsSold" style="-fx-background-color: #ea580c; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
-            <Button fx:id="deleteButton" text="حذف" onAction="#handleDelete" style="-fx-background-color: #991b1b; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 8 20; -fx-background-radius: 5;"/>
+        <!-- Admin actions -->
+        <HBox fx:id="adminActionBox" spacing="12" alignment="CENTER_RIGHT" visible="false" managed="false">
+            <Button fx:id="approveButton" text="تایید آگهی" onAction="#handleApprove" styleClass="btn btn-success">
+                <graphic><FontIcon iconLiteral="fas-check" iconSize="14" iconColor="#34d399"/></graphic>
+            </Button>
+            <Button fx:id="rejectButton" text="رد کردن" onAction="#handleReject" styleClass="btn btn-secondary">
+                <graphic><FontIcon iconLiteral="fas-times" iconSize="14" iconColor="#fbbf24"/></graphic>
+            </Button>
+            <Button fx:id="adminDeleteButton" text="حذف آگهی" onAction="#handleAdminDelete" styleClass="btn btn-danger">
+                <graphic><FontIcon iconLiteral="fas-trash" iconSize="14" iconColor="#fb6f6f"/></graphic>
+            </Button>
         </HBox>
 
-        <Label fx:id="statusLabel" textFill="#ff5a5a"/>
+        <!-- Owner actions -->
+        <HBox fx:id="ownerActionBox" spacing="12" alignment="CENTER_RIGHT" visible="false" managed="false">
+            <Button fx:id="editButton" text="ویرایش" onAction="#handleEdit" styleClass="btn btn-primary">
+                <graphic><FontIcon iconLiteral="fas-edit" iconSize="14" iconColor="#ffffff"/></graphic>
+            </Button>
+            <Button fx:id="markAsSoldButton" text="فروخته شد" onAction="#handleMarkAsSold" styleClass="btn btn-secondary">
+                <graphic><FontIcon iconLiteral="fas-check-circle" iconSize="14" iconColor="#fbbf24"/></graphic>
+            </Button>
+            <Button fx:id="deleteButton" text="حذف" onAction="#handleDelete" styleClass="btn btn-danger">
+                <graphic><FontIcon iconLiteral="fas-trash" iconSize="14" iconColor="#fb6f6f"/></graphic>
+            </Button>
+        </HBox>
+
+        <Label fx:id="statusLabel" styleClass="status-danger"/>
     </VBox>
 </ScrollPane>

@@ -132,13 +132,13 @@ public class AdDetailsController {
         commentsSection.setVisible(true);
         commentsSection.setManaged(true);
         for (RatingData rating : withComments) {
-            Label header = new Label("@" + rating.buyerUsername() + " - " + rating.score() + "/5");
-            header.setStyle("-fx-text-fill: #f0f0f0; -fx-font-weight: bold; -fx-font-size: 12px;");
+            Label header = new Label("@" + rating.buyerUsername() + "  ·  " + rating.score() + "/5");
+            header.getStyleClass().addAll("text-small", "comment-head");
             Label body = new Label(rating.comment());
             body.setWrapText(true);
-            body.setStyle("-fx-text-fill: #c7c7cd; -fx-font-size: 12px;");
-            VBox card = new VBox(3, header, body);
-            card.setStyle("-fx-background-color: rgba(255,255,255,0.04); -fx-padding: 10; -fx-background-radius: 8;");
+            body.getStyleClass().add("text-caption");
+            VBox card = new VBox(4, header, body);
+            card.getStyleClass().add("comment-card");
             commentsBox.getChildren().add(card);
         }
     }
@@ -343,8 +343,9 @@ public class AdDetailsController {
 
     private void styleDialog(Dialog<?> dialog) {
         dialog.initOwner(titleLabel.getScene().getWindow());
-        dialog.getDialogPane().getStylesheets().add(
-                getClass().getResource("/Dialog.css").toExternalForm());
+        java.net.URL themeUrl = getClass().getResource("/theme.css");
+        if (themeUrl == null) themeUrl = getClass().getResource("/Dialog.css");
+        dialog.getDialogPane().getStylesheets().add(themeUrl.toExternalForm());
         dialog.getDialogPane().setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
     }
 
