@@ -46,7 +46,7 @@ public class ConversationService {
 
         Conversation conversation = conversationRepository.findByAdAndBuyerAndSeller(ad, buyer, seller)
                 .orElseGet(() -> conversationRepository.save(new Conversation(ad, buyer, seller)));
-        return toConversationResponse(conversation);
+        return toConversationResponse(conversation, buyer);
     }
 
     /**
@@ -62,14 +62,16 @@ public class ConversationService {
 
     public List<ConversationResponse> listConversationsForUser(User user) {
         return conversationRepository.findAllForUser(user).stream()
-                .map(this::toConversationResponse)
+                .map(conversation -> toConversationResponse(conversation, user))
                 .toList();
     }
 
     public List<MessageResponse> listMessages(User requester, Long conversationId) {
         Conversation conversation = findConversationOrThrow(conversationId);
         requireParticipant(requester, conversation);
-        return messageRepository.findByConversationOrderBySentAtAsc(conversation).stream()
+        List<Message> messages = messageRepository.findByConversationOrderBySentAtAsc(conversation);
+        markMessagesAsRead(conversation, requester);
+        return messages.stream()
                 .map(MessageResponse::new)
                 .toList();
     }
@@ -93,9 +95,19 @@ public class ConversationService {
         return new MessageResponse(message);
     }
 
-    private ConversationResponse toConversationResponse(Conversation conversation) {
+    private ConversationResponse toConversationResponse(Conversation conversation, User forUser) {
         Message lastMessage = messageRepository.findFirstByConversationOrderBySentAtDesc(conversation);
-        return new ConversationResponse(conversation, lastMessage);
+        long unreadCount = messageRepository.countByConversationAndSenderNotAndReadFalse(conversation, forUser);
+        return new ConversationResponse(conversation, lastMessage, unreadCount);
+    }
+
+    private void markMessagesAsRead(Conversation conversation, User requester) {
+        List<Message> unread = messageRepository.findByConversationAndSenderNotAndReadFalse(conversation, requester);
+        if (unread.isEmpty()) {
+            return;
+        }
+        unread.forEach(message -> message.setRead(true));
+        messageRepository.saveAll(unread);
     }
 
     private Conversation findConversationOrThrow(Long conversationId) {

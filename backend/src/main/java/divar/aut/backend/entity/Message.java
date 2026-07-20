@@ -32,6 +32,9 @@ public class Message {
     @Column(nullable = false)
     private LocalDateTime sentAt = LocalDateTime.now();
 
+    @Column(nullable = false)
+    private boolean read = false;
+
     protected Message() {
     }
 
@@ -46,4 +49,6 @@ public class Message {
     public User getSender() { return sender; }
     public String getContent() { return content; }
     public LocalDateTime getSentAt() { return sentAt; }
+    public boolean isRead() { return read; }
+    public void setRead(boolean read) { this.read = read; }
 }
