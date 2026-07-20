@@ -67,6 +67,12 @@ public class ConversationsController {
         return badge;
     }
 
+    private Label unreadBadge(int count) {
+        Label badge = new Label(count > 99 ? "99+" : String.valueOf(count));
+        badge.getStyleClass().addAll("badge", "unread-badge");
+        return badge;
+    }
+
     private HBox partyNode(String role, String username, boolean isAdmin) {
         HBox box;
         if (isAdmin) {
@@ -85,11 +91,20 @@ public class ConversationsController {
     private VBox conversationCard(ConversationData conversation) {
         Label title = new Label("آگهی: " + conversation.adTitle());
         title.getStyleClass().add("convo-title");
+
+        HBox titleRow = new HBox(8, title);
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+        if (conversation.unreadCount() > 0) {
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+            titleRow.getChildren().addAll(spacer, unreadBadge(conversation.unreadCount()));
+        }
+
         HBox parties = new HBox(6, partyNode("خریدار", conversation.buyerUsername(), conversation.buyerAdmin()),
                 new Label("|"), partyNode("فروشنده", conversation.sellerUsername(), conversation.sellerAdmin()));
         parties.setAlignment(Pos.CENTER_LEFT);
         Label preview = new Label(conversation.lastMessagePreview() == null ? "هنوز پیامی ارسال نشده" : conversation.lastMessagePreview());
-        preview.getStyleClass().add("convo-preview");
+        preview.getStyleClass().add(conversation.unreadCount() > 0 ? "convo-preview-unread" : "convo-preview");
 
         Label timeLabel = new Label("");
         timeLabel.getStyleClass().add("text-caption");
@@ -108,8 +123,11 @@ public class ConversationsController {
         bottomRow.getChildren().addAll(preview, timeLabel);
         bottomRow.setAlignment(Pos.CENTER_LEFT);
 
-        VBox card = new VBox(6, title, parties, bottomRow);
+        VBox card = new VBox(6, titleRow, parties, bottomRow);
         card.getStyleClass().addAll("card", "card-hover", "convo-card");
+        if (conversation.unreadCount() > 0) {
+            card.getStyleClass().add("convo-card-unread");
+        }
         card.setOnMouseClicked(event -> openConversation(conversation));
         return card;
     }

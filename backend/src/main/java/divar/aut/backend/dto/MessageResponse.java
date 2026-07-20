@@ -28,6 +28,7 @@ public class MessageResponse {
      *
      * @param message the message entity.
      */
+    private final boolean read;
     public MessageResponse(Message message) {
         this.id = message.getId();
         this.conversationId = message.getConversation().getId();
@@ -36,6 +37,7 @@ public class MessageResponse {
         this.content = message.getContent();
         this.sentAt = message.getSentAt();
         this.senderAdmin = message.getSender().isAdmin();
+        this.read = message.isRead();
     }
 
     public Long getId() { return id; }
@@ -44,4 +46,6 @@ public class MessageResponse {
     public String getSenderUsername() { return senderUsername; }
     public String getContent() { return content; }
     public LocalDateTime getSentAt() { return sentAt; }
+    public boolean isSenderAdmin() { return senderAdmin; }
+    public boolean isRead() { return read; }
 }

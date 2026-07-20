@@ -45,12 +45,17 @@ public class ConversationResponse {
     private final boolean sellerAdmin;
 
     /**
+     * number of unread messages.
+     */
+    private final long unreadCount;
+
+    /**
      * Constructs a ConversationResponse from a Conversation and its last message.
      *
      * @param conversation     the conversation entity.
      * @param lastMessageOrNull the last message in the conversation, or null if none exists.
      */
-    public ConversationResponse(Conversation conversation, Message lastMessageOrNull) {
+    public ConversationResponse(Conversation conversation, Message lastMessageOrNull, long unreadCount) {
         this.id = conversation.getId();
         this.adId = conversation.getAd().getId();
         this.adTitle = conversation.getAd().getTitle();
@@ -63,6 +68,7 @@ public class ConversationResponse {
         this.lastMessageAt = lastMessageOrNull != null ? lastMessageOrNull.getSentAt() : null;
         this.buyerAdmin = conversation.getBuyer().isAdmin();
         this.sellerAdmin = conversation.getSeller().isAdmin();
+        this.unreadCount = unreadCount;
     }
 
     public Long getId() { return id; }
@@ -77,4 +83,5 @@ public class ConversationResponse {
     public LocalDateTime getLastMessageAt() { return lastMessageAt; }
     public boolean isBuyerAdmin() { return buyerAdmin; }
     public boolean isSellerAdmin() { return sellerAdmin; }
+    public long getUnreadCount() { return unreadCount; }
 }
