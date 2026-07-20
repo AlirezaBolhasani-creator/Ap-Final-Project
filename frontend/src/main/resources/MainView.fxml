@@ -42,6 +42,7 @@
                     </StackPane>
                     <Button text="علاقه‌مندی‌ها" styleClass="btn btn-ghost" onAction="#onFavorites"/>
                     <Button fx:id="adminPanelBtn" text="پنل مدیریت" styleClass="btn btn-ghost" onAction="#onAdminPanel"/>
+                    <Button fx:id="themeToggleBtn" text="حالت روشن" styleClass="btn btn-outline theme-toggle-btn" onAction="#onToggleTheme"/>
                     <Button text="خروج" styleClass="btn btn-ghost" onAction="#onLogout">
                         <graphic>
                             <FontIcon iconLiteral="fas-sign-out-alt" iconSize="15" iconColor="#a9b8de"/>
