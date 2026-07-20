@@ -62,6 +62,7 @@ public class AdDetailsController {
     private Runnable onActionCompleted;
     private java.util.function.Consumer<Long> adminDeleteHandler;
     private ViewManager viewManager;
+    private boolean isAdmin;
 
     public void setData(AdDetailData ad, AdService adService, String userRole,
                         boolean isOwner, Runnable onActionCompleted, ViewManager viewManager) {
@@ -91,7 +92,8 @@ public class AdDetailsController {
 
         renderImages(ad);
 
-        boolean isAdmin = "ADMIN".equals(userRole);
+        this.isAdmin = "ADMIN".equals(userRole);
+        boolean isAdmin = this.isAdmin;
         String status = ad.status();
         adminActionBox.setVisible(isAdmin);
         adminActionBox.setManaged(isAdmin);
@@ -134,13 +136,41 @@ public class AdDetailsController {
         for (RatingData rating : withComments) {
             Label header = new Label("@" + rating.buyerUsername() + "  ·  " + rating.score() + "/5");
             header.getStyleClass().addAll("text-small", "comment-head");
+            header.setMaxWidth(Double.MAX_VALUE);
+            javafx.scene.layout.HBox.setHgrow(header, javafx.scene.layout.Priority.ALWAYS);
+
+            javafx.scene.layout.HBox headerRow = new javafx.scene.layout.HBox(8, header);
+            headerRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+            if (isAdmin) {
+                javafx.scene.control.Button deleteBtn = new javafx.scene.control.Button("حذف");
+                deleteBtn.getStyleClass().addAll("btn", "btn-danger", "btn-sm");
+                deleteBtn.setOnAction(event -> deleteComment(rating));
+                headerRow.getChildren().add(deleteBtn);
+            }
+
             Label body = new Label(rating.comment());
             body.setWrapText(true);
             body.getStyleClass().add("text-caption");
-            VBox card = new VBox(4, header, body);
+            VBox card = new VBox(4, headerRow, body);
             card.getStyleClass().add("comment-card");
             commentsBox.getChildren().add(card);
         }
+    }
+
+    private void deleteComment(RatingData rating) {
+        ratingService.deleteRating(rating.id(),
+                () -> javafx.application.Platform.runLater(() -> {
+                    statusLabel.setText("نظر حذف شد");
+                    statusLabel.getStyleClass().setAll("status-success");
+                    renderComments(adDetail.ratings().stream()
+                            .filter(r -> !r.id().equals(rating.id()))
+                            .toList());
+                }),
+                error -> javafx.application.Platform.runLater(() -> {
+                    statusLabel.setText("خطا در حذف نظر: " + error);
+                    statusLabel.getStyleClass().setAll("status-danger");
+                }));
     }
 
     private void renderImages(AdDetailData ad) {

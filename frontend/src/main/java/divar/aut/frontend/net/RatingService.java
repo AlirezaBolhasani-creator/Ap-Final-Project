@@ -26,6 +26,17 @@ public class RatingService {
                 }, onError);
     }
 
+    public void deleteRating(Long ratingId, Runnable onSuccess, Consumer<String> onError) {
+        ApiClient.send("DELETE", "/ratings/" + ratingId, null,
+                response -> {
+                    if (response.statusCode() == 200 || response.statusCode() == 204) {
+                        onSuccess.run();
+                    } else {
+                        onError.accept(ApiClient.extractErrorMessage(response, "Error deleting comment: "));
+                    }
+                }, onError);
+    }
+
     public void listRatings(Long sellerId, Consumer<List<RatingData>> onSuccess, Consumer<String> onError) {
         ApiClient.send("GET", "/api/sellers/" + sellerId + "/ratings", null,
                 response -> handleList(response, onSuccess, onError), onError);
