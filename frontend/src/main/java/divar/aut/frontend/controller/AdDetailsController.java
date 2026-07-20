@@ -306,6 +306,7 @@ public class AdDetailsController {
         conversationService.startConversation(adDetail.id(),
                 conversation -> Platform.runLater(() -> {
                     ConversationDetailScreen screen = new ConversationDetailScreen(conversation, null);
+                    divar.aut.frontend.ui.ThemeManager.applyCurrentMode(screen.getView());
                     Stage stage = new Stage();
                     stage.setTitle("گفت‌وگو: " + adDetail.title());
                     stage.setScene(new Scene(screen.getView()));

@@ -134,9 +134,12 @@ public class ConversationsController {
 
     private void openConversation(ConversationData conversation) {
         ConversationDetailScreen screen = new ConversationDetailScreen(conversation, this::loadConversations);
+        divar.aut.frontend.ui.ThemeManager.applyCurrentMode(screen.getView());
         Stage stage = new Stage();
         stage.setTitle("گفت‌وگو: " + conversation.adTitle());
-        stage.setScene(new Scene(screen.getView(), javafx.scene.paint.Color.web("#0a1120")));
+        javafx.scene.paint.Color bg = divar.aut.frontend.ui.ThemeManager.isLightMode()
+                ? javafx.scene.paint.Color.web("#fffaf0") : javafx.scene.paint.Color.web("#0a1120");
+        stage.setScene(new Scene(screen.getView(), bg));
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();
     }
