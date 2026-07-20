@@ -44,4 +44,6 @@ public class ConversationResponse {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public String getLastMessagePreview() { return lastMessagePreview; }
     public LocalDateTime getLastMessageAt() { return lastMessageAt; }
+    public boolean isBuyerAdmin() { return buyerAdmin; }
+    public boolean isSellerAdmin() { return sellerAdmin; }
 }

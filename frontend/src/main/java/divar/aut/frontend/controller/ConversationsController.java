@@ -68,9 +68,16 @@ public class ConversationsController {
     }
 
     private HBox partyNode(String role, String username, boolean isAdmin) {
-        Label label = new Label(isAdmin ? role + ": ادمین" : role + ": " + username);
-        label.getStyleClass().add(isAdmin ? "party-admin" : "party-name");
-        HBox box = isAdmin ? new HBox(6, label, adminBadge()) : new HBox(6, label);
+        HBox box;
+        if (isAdmin) {
+            Label label = new Label(username);
+            label.getStyleClass().add("party-admin");
+            box = new HBox(6, label, adminBadge());
+        } else {
+            Label label = new Label(role + ": " + username);
+            label.getStyleClass().add("party-name");
+            box = new HBox(6, label);
+        }
         box.setAlignment(Pos.CENTER_LEFT);
         return box;
     }
