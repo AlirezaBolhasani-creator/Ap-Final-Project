@@ -21,9 +21,19 @@ public class ViewManager
     }
     public void show(Parent newView)
     {
+        ThemeManager.applyCurrentMode(newView);
         if(!root.getChildren().isEmpty())
             root.getChildren().removeFirst();
         root.getChildren().add(newView);
+    }
+
+    /** Flip light/dark mode and re-apply it to whatever screen is currently visible. */
+    public void toggleTheme() {
+        ThemeManager.toggle();
+        ThemeManager.applyShellBackground(root);
+        if (!root.getChildren().isEmpty()) {
+            ThemeManager.applyCurrentMode((Parent) root.getChildren().get(0));
+        }
     }
     public void toWelcome() { show(loadAuth("/Welcome.fxml")); }
     public void toLogin() { show(loadAuth("/Login.fxml")); }
@@ -67,7 +77,7 @@ public class ViewManager
     public void toAdminDashboard() {
         AdService adService = new AdService();
         AdminDashboardScreen adminScreen = new AdminDashboardScreen(this, adService);
-        root.getChildren().setAll(adminScreen.getView());
+        show(adminScreen.getView());
     }
 
     public String getUserToken() {
