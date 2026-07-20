@@ -7,6 +7,7 @@ public record MessageData(
         String senderUsername,
         String content,
         String sentAt,
-        boolean senderAdmin
+        boolean senderAdmin,
+        boolean read
 ) {
 }

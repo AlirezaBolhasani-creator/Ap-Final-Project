@@ -12,6 +12,7 @@ public record ConversationData(
         String lastMessagePreview,
         String lastMessageAt,
         boolean buyerAdmin,
-        boolean sellerAdmin
+        boolean sellerAdmin,
+        int unreadCount
 ) {
 }
