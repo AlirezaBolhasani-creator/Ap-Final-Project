@@ -4,6 +4,12 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents an individual message within a conversation.
+ * Each message belongs to a conversation, has a sender, and contains
+ * textual content. Messages are timestamped at creation and are used
+ * to facilitate communication between buyers and sellers.
+ */
 @Entity
 @Table(name = "messages")
 public class Message {

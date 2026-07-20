@@ -4,6 +4,12 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents a conversation thread between a buyer and a seller
+ * about a specific advertisement. Each conversation is uniquely
+ * identified by the combination of ad, buyer, and seller.
+ * Messages are linked to this conversation via the {@link Message} entity.
+ */
 @Entity
 @Table(name = "conversations", uniqueConstraints = @UniqueConstraint(columnNames = {"ad_id", "buyer_id", "seller_id"}))
 public class Conversation {

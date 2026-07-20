@@ -2,6 +2,11 @@ package divar.aut.backend.entity;
 
 import jakarta.persistence.*;
 
+/**
+ * Represents a city where advertisements can be listed.
+ * Cities are predefined by administrators and used to localize ads.
+ * The name must be unique across all cities.
+ */
 @Entity
 @Table(name = "cities")
 public class City {

@@ -2,6 +2,11 @@ package divar.aut.backend.entity;
 
 import jakarta.persistence.*;
 
+/**
+ * Represents a product category used to classify advertisements.
+ * Categories are predefined by administrators and can be assigned
+ * to ads. The name must be unique across all categories.
+ */
 @Entity
 @Table(name = "categories")
 public class Category {
