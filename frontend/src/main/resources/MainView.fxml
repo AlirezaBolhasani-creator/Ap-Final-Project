@@ -72,11 +72,11 @@
                 <VBox spacing="0" styleClass="ads-container">
 
                     <!-- Hero header -->
-                    <VBox styleClass="hero" spacing="14" alignment="CENTER_RIGHT" nodeOrientation="RIGHT_TO_LEFT">
+                    <VBox styleClass="hero" spacing="14" alignment="CENTER_RIGHT">
                         <Label text="هرچی بخوای، نزدیکته" styleClass="text-display"/>
                         <Label text="میان هزاران آگهی تاییدشده در شهر خودت جستجو کن — از موبایل و ماشین تا خانه و کار."
                                styleClass="hero-sub" wrapText="true"/>
-                        <HBox spacing="18" alignment="CENTER_RIGHT" nodeOrientation="RIGHT_TO_LEFT">
+                        <HBox spacing="18" alignment="CENTER_RIGHT">
                             <HBox spacing="8" alignment="CENTER">
                                 <FontIcon iconLiteral="fas-shield-alt" iconSize="16" iconColor="#34d399"/>
                                 <Label text="آگهی‌های تاییدشده" styleClass="text-small"/>

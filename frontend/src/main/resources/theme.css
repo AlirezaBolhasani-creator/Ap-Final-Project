@@ -161,7 +161,7 @@
     -fx-border-color: rgba(148,180,255,0.12); -fx-border-radius: 12; -fx-border-width: 1;
     -fx-padding: 0 14 0 14; -fx-alignment: center;
 }
-.input-icon .text-field { -fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 13 6 13 6; }
+.input-icon .text-field { -fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 13 6 13 6; -fx-alignment: CENTER_RIGHT; }
 .input-icon:focus-within { -fx-border-color: rgba(76,125,255,0.60); }
 
 .check-box { -fx-text-fill: #a9b8de; -fx-font-size: 15px; }

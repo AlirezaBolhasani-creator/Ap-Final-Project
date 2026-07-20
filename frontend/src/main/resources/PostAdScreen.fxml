@@ -30,7 +30,7 @@
 
         <!-- Images card -->
         <VBox styleClass="card form-card" spacing="12">
-            <HBox alignment="CENTER_RIGHT" spacing="8">
+            <HBox alignment="CENTER_LEFT" spacing="8">
                 <FontIcon iconLiteral="fas-images" iconSize="16" iconColor="#6b93ff"/>
                 <Label text="عکس‌های آگهی" styleClass="text-h3"/>
             </HBox>
@@ -47,7 +47,7 @@
 
         <!-- Details card -->
         <VBox styleClass="card form-card" spacing="16">
-            <HBox alignment="CENTER_RIGHT" spacing="8">
+            <HBox alignment="CENTER_LEFT" spacing="8">
                 <FontIcon iconLiteral="fas-align-right" iconSize="16" iconColor="#6b93ff"/>
                 <Label text="جزئیات آگهی" styleClass="text-h3"/>
             </HBox>
@@ -72,7 +72,7 @@
 
         <!-- Pricing & place card -->
         <VBox styleClass="card form-card" spacing="16">
-            <HBox alignment="CENTER_RIGHT" spacing="8">
+            <HBox alignment="CENTER_LEFT" spacing="8">
                 <FontIcon iconLiteral="fas-tag" iconSize="16" iconColor="#34d399"/>
                 <Label text="قیمت و مشخصات" styleClass="text-h3"/>
             </HBox>
