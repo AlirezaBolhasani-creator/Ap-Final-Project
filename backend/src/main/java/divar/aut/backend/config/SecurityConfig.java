@@ -60,6 +60,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.GET, "/ads/pending").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.PUT, "/ads/*/approve", "/ads/*/reject", "/ads/*/status").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/ads", "/ads/*").permitAll()
+                    .requestMatchers(HttpMethod.DELETE, "/ratings/*").hasRole("ADMIN")
                     .requestMatchers("/uploads/**").permitAll()
 
                     // Everything else requires a logged-in user

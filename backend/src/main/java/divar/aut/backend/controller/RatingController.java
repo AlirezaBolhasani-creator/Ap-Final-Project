@@ -33,4 +33,10 @@ public class RatingController {
     public List<RatingResponse> listRatings(@PathVariable Long sellerId) {
         return sellerRatingService.listRatingsForSellerId(sellerId);
     }
+
+    @DeleteMapping("/ratings/{ratingId}")
+    public ResponseEntity<Void> deleteRating(@PathVariable Long ratingId) {
+        sellerRatingService.deleteRating(ratingId);
+        return ResponseEntity.noContent().build();
+    }
 }

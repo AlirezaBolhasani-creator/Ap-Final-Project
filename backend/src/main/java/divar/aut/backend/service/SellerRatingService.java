@@ -63,6 +63,14 @@ public class SellerRatingService {
     }
 
     private List<SellerRating> ratingsFor(User seller) {
-        return sellerRatingRepository.findBySellerOrderByCreatedAtDesc(seller);
+        return sellerRatingRepository.findBySellerOrderByCreatedAtDesc(seller).stream()
+                .filter(rating -> !rating.getBuyer().isBlocked())
+                .toList();
+    }
+
+    public void deleteRating(Long ratingId) {
+        SellerRating rating = sellerRatingRepository.findById(ratingId)
+                .orElseThrow(() -> ApiException.notFound("Rating not found"));
+        sellerRatingRepository.delete(rating);
     }
 }
