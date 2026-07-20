@@ -27,7 +27,7 @@ public class LoginRequest {
     @NotBlank(message = "must not be blank")
     @Size(min = 1, max = 200, message = "must be between 1 and 200 characters")
     private String password;
-
+    
     public String getUsername() {
         return username;
     }
