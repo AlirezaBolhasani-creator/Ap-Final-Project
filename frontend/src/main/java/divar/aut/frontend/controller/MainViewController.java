@@ -4,6 +4,7 @@ import divar.aut.frontend.SessionManager;
 import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.CategoryService;
 import divar.aut.frontend.net.CityService;
+import divar.aut.frontend.net.ConversationService;
 import divar.aut.frontend.model.AdData;
 import divar.aut.frontend.model.CategoryData;
 import divar.aut.frontend.model.CityData;
@@ -39,10 +40,12 @@ public class MainViewController implements Initializable {
     @FXML private ComboBox<String> conditionCombo;
     @FXML private TextField        minPriceField;
     @FXML private TextField        maxPriceField;
+    @FXML private Label            chatBadge;
 
     private AdService adService;
     private final CategoryService categoryService = new CategoryService();
     private final CityService cityService = new CityService();
+    private final ConversationService conversationService = new ConversationService();
     private final List<CategoryData> categories = new ArrayList<>();
     private final List<CityData> cities = new ArrayList<>();
     private Long selectedCategoryId;
@@ -75,6 +78,7 @@ public class MainViewController implements Initializable {
             this.adService = new AdService();
             loadFilterOptions();
             loadPage();
+            refreshChatBadge();
         } else {
             if (statusLabel != null) statusLabel.setText("خطا: توکن احراز هویت یافت نشد!");
         }
@@ -217,6 +221,31 @@ public class MainViewController implements Initializable {
     @FXML private void onConversations() {
         if(viewManager == null || viewManager.getUserToken() == null) return;
         viewManager.toConversations();
+    }
+
+    /**
+     * Re-fetches conversations and updates the unread-count badge on the "گفتگوها" nav button.
+     * Safe to call whenever the main view regains focus (e.g. after closing the conversations
+     * or a conversation-detail window) so the badge count doesn't go stale.
+     */
+    public void refreshChatBadge() {
+        if (chatBadge == null || viewManager == null || viewManager.getUserToken() == null) return;
+        conversationService.listConversations(
+                conversations -> {
+                    int total = conversations.stream().mapToInt(divar.aut.frontend.model.ConversationData::unreadCount).sum();
+                    Platform.runLater(() -> {
+                        if (total > 0) {
+                            chatBadge.setText(total > 99 ? "99+" : String.valueOf(total));
+                            chatBadge.setVisible(true);
+                            chatBadge.setManaged(true);
+                        } else {
+                            chatBadge.setVisible(false);
+                            chatBadge.setManaged(false);
+                        }
+                    });
+                },
+                error -> { /* badge is non-critical; fail silently */ }
+        );
     }
 
     private void selectCategory(Long categoryId) {

@@ -35,7 +35,11 @@
                 <!-- Nav actions -->
                 <HBox spacing="4" alignment="CENTER">
                     <Button fx:id="myAdsBtn" text="دیوار من" styleClass="btn btn-ghost" onAction="#onMyAds"/>
-                    <Button text="گفتگوها" styleClass="btn btn-ghost" onAction="#onConversations"/>
+                    <StackPane>
+                        <Button text="گفتگوها" styleClass="btn btn-ghost" onAction="#onConversations"/>
+                        <Label fx:id="chatBadge" styleClass="nav-badge" visible="false" managed="false"
+                               StackPane.alignment="TOP_LEFT"/>
+                    </StackPane>
                     <Button text="علاقه‌مندی‌ها" styleClass="btn btn-ghost" onAction="#onFavorites"/>
                     <Button fx:id="adminPanelBtn" text="پنل مدیریت" styleClass="btn btn-ghost" onAction="#onAdminPanel"/>
                     <Button text="خروج" styleClass="btn btn-ghost" onAction="#onLogout">
