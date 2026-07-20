@@ -2,7 +2,17 @@ package divar.aut.backend.dto;
 
 import divar.aut.backend.entity.User;
 
+/**
+ * Data Transfer Object for user responses.
+ * <p>
+ * Contains user profile information including ID, username, full name,
+ * email, phone, role, and blocked status. Built from a {@link User} entity.
+ * </p>
+ */
 public class UserResponse {
+    /**
+     * The unique identifier of the user.
+     */
     private final Long id;
     private final String username;
     private final String fullname;
@@ -11,6 +21,11 @@ public class UserResponse {
     private final String role;
     private final boolean blocked;
 
+    /**
+     * Constructs a UserResponse from a User entity.
+     *
+     * @param user the user entity.
+     */
     public UserResponse(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
