@@ -10,6 +10,14 @@ import javafx.scene.image.ImageView;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * JavaFX controller for rendering an individual advertisement card in the UI.
+ * <p>
+ * Binds to an FXML layout that displays ad image, title, price, location,
+ * time, photo count, and item condition badge. The card is populated via
+ * the {@link #setData(AdData)} method.
+ * </p>
+ */
 public class AdCardController implements Initializable {
 
     @FXML private ImageView  adImage;
@@ -20,10 +28,28 @@ public class AdCardController implements Initializable {
     @FXML private Label      photoCount;
     @FXML private Label      conditionLabel;
 
+    /**
+     * Initializes the controller after its root element has been fully processed.
+     * Currently no additional setup is required.
+     *
+     * @param location  the location used to resolve relative paths (unused)
+     * @param resources the resources used to localize the root object (unused)
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     }
 
+    /**
+     * Populates the card UI with data from an {@link AdData} object.
+     * <p>
+     * Sets the title, price, location, time, category (as photo count placeholder),
+     * and condition badge. Also attempts to load the thumbnail image from the
+     * server. If the thumbnail fails to load, the error is logged and the image
+     * remains empty.
+     * </p>
+     *
+     * @param data the ad data to display; must not be null.
+     */
     public void setData(AdData data) {
         adTitle.setText(data.title());
         adPrice.setText(data.price() == null ? "0" : String.valueOf(data.price()));
@@ -61,6 +87,3 @@ public class AdCardController implements Initializable {
         }
     }
 }
-
-
-

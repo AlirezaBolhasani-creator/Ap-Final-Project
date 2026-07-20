@@ -26,6 +26,19 @@ import javafx.stage.Stage;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * JavaFX controller for the advertisement details view.
+ * <p>
+ * Displays full ad information including images, description, seller details,
+ * and ratings. Provides actions based on user role (owner, admin, or viewer):
+ * edit, delete, mark as sold, add to favorites, message seller, rate seller,
+ * approve/reject (admin), and delete comments (admin).
+ * </p>
+ * <p>
+ * The controller interacts with backend services ({@link AdService}, etc.)
+ * and manages UI state (enabling/disabling buttons, showing errors).
+ * </p>
+ */
 public class AdDetailsController {
     @FXML private Label titleLabel;
     @FXML private Label priceLabel;
@@ -64,11 +77,39 @@ public class AdDetailsController {
     private ViewManager viewManager;
     private boolean isAdmin;
 
+    /**
+     * Populates the UI with the provided ad details.
+     * <p>
+     * This overload is used when no custom admin delete handler is needed.
+     * </p>
+     *
+     * @param ad                 the ad detail data.
+     * @param adService          the service for ad operations.
+     * @param userRole           the role of the currently logged-in user ("ADMIN" or "USER").
+     * @param isOwner            whether the current user is the owner of the ad.
+     * @param onActionCompleted  callback to run after a successful action (e.g., refresh list).
+     * @param viewManager        the navigation manager for switching screens.
+     */
     public void setData(AdDetailData ad, AdService adService, String userRole,
                         boolean isOwner, Runnable onActionCompleted, ViewManager viewManager) {
         setData(ad, adService, userRole, isOwner, onActionCompleted, viewManager, null);
     }
 
+    /**
+     * Populates the UI with the provided ad details and an admin delete handler.
+     * <p>
+     * Renders ad information, images, comments, and configures action buttons
+     * based on the user's role and the ad's status.
+     * </p>
+     *
+     * @param ad                 the ad detail data.
+     * @param adService          the service for ad operations.
+     * @param userRole           the role of the currently logged-in user ("ADMIN" or "USER").
+     * @param isOwner            whether the current user is the owner of the ad.
+     * @param onActionCompleted  callback to run after a successful action.
+     * @param viewManager        the navigation manager for switching screens.
+     * @param adminDeleteHandler callback to handle admin deletion (receives ad ID).
+     */
     public void setData(AdDetailData ad, AdService adService, String userRole,
                         boolean isOwner, Runnable onActionCompleted, ViewManager viewManager,
                         java.util.function.Consumer<Long> adminDeleteHandler) {
@@ -201,6 +242,10 @@ public class AdDetailsController {
         }
     }
 
+    /**
+     * Opens a dialog for the user to rate the seller.
+     * The user selects a score (1–5) and optionally adds a comment.
+     */
     @FXML
     private void handleRateSeller() {
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -251,6 +296,10 @@ public class AdDetailsController {
         });
     }
 
+    /**
+     * Initiates a conversation with the seller.
+     * Opens a new modal dialog showing the chat.
+     */
     @FXML
     private void handleMessageSeller() {
         messageButton.setDisable(true);
@@ -270,6 +319,9 @@ public class AdDetailsController {
                 }));
     }
 
+    /**
+     * Adds the ad to the current user's favorites.
+     */
     @FXML
     private void handleAddFavorite() {
         favoriteButton.setDisable(true);
@@ -281,6 +333,9 @@ public class AdDetailsController {
                 }));
     }
 
+    /**
+     * Admin action: approves the ad (sets status to ACTIVE).
+     */
     @FXML
     private void handleApprove() {
         setUiDisabled(true);
@@ -289,6 +344,10 @@ public class AdDetailsController {
                 error -> Platform.runLater(() -> showError(error)));
     }
 
+    /**
+     * Admin action: deletes the ad entirely (hard delete).
+     * Uses the provided adminDeleteHandler callback.
+     */
     @FXML
     private void handleAdminDelete() {
         if (adminDeleteHandler == null) {
@@ -300,6 +359,10 @@ public class AdDetailsController {
         closeWindow();
     }
 
+    /**
+     * Admin action: rejects the ad with a required reason.
+     * Opens a dialog for the admin to enter the rejection reason.
+     */
     @FXML
     private void handleReject() {
 
@@ -343,6 +406,9 @@ public class AdDetailsController {
         });
     }
 
+    /**
+     * Owner action: marks the ad as sold (status changes to SOLD).
+     */
     @FXML
     private void handleMarkAsSold() {
         setUiDisabled(true);
@@ -351,6 +417,9 @@ public class AdDetailsController {
                 error -> Platform.runLater(() -> showError(error)));
     }
 
+    /**
+     * Owner action: soft‑deletes the ad (status changed to DELETED).
+     */
     @FXML
     private void handleDelete() {
         setUiDisabled(true);
@@ -359,6 +428,9 @@ public class AdDetailsController {
                 error -> Platform.runLater(() -> showError(error)));
     }
 
+    /**
+     * Owner action: opens the edit screen for this ad.
+     */
     @FXML
     private void handleEdit() {
         if (viewManager == null) return;
