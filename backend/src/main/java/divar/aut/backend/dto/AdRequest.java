@@ -5,26 +5,52 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Data Transfer Object for creating or updating an advertisement.
+ * <p>
+ * Contains all necessary fields for an ad submission, including title,
+ * description, price, condition, and references to a category and city.
+ * Validation annotations enforce business rules.
+ * </p>
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AdRequest {
 
+    /**
+     * The title of the advertisement. Must not be blank and at most 200 characters.
+     */
     @NotBlank(message = "must not be blank")
     @Size(max = 200, message = "must be at most 200 characters")
     private String title;
 
+    /**
+     * The detailed description of the advertisement. Must not be blank and at most 2000 characters.
+     */
     @NotBlank(message = "must not be blank")
     @Size(max = 2000, message = "must be at most 2000 characters")
     private String description;
 
+    /**
+     * The price of the item. Must not be null.
+     */
     @NotNull(message = "must not be null")
     private double price;
 
+    /**
+     * The condition of the item (e.g., "new", "used"). Must not be blank.
+     */
     @NotBlank(message = "must not be blank")
     private String itemCondition;
 
+    /**
+     * The ID of the category this ad belongs to. Must not be null.
+     */
     @NotNull(message = "must not be null")
     private Long categoryId;
 
+    /**
+     * The ID of the city where the item is located. Must not be null.
+     */
     @NotNull(message = "must not be null")
     private Long cityId;
 
