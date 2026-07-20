@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-public class AdminDashboardController {
+public class
+AdminDashboardController {
     @FXML private FlowPane statsPane;
     @FXML private FlowPane adminAdGrid;
     @FXML private ListView<UserData> usersList;

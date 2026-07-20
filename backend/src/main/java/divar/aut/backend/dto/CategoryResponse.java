@@ -19,6 +19,7 @@ public class CategoryResponse {
      */
     private String name;
 
+    private Long parentId;
     /**
      * Constructs a CategoryResponse from a Category entity.
      *
@@ -27,6 +28,7 @@ public class CategoryResponse {
     public CategoryResponse(Category category) {
         this.id = category.getId();
         this.name = category.getName();
+        this.parentId = category.getParent() != null? category.getParent().getId() : null;
     }
 
     public Long getId() {

@@ -49,11 +49,16 @@ public class AdService {
 
     public AdDetailResponse createAd(User owner, AdRequest request) {
         Category category = findCategoryOrThrow(request.getCategoryId());
+
+        if (categoryRepository.existsByParent(category)) {
+            throw ApiException.badRequest("You must select a subcategory");
+        }
+
         City city = findCityOrThrow(request.getCityId());
         ItemCondition condition = parseCondition(request.getItemCondition());
 
         Ad ad = new Ad(request.getTitle(), request.getDescription(), request.getPrice(),
-                       condition, owner, category, city);
+                condition, owner, category, city);
         adRepository.save(ad);
 
         return toDetailResponse(ad);
@@ -64,11 +69,16 @@ public class AdService {
         requireOwner(actingUser, ad);
 
         Category category = findCategoryOrThrow(request.getCategoryId());
+
+        if (categoryRepository.existsByParent(category)) {
+            throw ApiException.badRequest("You must select a subcategory");
+        }
+
         City city = findCityOrThrow(request.getCityId());
         ItemCondition condition = parseCondition(request.getItemCondition());
 
         ad.applyEdit(request.getTitle(), request.getDescription(), request.getPrice(),
-                     condition, category, city);
+                condition, category, city);
         adRepository.save(ad);
 
         return toDetailResponse(ad);
@@ -255,4 +265,3 @@ public class AdService {
                 sellerRatingService.listRatingsForSeller(ad.getOwner()));
     }
 }
-
