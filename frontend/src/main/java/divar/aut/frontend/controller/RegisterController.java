@@ -72,7 +72,7 @@ public class RegisterController {
             return "لطفاً نام و نام خانوادگی را وارد کنید";
         }
         if (!FULL_NAME_PATTERN.matcher(name).matches()) {
-            return "نام و نام خانوادگی باید فقط شامل حروف باشد و نام و نام خانوادگی را با فاصله وارد کنید (مثلاً: علی رضایی)";
+            return "نام و نام خانوادگی باید فقط شامل حروف باشد و نام و نام خانوادگی را با فاصله وارد کنید";
         }
         if (!email.isEmpty() && !EMAIL_PATTERN.matcher(email).matches()) {
             return "ایمیل وارد شده معتبر نیست (مثلاً: example@mail.com)";
