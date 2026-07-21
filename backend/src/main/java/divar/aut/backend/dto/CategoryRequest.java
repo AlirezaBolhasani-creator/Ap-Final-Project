@@ -14,9 +14,5 @@ public class CategoryRequest {
     @Size(max = 100, message = "must be at most 100 characters")
     private String name;
 
-    private Long parentId;
-
-    public Long getParentId() {return parentId;}
-
-    public String getName() {return name; }
+    public String getName() { return name; }
 }
