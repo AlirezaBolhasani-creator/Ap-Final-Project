@@ -32,7 +32,7 @@
                 </Tab>
                 <Tab text="همه آگهی‌ها">
                     <ScrollPane fitToWidth="true" styleClass="admin-scroll">
-                        <FlowPane fx:id="adminAdGrid" hgap="16" vgap="16" styleClass="admin-content"/>
+                        <VBox fx:id="adminAdGrid" spacing="24" styleClass="admin-content"/>
                     </ScrollPane>
                 </Tab>
                 <Tab text="کاربران">

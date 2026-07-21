@@ -23,7 +23,7 @@ import java.util.Optional;
 public class
 AdminDashboardController {
     @FXML private FlowPane statsPane;
-    @FXML private FlowPane adminAdGrid;
+    @FXML private VBox adminAdGrid;
     @FXML private ListView<UserData> usersList;
     @FXML private ListView<CategoryData> categoriesList;
     @FXML private ListView<CityData> citiesList;
@@ -136,14 +136,15 @@ AdminDashboardController {
             if (group.isEmpty()) continue;
             Label header = new Label(titles.get(status) + " (" + group.size() + ")");
             header.getStyleClass().add("admin-group-header");
-            HBox headerBox = new HBox(header);
-            headerBox.setPrefWidth(Double.MAX_VALUE);
-            headerBox.setMaxWidth(Double.MAX_VALUE);
-            adminAdGrid.getChildren().add(headerBox);
+            FlowPane cardsPane = new FlowPane();
+            cardsPane.setHgap(16);
+            cardsPane.setVgap(16);
             for (AdData ad : group) {
                 Node card = buildCard(ad);
-                if (card != null) adminAdGrid.getChildren().add(card);
+                if (card != null) cardsPane.getChildren().add(card);
             }
+            VBox groupBox = new VBox(8, header, cardsPane);
+            adminAdGrid.getChildren().add(groupBox);
         }
         if (adminAdGrid.getChildren().isEmpty()) {
             Label empty = new Label("آگهی‌ای وجود ندارد");

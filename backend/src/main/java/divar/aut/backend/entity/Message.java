@@ -1,6 +1,7 @@
 package divar.aut.backend.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -33,7 +34,9 @@ public class Message {
     private LocalDateTime sentAt = LocalDateTime.now();
 
     @Column(nullable = false)
+    @ColumnDefault("false")
     private boolean read = false;
+
 
     protected Message() {
     }
