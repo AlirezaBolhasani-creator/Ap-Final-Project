@@ -41,7 +41,6 @@ public class AdminDashboardController {
     @FXML private TextField categoryNameField;
     @FXML private TextField cityNameField;
     @FXML private Label statusLabel;
-    @FXML private Button themeToggleBtn;
 
     private final AdminService adminService = new AdminService();
     private final CategoryService categoryService = new CategoryService();
@@ -61,7 +60,6 @@ public class AdminDashboardController {
         this.viewManager = viewManager;
         configureLists();
         refreshAll();
-        ThemeManager.syncButtonLabel(themeToggleBtn);
     }
 
     private void configureLists() {
@@ -202,7 +200,13 @@ public class AdminDashboardController {
                 ThemeManager.applyCurrentMode(root);
                 loader.<AdDetailsController>getController().setData(detail, adService, "ADMIN", false,
                         this::refreshAll, viewManager, this::requestAdminDelete);
-                Stage stage = new Stage(); stage.setTitle("مدیریت آگهی: " + data.title()); stage.setScene(new Scene(root)); stage.initModality(Modality.APPLICATION_MODAL); stage.show();
+                Stage stage = new Stage();
+                stage.setTitle("مدیریت آگهی: " + data.title());
+                javafx.scene.paint.Color bg = ThemeManager.isLightMode()
+                        ? javafx.scene.paint.Color.web("#fffaf0") : javafx.scene.paint.Color.web("#0a1120");
+                stage.setScene(new Scene(root, bg));
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.show();
             } catch (IOException e) { showError("خطا در باز کردن آگهی"); }
         }), this::showError);
     }
@@ -246,6 +250,7 @@ public class AdminDashboardController {
         dialog.initOwner(statusLabel.getScene().getWindow());
         dialog.getDialogPane().getStylesheets().add(
                 getClass().getResource("/theme.css").toExternalForm());
+        ThemeManager.applyCurrentMode(dialog.getDialogPane());
         dialog.getDialogPane().setNodeOrientation(javafx.geometry.NodeOrientation.RIGHT_TO_LEFT);
     }
 
@@ -382,14 +387,4 @@ public class AdminDashboardController {
      * Returns to the main application screen using the {@link ViewManager}.
      */
     @FXML private void goBack() { viewManager.toMain(); }
-
-    /**
-     * Toggles the application theme (light/dark) via {@link ThemeManager}.
-     */
-    @FXML
-    private void onToggleTheme() {
-        if (viewManager == null) return;
-        viewManager.toggleTheme();
-        ThemeManager.syncButtonLabel(themeToggleBtn);
-    }
 }

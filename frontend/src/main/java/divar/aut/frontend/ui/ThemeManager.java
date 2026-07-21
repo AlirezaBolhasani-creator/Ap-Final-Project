@@ -64,23 +64,50 @@ public final class ThemeManager {
     }
 
     /**
-     * Applies the current global theme mode to a given view.
+     * Applies the current global theme mode to a given view and all of its
+     * descendants.
      * <p>
-     * This method ensures that the view's stylesheet list matches the
-     * current mode. It is safe to call on every screen every time it is shown.
+     * Some components (e.g. the ad card, which is reused inside screens that
+     * don't necessarily carry {@code theme.css} themselves, like the admin
+     * dashboard) manage their own private stylesheet list rather than relying
+     * purely on inheriting from an ancestor. Because of that, toggling the
+     * theme on just the top-level screen root is not enough to keep those
+     * nested components in sync — this method walks the whole subtree so
+     * every Parent that carries one of the tracked base stylesheets gets
+     * updated, no matter how deeply nested it is or when it was constructed.
+     * </p>
+     * <p>
+     * It is safe to call on every screen every time it is shown, and on the
+     * currently visible screen whenever the theme is toggled.
      * </p>
      *
-     * @param view the JavaFX parent node to which the theme should be applied.
+     * @param view the JavaFX parent node (and its descendants) to which the
+     *             theme should be applied.
      */
     public static void applyCurrentMode(Parent view) {
         if (view == null) return;
+        applyCurrentModeToSingleNode(view);
+        for (javafx.scene.Node child : view.getChildrenUnmodifiable()) {
+            if (child instanceof Parent childParent) {
+                applyCurrentMode(childParent);
+            }
+        }
+    }
 
+    /**
+     * Applies the current global theme mode to a single view, without
+     * descending into its children. See {@link #applyCurrentMode(Parent)}
+     * for the recursive version used by callers.
+     *
+     * @param view the JavaFX parent node to which the theme should be applied.
+     */
+    private static void applyCurrentModeToSingleNode(Parent view) {
         for (Map.Entry<String, String> entry : LIGHT_VARIANTS.entrySet()) {
             String base = entry.getKey();
             String lightFile = entry.getValue();
 
             String baseUrl = findStylesheetEndingWith(view, base);
-            if (baseUrl == null) continue; // this screen doesn't use that base stylesheet
+            if (baseUrl == null) continue; // this view doesn't use that base stylesheet
 
             String lightUrl = baseUrl.substring(0, baseUrl.length() - base.length()) + lightFile;
 

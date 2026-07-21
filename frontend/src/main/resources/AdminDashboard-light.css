@@ -31,10 +31,11 @@
     -fx-border-color: rgba(20,10,0,0.10);
 }
 .admin-list-label { -fx-text-fill: #000000; }
-.admin-action-button { -fx-background-color: rgba(220,20,60,0.14); -fx-text-fill: #a80f2e; -fx-border-color: rgba(220,20,60,0.30); }
+.admin-action-button { -fx-background-color: rgba(37,99,235,0.14); -fx-text-fill: #2563eb; -fx-border-color: rgba(37,99,235,0.30); }
+.admin-action-button:hover { -fx-background-color: rgba(37,99,235,0.22); }
 .admin-primary-button { -fx-background-color: #dc143c; -fx-text-fill: white; }
 .admin-danger-button { -fx-background-color: rgba(220,38,38,0.12); -fx-text-fill: #dc2626; -fx-border-color: rgba(220,38,38,0.30); }
-.admin-action-button:hover, .admin-danger-button:hover { -fx-background-color: rgba(220,20,60,0.22); }
+.admin-danger-button:hover { -fx-background-color: rgba(220,20,60,0.22); }
 .admin-primary-button:hover { -fx-background-color: #e83a5c; }
 .admin-input {
     -fx-background-color: #ffffff; -fx-text-fill: #000000; -fx-prompt-text-fill: #7a7068;

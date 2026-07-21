@@ -54,6 +54,7 @@
 .text-small   { -fx-text-fill: #3a3230; }
 .text-caption { -fx-text-fill: #7a7068; }
 .text-muted   { -fx-text-fill: #3a3230; }
+.text-body.welcome-subtitle { -fx-text-fill: #3a3230; }
 .text-lo      { -fx-text-fill: #7a7068; }
 .text-brand   { -fx-text-fill: #dc143c; }
 .text-success { -fx-text-fill: #16a34a; }

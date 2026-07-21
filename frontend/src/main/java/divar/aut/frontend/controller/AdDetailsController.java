@@ -8,6 +8,7 @@ import divar.aut.frontend.net.ConversationService;
 import divar.aut.frontend.net.RatingService;
 import divar.aut.frontend.ui.ConversationDetailScreen;
 import divar.aut.frontend.ui.PostAdScreen;
+import divar.aut.frontend.ui.ThemeManager;
 import divar.aut.frontend.ui.ViewManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -448,6 +449,7 @@ public class AdDetailsController {
         dialog.initOwner(titleLabel.getScene().getWindow());
         dialog.getDialogPane().getStylesheets().add(
                 getClass().getResource("/theme.css").toExternalForm());
+        ThemeManager.applyCurrentMode(dialog.getDialogPane());
         dialog.getDialogPane().setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
     }
 

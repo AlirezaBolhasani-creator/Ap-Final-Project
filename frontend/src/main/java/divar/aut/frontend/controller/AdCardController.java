@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,6 +21,7 @@ import java.util.ResourceBundle;
  */
 public class AdCardController implements Initializable {
 
+    @FXML private VBox       cardRoot;
     @FXML private ImageView  adImage;
     @FXML private Label      adTitle;
     @FXML private Label      adPrice;
@@ -30,13 +32,24 @@ public class AdCardController implements Initializable {
 
     /**
      * Initializes the controller after its root element has been fully processed.
-     * Currently no additional setup is required.
+     * <p>
+     * The card is reused inside screens that don't necessarily carry
+     * {@code theme.css} themselves (e.g. the admin dashboard, which uses
+     * {@code AdminDashboard.css}), so the card attaches its own base
+     * stylesheet here and then asks {@link divar.aut.frontend.ui.ThemeManager}
+     * to layer the light variant on top when needed. Because both live on
+     * this same node's stylesheet list, the light variant reliably wins the
+     * cascade tie-break over the dark base rules, regardless of what the
+     * parent screen is doing with its own stylesheets.
+     * </p>
      *
      * @param location  the location used to resolve relative paths (unused)
      * @param resources the resources used to localize the root object (unused)
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        cardRoot.getStylesheets().add(getClass().getResource("/theme.css").toExternalForm());
+        divar.aut.frontend.ui.ThemeManager.applyCurrentMode(cardRoot);
     }
 
     /**

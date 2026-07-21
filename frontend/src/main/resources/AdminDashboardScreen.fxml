@@ -20,7 +20,6 @@
                     <Button text="بازگشت" onAction="#goBack" styleClass="admin-back-button">
                         <graphic><FontIcon iconLiteral="fas-arrow-left" iconSize="13" iconColor="#aaa"/></graphic>
                     </Button>
-                    <Button fx:id="themeToggleBtn" text="حالت روشن" styleClass="admin-back-button theme-toggle-btn" onAction="#onToggleTheme"/>
                 </HBox>
             </left>
         </BorderPane>

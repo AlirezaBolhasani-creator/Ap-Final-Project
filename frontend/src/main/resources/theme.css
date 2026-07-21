@@ -64,6 +64,7 @@
 .text-small   { -fx-font-size: 14px; -fx-text-fill: #a9b8de; }
 .text-caption { -fx-font-size: 12px; -fx-text-fill: #6b7ba3; }
 .text-muted   { -fx-text-fill: #a9b8de; }
+.text-body.welcome-subtitle { -fx-text-fill: #ffffff; }
 .text-lo      { -fx-text-fill: #6b7ba3; }
 .text-brand   { -fx-text-fill: #4c7dff; }
 .text-success { -fx-text-fill: #34d399; }

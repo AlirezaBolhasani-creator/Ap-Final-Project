@@ -19,7 +19,7 @@
 
             <Label text="دیوار" styleClass="brand-logo" style="-fx-font-size: 56px;"/>
             <Label text="خرید و فروش کالای دست دوم، ساده و مطمئن"
-                   styleClass="text-body text-muted" wrapText="true"/>
+                   styleClass="text-body welcome-subtitle" wrapText="true"/>
 
             <Separator/>
 
