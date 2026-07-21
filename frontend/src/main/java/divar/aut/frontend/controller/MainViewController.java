@@ -35,6 +35,7 @@ public class MainViewController implements Initializable {
     @FXML private Label            statusLabel;
     @FXML private Button           myAdsBtn;
     @FXML private Button           adminPanelBtn;
+    @FXML private Button           themeToggleBtn;
     @FXML private HBox             categoryBar;
     @FXML private ComboBox<String> cityCombo;
     @FXML private ComboBox<String> conditionCombo;
@@ -87,6 +88,7 @@ public class MainViewController implements Initializable {
             adminPanelBtn.setVisible(false);
             adminPanelBtn.setManaged(false);
         }
+        divar.aut.frontend.ui.ThemeManager.syncButtonLabel(themeToggleBtn);
     }
 
     private void loadPage() {
@@ -178,6 +180,7 @@ public class MainViewController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
             Parent root = loader.load();
+            divar.aut.frontend.ui.ThemeManager.applyCurrentMode(root);
             AdDetailsController controller = loader.getController();
             controller.setData(adDetail, adService, viewManager.getUserRole(), showingMyAds, () -> {
                 page = 0;
@@ -187,7 +190,9 @@ public class MainViewController implements Initializable {
 
             javafx.stage.Stage stage = new javafx.stage.Stage();
             stage.setTitle("جزئیات آگهی: " + adDetail.title());
-            stage.setScene(new javafx.scene.Scene(root, javafx.scene.paint.Color.web("#0a1120")));
+            javafx.scene.paint.Color bg = divar.aut.frontend.ui.ThemeManager.isLightMode()
+                    ? javafx.scene.paint.Color.web("#fffaf0") : javafx.scene.paint.Color.web("#0a1120");
+            stage.setScene(new javafx.scene.Scene(root, bg));
             stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
             stage.show();
         } catch (IOException ex) {
@@ -367,5 +372,12 @@ public class MainViewController implements Initializable {
         if (viewManager == null) return;
         SessionManager.getInstance().endSession();
         viewManager.toWelcome();
+    }
+
+    @FXML
+    private void onToggleTheme() {
+        if (viewManager == null) return;
+        viewManager.toggleTheme();
+        divar.aut.frontend.ui.ThemeManager.syncButtonLabel(themeToggleBtn);
     }
 }

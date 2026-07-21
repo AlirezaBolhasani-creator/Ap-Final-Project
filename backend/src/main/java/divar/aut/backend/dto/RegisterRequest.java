@@ -2,6 +2,7 @@ package divar.aut.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 /**
@@ -15,11 +16,16 @@ import jakarta.validation.constraints.Size;
 public class RegisterRequest {
 
     /**
-     * The full name of the user. Must not be blank, at most 200 characters.
-     * Mapped from JSON field "name" via {@link JsonAlias}.
+     * The full name of the user. Must not be blank, at most 200 characters,
+     * and must contain only letters and spaces with at least a first and
+     * last name (two words). Mapped from JSON field "name" via {@link JsonAlias}.
      */
     @NotBlank(message = "must not be blank")
     @Size(max = 200, message = "must be at most 200 characters")
+    @Pattern(
+            regexp = "^[\\p{L}]+(\\s[\\p{L}]+)+$",
+            message = "must contain only letters and include both a first and last name"
+    )
     @JsonAlias("name")
     private String fullName;
 
@@ -38,15 +44,25 @@ public class RegisterRequest {
     private String password;
 
     /**
-     * The email address of the user. Optional, but if provided must be at most 200 characters.
+     * The email address of the user. Optional, but if provided must be at most
+     * 200 characters and a well-formed email address.
      */
     @Size(max = 200, message = "must be at most 200 characters")
+    @Pattern(
+            regexp = "^$|^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$",
+            message = "must be a valid email address"
+    )
     private String email;
 
     /**
-     * The phone number of the user. Optional, but if provided must be at most 50 characters.
+     * The phone number of the user. Optional, but if provided must be a valid
+     * Iranian mobile number (11 digits starting with 09).
      */
     @Size(max = 50, message = "must be at most 50 characters")
+    @Pattern(
+            regexp = "^$|^09\\d{9}$",
+            message = "must be a valid mobile number (e.g. 09xxxxxxxxx)"
+    )
     private String phone;
 
     public String getFullName() {

@@ -2,6 +2,7 @@ package divar.aut.frontend.controller;
 
 import divar.aut.frontend.model.*;
 import divar.aut.frontend.net.*;
+import divar.aut.frontend.ui.ThemeManager;
 import divar.aut.frontend.ui.ViewManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -30,6 +31,7 @@ AdminDashboardController {
     @FXML private TextField categoryNameField;
     @FXML private TextField cityNameField;
     @FXML private Label statusLabel;
+    @FXML private Button themeToggleBtn;
 
     private final AdminService adminService = new AdminService();
     private final CategoryService categoryService = new CategoryService();
@@ -42,6 +44,7 @@ AdminDashboardController {
         this.viewManager = viewManager;
         configureLists();
         refreshAll();
+        ThemeManager.syncButtonLabel(themeToggleBtn);
     }
 
     private void configureLists() {
@@ -179,6 +182,7 @@ AdminDashboardController {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
                 Parent root = loader.load();
+                ThemeManager.applyCurrentMode(root);
                 loader.<AdDetailsController>getController().setData(detail, adService, "ADMIN", false,
                         this::refreshAll, viewManager, this::requestAdminDelete);
                 Stage stage = new Stage(); stage.setTitle("مدیریت آگهی: " + data.title()); stage.setScene(new Scene(root)); stage.initModality(Modality.APPLICATION_MODAL); stage.show();
@@ -348,4 +352,11 @@ AdminDashboardController {
     private void showSuccess(String message) { statusLabel.setText(message); statusLabel.getStyleClass().setAll("status-success"); }
     private void showError(String message) { statusLabel.setText("خطا: " + message); statusLabel.getStyleClass().setAll("status-danger"); }
     @FXML private void goBack() { viewManager.toMain(); }
+
+    @FXML
+    private void onToggleTheme() {
+        if (viewManager == null) return;
+        viewManager.toggleTheme();
+        ThemeManager.syncButtonLabel(themeToggleBtn);
+    }
 }
