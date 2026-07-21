@@ -98,7 +98,7 @@ public class PostAdController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        conditionCombo.getItems().addAll("نو", "در حد نو", "کارکرده");
+        conditionCombo.getItems().addAll("نو", "کارکرده");
         conditionCombo.getSelectionModel().select(0);
         loadCategories();
         loadCities();
@@ -283,16 +283,16 @@ public class PostAdController implements Initializable {
         if (label == null) return "USED";
         return switch (label) {
             case "نو" -> "NEW";
-            case "در حد نو", "کارکرده" -> "USED";
+            case "کارکرده" -> "USED";
             default -> label.toUpperCase();
         };
     }
 
     private String mapConditionToLabel(String condition) {
-        if (condition == null) return "در حد نو";
+        if (condition == null) return "کارکرده";
         return switch (condition) {
             case "NEW" -> "نو";
-            case "USED" -> "در حد نو";
+            case "USED" -> "کارکرده";
             default -> condition;
         };
     }
