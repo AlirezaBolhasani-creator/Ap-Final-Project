@@ -20,6 +20,13 @@ import javafx.stage.Stage;
 
 import java.util.List;
 
+/**
+ * JavaFX controller for the list of user conversations.
+ * Displays all conversations the current user is involved in, with
+ * previews of the last message, timestamps, and unread count badges.
+ * Allows opening a conversation detail view by clicking on a card.
+ * Interacts with {@link ConversationService} to fetch conversations.
+ */
 public class ConversationsController {
 
     @FXML private VBox conversationList;
@@ -28,6 +35,11 @@ public class ConversationsController {
     private final ConversationService conversationService = new ConversationService();
     private ViewManager viewManager;
 
+    /**
+     * Injects the view manager and triggers loading of conversations.
+     *
+     * @param viewManager the navigation manager for switching screens.
+     */
     public void setViewManager(ViewManager viewManager) {
         this.viewManager = viewManager;
         loadConversations();
@@ -144,6 +156,9 @@ public class ConversationsController {
         stage.show();
     }
 
+    /**
+     * Navigates back to the main application screen using the injected {@link ViewManager}.
+     */
     @FXML
     private void goBack() {
         if (viewManager != null) viewManager.toMain();

@@ -19,6 +19,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+/**
+ * JavaFX controller for displaying the user's favorite advertisements.
+ * Shows a grid of ad cards and allows the user to click on an ad to
+ * view its details. Fetches the list of favorites via {@link FavoriteService}
+ * and uses {@link AdService} for detail retrieval.
+ */
 public class FavoritesController {
 
     @FXML private FlowPane favoritesGrid;
@@ -28,6 +34,11 @@ public class FavoritesController {
     private final AdService adService = new AdService();
     private ViewManager viewManager;
 
+    /**
+     * Injects the view manager and loads the user's favorites.
+     *
+     * @param viewManager the navigation manager for switching screens.
+     */
     public void setViewManager(ViewManager viewManager) {
         this.viewManager = viewManager;
         loadFavorites();
@@ -94,6 +105,9 @@ public class FavoritesController {
         }), error -> Platform.runLater(() -> statusLabel.setText("خطا در دریافت جزئیات آگهی: " + error)));
     }
 
+    /**
+     * Navigates back to the main application screen.
+     */
     @FXML
     private void goBack() {
         if (viewManager != null) viewManager.toMain();

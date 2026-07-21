@@ -21,6 +21,17 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * JavaFX controller for the administrator dashboard.
+ * <p>
+ * Provides an overview of system statistics, lists of users, categories,
+ * cities, and all advertisements grouped by status. Enables administrative
+ * actions: block/unblock users, manage categories and cities (create, edit,
+ * delete with reassign or delete-ads strategies), and manage ads (view details,
+ * approve, reject, or delete). Interacts with backend services
+ * ({@link AdminService}, {@link CategoryService}, {@link CityService}).
+ * </p>
+ */
 public class AdminDashboardController {
     @FXML private FlowPane statsPane;
     @FXML private VBox adminAdGrid;
@@ -38,6 +49,13 @@ public class AdminDashboardController {
     private AdService adService;
     private ViewManager viewManager;
 
+    /**
+     * Injects required dependencies and initialises the dashboard.
+     * Must be called after the FXML is loaded.
+     *
+     * @param adService   the service for advertisement operations.
+     * @param viewManager the navigation manager for switching screens.
+     */
     public void setDependencies(AdService adService, ViewManager viewManager) {
         this.adService = adService;
         this.viewManager = viewManager;
@@ -189,7 +207,16 @@ public class AdminDashboardController {
         }), this::showError);
     }
 
+    /**
+     * Adds a new category using the text entered in {@code categoryNameField}.
+     * Clears the input field and refreshes the lists and stats on success.
+     */
     @FXML private void addCategory() { String name = categoryNameField.getText().trim(); if (!name.isEmpty()) adminService.createCategory(name, c -> { categoryNameField.clear(); loadCategories(); loadStats(); }, this::showError); }
+
+    /**
+     * Adds a new city using the text entered in {@code cityNameField}.
+     * Clears the input field and refreshes the lists and stats on success.
+     */
     @FXML private void addCity() { String name = cityNameField.getText().trim(); if (!name.isEmpty()) adminService.createCity(name, c -> { cityNameField.clear(); loadCities(); loadStats(); }, this::showError); }
 
     private void editMetadata(boolean category, Long id, String currentName) {
@@ -350,8 +377,15 @@ public class AdminDashboardController {
 
     private void showSuccess(String message) { statusLabel.setText(message); statusLabel.getStyleClass().setAll("status-success"); }
     private void showError(String message) { statusLabel.setText("خطا: " + message); statusLabel.getStyleClass().setAll("status-danger"); }
+
+    /**
+     * Returns to the main application screen using the {@link ViewManager}.
+     */
     @FXML private void goBack() { viewManager.toMain(); }
 
+    /**
+     * Toggles the application theme (light/dark) via {@link ThemeManager}.
+     */
     @FXML
     private void onToggleTheme() {
         if (viewManager == null) return;

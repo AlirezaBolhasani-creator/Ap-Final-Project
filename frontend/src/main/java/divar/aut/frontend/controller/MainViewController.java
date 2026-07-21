@@ -26,6 +26,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * JavaFX controller for the main application screen.
+ * <p>
+ * This is the central view after login, displaying advertisements in a grid
+ * with filtering and sorting capabilities. It also provides navigation to
+ * other sections: "My Ads", "Post Ad", "Favorites", "Conversations",
+ * and "Admin Panel" (for admins). The view supports theme switching and
+ * includes a chat unread‑count badge. It interacts with multiple backend
+ * services ({@link AdService}, {@link CategoryService}, {@link CityService},
+ * and {@link ConversationService}) to fetch data.
+ * </p>
+ */
 public class MainViewController implements Initializable {
 
     @FXML private FlowPane         adGrid;
@@ -54,12 +66,29 @@ public class MainViewController implements Initializable {
     private int page = 0;
     private boolean showingMyAds = false;
 
-    /** No-arg constructor required by FXMLLoader — do NOT remove */
+    /**
+     * No‑arg constructor required by FXMLLoader. Do not remove.
+     */
     public MainViewController() { this.viewManager = null; }
 
-    /** Called by MainView via controller factory */
+    /**
+     * Constructor used by MainView via a controller factory.
+     *
+     * @param vm the injected view manager for navigation and state.
+     */
     public MainViewController(ViewManager vm) { this.viewManager = vm;}
 
+    /**
+     * Initializes the controller after the FXML is loaded.
+     * <p>
+     * Configures sort and filter combo boxes, loads filter options (categories,
+     * cities), loads the initial page of ads, refreshes the chat badge, and
+     * hides the admin panel button if the user is not an admin.
+     * </p>
+     *
+     * @param location  the location used to resolve relative paths (unused).
+     * @param resources the resources used to localize the root object (unused).
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if (sortCombo != null) {
@@ -117,6 +146,13 @@ public class MainViewController implements Initializable {
             );
         }
     }
+
+    /**
+     * Renders a list of advertisements in the grid with a fade-in animation.
+     * Clears the existing grid and adds each ad card with a staggered delay.
+     *
+     * @param ads the list of ad data to display.
+     */
     public void renderAds(List<AdData> ads) {
         adGrid.getChildren().clear();
         int delay = 0;
@@ -201,6 +237,9 @@ public class MainViewController implements Initializable {
         }
     }
 
+    /**
+     * Toggles between showing "My Ads" and the main ad list.
+     */
     @FXML
     private void onMyAds() {
         if (viewManager == null || viewManager.getUserToken() == null) return;
@@ -213,25 +252,36 @@ public class MainViewController implements Initializable {
         loadPage();
     }
 
+    /**
+     * Navigates to the "Post Ad" screen.
+     */
     @FXML private void onPostAd() {
         if(viewManager == null || viewManager.getUserToken() == null) return;
         viewManager.toPostAd();
     }
 
+    /**
+     * Navigates to the "Favorites" screen.
+     */
     @FXML private void onFavorites() {
         if(viewManager == null || viewManager.getUserToken() == null) return;
         viewManager.toFavorites();
     }
 
+    /**
+     * Navigates to the "Conversations" screen.
+     */
     @FXML private void onConversations() {
         if(viewManager == null || viewManager.getUserToken() == null) return;
         viewManager.toConversations();
     }
 
     /**
-     * Re-fetches conversations and updates the unread-count badge on the "گفتگوها" nav button.
-     * Safe to call whenever the main view regains focus (e.g. after closing the conversations
-     * or a conversation-detail window) so the badge count doesn't go stale.
+     * Re‑fetches conversations and updates the unread‑count badge on the "گفتگوها" nav button.
+     * <p>
+     * This method is safe to call whenever the main view regains focus (e.g., after closing the
+     * conversations or a conversation‑detail window) so the badge count does not become stale.
+     * </p>
      */
     public void refreshChatBadge() {
         if (chatBadge == null || viewManager == null || viewManager.getUserToken() == null) return;
@@ -273,6 +323,10 @@ public class MainViewController implements Initializable {
         return button;
     }
 
+    /**
+     * Applies the current filter and sorting criteria and reloads the ad list.
+     * Also resets the "My Ads" toggle if it was active.
+     */
     @FXML private void applyFilter() {
         if (showingMyAds) {
             showingMyAds = false;
@@ -361,12 +415,20 @@ public class MainViewController implements Initializable {
             default -> "newest";
         };
     }
+
+    /**
+     * Navigates to the admin dashboard.
+     * Only visible if the current user has the ADMIN role.
+     */
     @FXML
     private void onAdminPanel() {
         if(viewManager == null || viewManager.getUserToken() == null) return;
         viewManager.toAdminDashboard();
     }
 
+    /**
+     * Logs out the current user and returns to the welcome screen.
+     */
     @FXML
     private void onLogout() {
         if (viewManager == null) return;
@@ -374,6 +436,9 @@ public class MainViewController implements Initializable {
         viewManager.toWelcome();
     }
 
+    /**
+     * Toggles the application theme (light/dark) via {@code ThemeManager}.
+     */
     @FXML
     private void onToggleTheme() {
         if (viewManager == null) return;

@@ -21,6 +21,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * JavaFX controller for the "Post Ad" screen.
+ * <p>
+ * Allows users to create a new advertisement or edit an existing one.
+ * The form includes fields for title, description, price, location,
+ * condition, and category. Users can also upload multiple images.
+ * On submission, the ad is sent to the backend via {@link AdService}.
+ * This controller also supports editing by pre‑populating fields with
+ * existing data when {@link #setData(AdDetailData)} is called.
+ * </p>
+ */
 public class PostAdController implements Initializable {
 
     @FXML private TextField titleField;
@@ -43,11 +54,23 @@ public class PostAdController implements Initializable {
     private String pendingCategoryName;
     private String pendingCityName;
 
+    /**
+     * Injects required dependencies after the FXML is loaded.
+     *
+     * @param adService   the service for ad operations.
+     * @param viewManager the navigation manager.
+     */
     public void setDependencies(AdService adService, ViewManager viewManager) {
         this.adService = adService;
         this.viewManager = viewManager;
     }
 
+    /**
+     * Pre‑populates the form with existing ad data for editing.
+     * Called when the controller is used in edit mode.
+     *
+     * @param adDetail the existing ad data to edit.
+     */
     public void setData(AdDetailData adDetail) {
         this.editingAd = adDetail;
         this.pendingCategoryName = adDetail.categoryName();
@@ -66,6 +89,13 @@ public class PostAdController implements Initializable {
         }
     }
 
+    /**
+     * Initializes the controller after FXML loading.
+     * Sets up condition combo box and loads categories and cities.
+     *
+     * @param location  the location used to resolve relative paths (unused).
+     * @param resources the resources used to localize the root object (unused).
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         conditionCombo.getItems().addAll("نو", "در حد نو", "کارکرده");
@@ -114,6 +144,10 @@ public class PostAdController implements Initializable {
         );
     }
 
+    /**
+     * Opens a file chooser for selecting image files.
+     * Supports .png, .jpg, and .jpeg. Stores the chosen files for upload.
+     */
     @FXML
     public void handleImageUpload() {
         FileChooser fileChooser = new FileChooser();
@@ -130,11 +164,17 @@ public class PostAdController implements Initializable {
         }
     }
 
+    /**
+     * Navigates back to the main screen without saving.
+     */
     @FXML
     private void handleBack() {
         if (viewManager != null) viewManager.toMain();
     }
 
+    /**
+     * Clears all input fields, the selected images, and the status message.
+     */
     @FXML
     public void handleClear() {
         titleField.clear();
@@ -148,6 +188,13 @@ public class PostAdController implements Initializable {
         setStatusError();
     }
 
+    /**
+     * Submits the ad data to the backend.
+     * Validates required fields, converts inputs, and creates or updates
+     * the ad via {@link AdService}. If images are selected, they are uploaded
+     * after a successful ad creation/update. On success, navigates back to
+     * the main screen.
+     */
     @FXML
     public void handleSubmit() {
         // 1. Validate required fields

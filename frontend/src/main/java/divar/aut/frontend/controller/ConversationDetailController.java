@@ -17,6 +17,13 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 
+/**
+ * JavaFX controller for displaying a conversation detail view.
+ * Shows the full message history between buyer and seller, with date
+ * separators, sender labels (with admin badge for admin senders), and
+ * a text field for sending new messages. Uses {@link ConversationService}
+ * to fetch messages and send new ones.
+ */
 public class ConversationDetailController {
 
     @FXML private Label headerLabel;
@@ -28,6 +35,13 @@ public class ConversationDetailController {
     private ConversationData conversation;
     private Runnable onMessageSent;
 
+    /**
+     * Initialises the controller with the conversation data.
+     * Sets the header label and loads the message history.
+     *
+     * @param conversation the conversation data to display.
+     * @param onMessageSent optional callback to run after a message is sent successfully.
+     */
     public void setData(ConversationData conversation, Runnable onMessageSent) {
         this.conversation = conversation;
         this.onMessageSent = onMessageSent;
@@ -112,6 +126,13 @@ public class ConversationDetailController {
         }
     }
 
+    /**
+     * Sends a new message in the current conversation.
+     * Reads the content from {@code messageField}, clears it on success,
+     * reloads the message list, and triggers the optional callback.
+     * Disables the input field temporarily and, on a 403/forbidden error,
+     * permanently disables it with a prompt message.
+     */
     @FXML
     private void sendMessage() {
         String content = messageField.getText() == null ? "" : messageField.getText().trim();
