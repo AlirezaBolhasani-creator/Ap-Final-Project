@@ -141,7 +141,6 @@ public class ViewManager {
     public void toConversations() {
         show(new ConversationsScreen(this).getView());
     }
-
     /**
      * Navigates to the admin dashboard (admin only).
      */
