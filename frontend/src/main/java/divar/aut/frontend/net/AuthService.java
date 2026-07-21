@@ -7,13 +7,32 @@ import java.net.http.HttpResponse;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-/** Talks to /api/auth/**. */
+/**
+ * Service class for authentication operations.
+ * <p>
+ * Provides methods for user login and registration. Communicates with the backend
+ * REST API via {@link ApiClient}. On successful authentication, stores the token
+ * and role in {@link SessionManager}.
+ * </p>
+ */
 public class AuthService {
 
+    /**
+     * JSON serializer/deserializer for request/response bodies.
+     */
     private static final Gson GSON = new Gson();
 
+    /**
+     * Sends an authentication request (login) to the server.
+     *
+     * @param username  the user's username.
+     * @param password  the user's password.
+     * @param endpoint  the API endpoint (e.g., "/login").
+     * @param onSuccess callback receiving the token and role on success.
+     * @param onError   callback receiving an error message on failure.
+     */
     public static void sendAuthRequest(String username, String password, String endpoint,
-                                        BiConsumer<String, String> onSuccess, Consumer<String> onError) {
+                                       BiConsumer<String, String> onSuccess, Consumer<String> onError) {
         if (username.isEmpty() || password.isEmpty()) {
             onError.accept("Please fill all the fields");
             return;
@@ -23,15 +42,35 @@ public class AuthService {
                 response -> handleResponse(response, onSuccess, onError), onError);
     }
 
+    /**
+     * Sends a registration request to the server.
+     *
+     * @param name      the user's full name.
+     * @param username  the desired username.
+     * @param password  the desired password.
+     * @param email     the user's email (may be empty).
+     * @param phone     the user's phone number (may be empty).
+     * @param onSuccess callback receiving the token and role on success.
+     * @param onError   callback receiving an error message on failure.
+     */
     public static void sendRegisterRequest(String name, String username, String password, String email, String phone,
-                                            BiConsumer<String, String> onSuccess, Consumer<String> onError) {
+                                           BiConsumer<String, String> onSuccess, Consumer<String> onError) {
         String jsonBody = GSON.toJson(new RegisterRequestBody(name, username, password, email, phone));
         ApiClient.send("POST", "/api/auth/register", jsonBody,
                 response -> handleResponse(response, onSuccess, onError), onError);
     }
 
+    /**
+     * Handles the HTTP response from authentication endpoints.
+     * Parses the JSON response, extracts token and role, and stores them
+     * in the {@link SessionManager} on success.
+     *
+     * @param response  the HTTP response.
+     * @param onSuccess callback accepting the token and role.
+     * @param onError   callback accepting an error message.
+     */
     private static void handleResponse(HttpResponse<String> response,
-                                        BiConsumer<String, String> onSuccess, Consumer<String> onError) {
+                                       BiConsumer<String, String> onSuccess, Consumer<String> onError) {
         AuthApiResponse parsed;
         try {
             parsed = GSON.fromJson(response.body(), AuthApiResponse.class);
@@ -56,17 +95,36 @@ public class AuthService {
         }
     }
 
+    /**
+     * Internal record for login request body.
+     *
+     * @param username the username.
+     * @param password the password.
+     */
     private record LoginRequestBody(String username, String password) {
     }
 
-    // NOTE: the backend's User entity field is "fullname", but AuthController#register
-    // never reads/uses the name at all - so this key name has no real effect either way.
-    // Kept as "name" here to match the existing (pre-existing, unrelated to this refactor)
-    // request shape rather than silently changing behavior.
+    /**
+     * Internal record for registration request body.
+     * <p>
+     * NOTE: The backend's User entity field is "fullname", but AuthController#register
+     * never reads or uses the name at all, so this key name has no real effect.
+     * Kept as "name" to match the existing request shape.
+     * </p>
+     *
+     * @param name     the user's full name.
+     * @param username the desired username.
+     * @param password the desired password.
+     * @param email    the user's email.
+     * @param phone    the user's phone number.
+     */
     private record RegisterRequestBody(String name, String username, String password, String email, String phone) {
     }
 
-    /** Shape returned by AuthController: always a message, optionally a token/role. */
+    /**
+     * Internal class representing the shape of the authentication response.
+     * Always contains a message; optionally contains a token and/or role.
+     */
     private static class AuthApiResponse {
         String message;
         String token;

@@ -8,11 +8,25 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.function.Consumer;
 
-/** Talks to /api/cities/**. */
+/**
+ * Service class for city-related operations.
+ * <p>
+ * Provides methods to fetch cities from the backend REST API.
+ * </p>
+ */
 public class CityService {
 
+    /**
+     * JSON serializer/deserializer for response bodies.
+     */
     private static final Gson GSON = new Gson();
 
+    /**
+     * Retrieves a list of all cities.
+     *
+     * @param onSuccess callback accepting the list of {@link CityData}.
+     * @param onError   callback accepting an error message.
+     */
     public void listAll(Consumer<List<CityData>> onSuccess, Consumer<String> onError) {
         ApiClient.send("GET", "/api/cities", null,
                 response -> {

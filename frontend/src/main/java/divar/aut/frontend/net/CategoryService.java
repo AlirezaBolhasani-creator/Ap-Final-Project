@@ -8,11 +8,25 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.function.Consumer;
 
-/** Talks to /api/categories/**. */
+/**
+ * Service class for category-related operations.
+ * <p>
+ * Provides methods to fetch categories from the backend REST API.
+ * </p>
+ */
 public class CategoryService {
 
+    /**
+     * JSON serializer/deserializer for response bodies.
+     */
     private static final Gson GSON = new Gson();
 
+    /**
+     * Retrieves a list of all categories.
+     *
+     * @param onSuccess callback accepting the list of {@link CategoryData}.
+     * @param onError   callback accepting an error message.
+     */
     public void listAll(Consumer<List<CategoryData>> onSuccess, Consumer<String> onError) {
         ApiClient.send("GET", "/api/categories", null,
                 response -> {

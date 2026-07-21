@@ -16,17 +16,46 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Consumer;
 
-/** Talks to /ads/**. */
+/**
+ * Service class for advertisement-related operations.
+ * <p>
+ * Provides methods to fetch, create, update, delete, and manage advertisements,
+ * including image uploads and status changes. Communicates with the backend
+ * REST API via {@link ApiClient}.
+ * </p>
+ */
 public class AdService {
 
+    /**
+     * JSON serializer/deserializer for request/response bodies.
+     */
     private static final Gson GSON = new Gson();
 
+    /**
+     * Fetches a paginated list of all advertisements.
+     *
+     * @param page     the page number (0‑based).
+     * @param onSuccess callback accepting the list of {@link AdData}.
+     * @param onError   callback accepting an error message.
+     */
     public void fetchAds(int page, Consumer<List<AdData>> onSuccess, Consumer<String> onError) {
         ApiClient.send("GET", "/ads?page=" + page, null,
                 response -> handleList(response, onSuccess, onError), onError);
     }
 
-
+    /**
+     * Searches advertisements with optional filters and sorting.
+     *
+     * @param keyword    search keyword (may be null or empty).
+     * @param categoryId category filter (may be null).
+     * @param cityId     city filter (may be null).
+     * @param minPrice   minimum price (may be null).
+     * @param maxPrice   maximum price (may be null).
+     * @param condition  item condition (e.g., "NEW", "USED"; may be null).
+     * @param sortBy     sort criteria (e.g., "newest", "cheapest", etc.; may be null).
+     * @param onSuccess  callback accepting the list of {@link AdData}.
+     * @param onError    callback accepting an error message.
+     */
     public void searchAds(String keyword, Long categoryId, Long cityId, Double minPrice, Double maxPrice,
                           String condition, String sortBy, Consumer<List<AdData>> onSuccess,
                           Consumer<String> onError) {
@@ -42,16 +71,35 @@ public class AdService {
                 response -> handleList(response, onSuccess, onError), onError);
     }
 
+    /**
+     * Fetches all pending advertisements (admin only).
+     *
+     * @param onSuccess callback accepting the list of {@link AdData}.
+     * @param onError   callback accepting an error message.
+     */
     public void fetchPendingAds(Consumer<List<AdData>> onSuccess, Consumer<String> onError) {
         ApiClient.send("GET", "/ads/pending", null,
                 response -> handleList(response, onSuccess, onError), onError);
     }
 
+    /**
+     * Fetches advertisements belonging to the currently authenticated user.
+     *
+     * @param onSuccess callback accepting the list of {@link AdData}.
+     * @param onError   callback accepting an error message.
+     */
     public void fetchMyAds(Consumer<List<AdData>> onSuccess, Consumer<String> onError) {
         ApiClient.send("GET", "/ads/my-ads", null,
                 response -> handleList(response, onSuccess, onError), onError);
     }
 
+    /**
+     * Fetches detailed information for a specific advertisement.
+     *
+     * @param adId      the ID of the ad.
+     * @param onSuccess callback accepting the full {@link AdDetailData}.
+     * @param onError   callback accepting an error message.
+     */
     public void fetchAdDetails(Long adId, Consumer<AdDetailData> onSuccess, Consumer<String> onError) {
         ApiClient.send("GET", "/ads/" + adId, null,
                 response -> {
@@ -64,6 +112,13 @@ public class AdService {
                 }, onError);
     }
 
+    /**
+     * Creates a new advertisement.
+     *
+     * @param newAd     the request data for the new ad.
+     * @param onSuccess callback accepting the created {@link AdDetailData}.
+     * @param onError   callback accepting an error message.
+     */
     public void createAd(AdRequestData newAd, Consumer<AdDetailData> onSuccess, Consumer<String> onError) {
         String jsonBody = GSON.toJson(newAd);
         ApiClient.send("POST", "/ads", jsonBody,
@@ -76,6 +131,14 @@ public class AdService {
                 }, onError);
     }
 
+    /**
+     * Updates an existing advertisement.
+     *
+     * @param adId      the ID of the ad to update.
+     * @param updatedAd the updated request data.
+     * @param onSuccess callback accepting the updated {@link AdDetailData}.
+     * @param onError   callback accepting an error message.
+     */
     public void updateAd(Long adId, AdRequestData updatedAd, Consumer<AdDetailData> onSuccess, Consumer<String> onError) {
         String jsonBody = GSON.toJson(updatedAd);
         ApiClient.send("PUT", "/ads/" + adId, jsonBody,
@@ -88,6 +151,13 @@ public class AdService {
                 }, onError);
     }
 
+    /**
+     * Soft‑deletes an advertisement (changes status to DELETED).
+     *
+     * @param adId      the ID of the ad to delete.
+     * @param onSuccess callback accepting a success message.
+     * @param onError   callback accepting an error message.
+     */
     public void deleteAd(Long adId, Consumer<String> onSuccess, Consumer<String> onError) {
         ApiClient.send("DELETE", "/ads/" + adId, null,
                 response -> {
@@ -99,6 +169,13 @@ public class AdService {
                 }, onError);
     }
 
+    /**
+     * Marks an ad as sold (status changes to SOLD).
+     *
+     * @param adId      the ID of the ad.
+     * @param onSuccess callback accepting a success message.
+     * @param onError   callback accepting an error message.
+     */
     public void markAsSold(Long adId, Consumer<String> onSuccess, Consumer<String> onError) {
         ApiClient.send("PUT", "/ads/" + adId + "/mark-as-sold", null,
                 response -> {
@@ -110,10 +187,26 @@ public class AdService {
                 }, onError);
     }
 
+    /**
+     * Uploads a single image for the specified ad.
+     *
+     * @param adId      the ad ID.
+     * @param file      the image file.
+     * @param onSuccess callback accepting a success message.
+     * @param onError   callback accepting an error message.
+     */
     public void uploadImage(Long adId, File file, Consumer<String> onSuccess, Consumer<String> onError) {
         uploadImages(adId, List.of(file), onSuccess, onError);
     }
 
+    /**
+     * Uploads multiple images for the specified ad.
+     *
+     * @param adId      the ad ID.
+     * @param files     the list of image files.
+     * @param onSuccess callback accepting a success message.
+     * @param onError   callback accepting an error message.
+     */
     public void uploadImages(Long adId, List<File> files, Consumer<String> onSuccess, Consumer<String> onError) {
         ApiClient.uploadFiles("/ads/" + adId + "/images", "files", files,
                 response -> {
@@ -125,6 +218,15 @@ public class AdService {
                 }, onError);
     }
 
+    /**
+     * Updates the status of an ad (admin action). Currently supports "ACTIVE" (approve).
+     * This method is deprecated for rejection; use {@link #rejectAd(Long, String, Consumer, Consumer)} instead.
+     *
+     * @param adId      the ad ID.
+     * @param status    the new status (only "ACTIVE" is fully supported).
+     * @param onSuccess callback accepting a success message.
+     * @param onError   callback accepting an error message.
+     */
     public void updateAdStatus(Long adId, String status, Consumer<String> onSuccess, Consumer<String> onError) {
         String path;
         if ("ACTIVE".equals(status)) {
@@ -146,6 +248,13 @@ public class AdService {
                 }, onError);
     }
 
+    /**
+     * Appends a query parameter to the URL builder if the value is not null/empty.
+     *
+     * @param path the StringBuilder containing the URL.
+     * @param key  the parameter key.
+     * @param value the parameter value (may be null).
+     */
     private void appendQuery(StringBuilder path, String key, Object value) {
         if (value == null || (value instanceof String text && text.isBlank())) {
             return;
@@ -155,6 +264,13 @@ public class AdService {
                 .append(URLEncoder.encode(String.valueOf(value), StandardCharsets.UTF_8));
     }
 
+    /**
+     * Handles the HTTP response for list endpoints, deserializing into a list of {@link AdData}.
+     *
+     * @param response  the HTTP response.
+     * @param onSuccess callback accepting the list.
+     * @param onError   callback accepting an error message.
+     */
     private void handleList(HttpResponse<String> response, Consumer<List<AdData>> onSuccess, Consumer<String> onError) {
         if (response.statusCode() == 200) {
             Type listType = new TypeToken<List<AdData>>() {
@@ -165,6 +281,15 @@ public class AdService {
             onError.accept(ApiClient.extractErrorMessage(response, "Error fetching ads: "));
         }
     }
+
+    /**
+     * Rejects an ad with a given reason.
+     *
+     * @param adId      the ID of the ad to reject.
+     * @param reason    the rejection reason.
+     * @param onSuccess callback accepting a success message.
+     * @param onError   callback accepting an error message.
+     */
     public void rejectAd(Long adId, String reason, Consumer<String> onSuccess, Consumer<String> onError) {
         String jsonBody = GSON.toJson(java.util.Map.of("reason", reason));
 
