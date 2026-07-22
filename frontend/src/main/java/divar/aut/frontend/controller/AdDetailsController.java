@@ -26,7 +26,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -314,27 +313,33 @@ public class AdDetailsController {
     @FXML
     private void handleMessageSeller() {
         messageButton.setDisable(true);
-        conversationService.startConversation(adDetail.id(),
-                conversation -> Platform.runLater(() -> {
-                    try {
-                        URL fxmlUrl = getClass().getResource("/ConversationDetailScreen.fxml");
-                        if (fxmlUrl == null) return;
-                        FXMLLoader loader = new FXMLLoader(fxmlUrl);
-                        Parent view = loader.load();
-                        ConversationDetailController controller = loader.getController();
-                        controller.setViewManager(viewManager);
-                        controller.setData(conversation, null);
-                        viewManager.show(view);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        showError("خطا در باز کردن گفت‌وگو");
-                    }
-                    messageButton.setDisable(false);
-                }),
-                error -> Platform.runLater(() -> {
-                    showError(error);
-                    messageButton.setDisable(false);
-                }));
+        conversationService.listConversations(conversations -> Platform.runLater(() -> {
+            try {
+                URL fxmlUrl = getClass().getResource("/ConversationDetailScreen.fxml");
+                if (fxmlUrl == null) return;
+                FXMLLoader loader = new FXMLLoader(fxmlUrl);
+                Parent view = loader.load();
+                ConversationDetailController controller = loader.getController();
+                controller.setViewManager(viewManager);
+                Optional<ConversationData> existing = conversations.stream()
+                        .filter(c -> c.adId().equals(adDetail.id()))
+                        .findFirst();
+                if (existing.isPresent()) {
+                    controller.setData(existing.get(), null);
+                } else {
+                    controller.setData(adDetail.id(), adDetail.title(), null);
+                }
+                viewManager.show(view);
+            } catch (IOException e) {
+                e.printStackTrace();
+                showError("خطا در باز کردن گفت‌وگو");
+            } finally {
+                messageButton.setDisable(false);
+            }
+        }), error -> Platform.runLater(() -> {
+            showError(error);
+            messageButton.setDisable(false);
+        }));
     }
 
     /**

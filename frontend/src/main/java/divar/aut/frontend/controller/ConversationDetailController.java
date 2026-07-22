@@ -43,6 +43,8 @@ public class ConversationDetailController {
     private final ConversationService conversationService = new ConversationService();
     private final AdService adService = new AdService();
     private ViewManager viewManager;
+    private Long adId;
+    private String adTitle;
 
     public void setViewManager(ViewManager viewManager) {
         this.viewManager = viewManager;
@@ -57,10 +59,14 @@ public class ConversationDetailController {
 
     @FXML
     private void handleBackToAd() {
-        if (viewManager == null || conversation == null) {
+        if (viewManager == null) {
             return;
         }
-        adService.fetchAdDetails(conversation.adId(), adDetail -> Platform.runLater(() -> {
+        Long targetAdId = conversation != null ? conversation.adId() : adId;
+        if (targetAdId == null) {
+            return;
+        }
+        adService.fetchAdDetails(targetAdId, adDetail -> Platform.runLater(() -> {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
                 Parent view = loader.load();
@@ -86,12 +92,33 @@ public class ConversationDetailController {
      */
     public void setData(ConversationData conversation, Runnable onMessageSent) {
         this.conversation = conversation;
+        this.adId = conversation.adId();
+        this.adTitle = conversation.adTitle();
         this.onMessageSent = onMessageSent;
         headerLabel.setText("گفت‌وگو درباره: " + conversation.adTitle());
         loadMessages();
     }
 
+    public void setData(Long adId, String adTitle, Runnable onMessageSent) {
+        this.conversation = null;
+        this.adId = adId;
+        this.adTitle = adTitle;
+        this.onMessageSent = onMessageSent;
+        headerLabel.setText("گفت‌وگو درباره: " + adTitle);
+        messagesBox.getChildren().clear();
+        Label emptyLabel = new Label("هنوز پیامی ارسال نشده است.");
+        emptyLabel.getStyleClass().add("empty-state");
+        messagesBox.getChildren().add(emptyLabel);
+    }
+
     private void loadMessages() {
+        if (conversation == null) {
+            messagesBox.getChildren().clear();
+            Label emptyLabel = new Label("هنوز پیامی ارسال نشده است.");
+            emptyLabel.getStyleClass().add("empty-state");
+            messagesBox.getChildren().add(emptyLabel);
+            return;
+        }
         conversationService.listMessages(conversation.id(), this::renderMessages,
                 error -> statusLabel.setText("خطا در دریافت پیام‌ها: " + error));
     }
@@ -186,15 +213,37 @@ public class ConversationDetailController {
         String content = messageField.getText() == null ? "" : messageField.getText().trim();
         if (content.isEmpty()) return;
         messageField.setDisable(true);
+
+        if (conversation == null) {
+            if (adId == null) {
+                statusLabel.setText("شناسه آگهی نامشخص است.");
+                messageField.setDisable(false);
+                return;
+            }
+            conversationService.startConversation(adId, startedConversation -> Platform.runLater(() -> {
+                this.conversation = startedConversation;
+                this.adId = startedConversation.adId();
+                this.adTitle = startedConversation.adTitle();
+                sendMessageToConversation(content);
+            }), error -> Platform.runLater(() -> {
+                showError(error);
+                messageField.setDisable(false);
+            }));
+        } else {
+            sendMessageToConversation(content);
+        }
+    }
+
+    private void sendMessageToConversation(String content) {
         conversationService.sendMessage(conversation.id(), content,
-                message -> {
+                message -> Platform.runLater(() -> {
                     messageField.clear();
                     messageField.setDisable(false);
                     statusLabel.setText("");
                     loadMessages();
                     if (onMessageSent != null) onMessageSent.run();
-                },
-                error -> {
+                }),
+                error -> Platform.runLater(() -> {
                     if (error.contains("403") || error.toLowerCase().contains("forbidden")) {
                         messageField.setDisable(true); // برای همیشه دیزیبل می‌ماند
                         messageField.setPromptText("شما امکان ارسال پیام در این گفتگو را ندارید.");
@@ -204,7 +253,6 @@ public class ConversationDetailController {
                         messageField.setDisable(false);
                         statusLabel.setText("خطا در ارسال پیام: " + error);
                     }
-                }
-        );
+                }));
     }
 }
