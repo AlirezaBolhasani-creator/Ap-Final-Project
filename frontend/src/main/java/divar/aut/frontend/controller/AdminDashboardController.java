@@ -9,13 +9,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.geometry.Pos;
 import javafx.geometry.NodeOrientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.List;
@@ -197,16 +194,9 @@ public class AdminDashboardController {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
                 Parent root = loader.load();
-                ThemeManager.applyCurrentMode(root);
                 loader.<AdDetailsController>getController().setData(detail, adService, "ADMIN", false,
                         this::refreshAll, viewManager, this::requestAdminDelete);
-                Stage stage = new Stage();
-                stage.setTitle("مدیریت آگهی: " + data.title());
-                javafx.scene.paint.Color bg = ThemeManager.isLightMode()
-                        ? javafx.scene.paint.Color.web("#fffaf0") : javafx.scene.paint.Color.web("#0a1120");
-                stage.setScene(new Scene(root, bg));
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.show();
+                viewManager.show(root);
             } catch (IOException e) { showError("خطا در باز کردن آگهی"); }
         }), this::showError);
     }

@@ -16,7 +16,7 @@ public class DivarApplication extends Application {
     public void start(Stage primaryStage) {
         StackPane root = new StackPane();
         ThemeManager.applyShellBackground(root);
-        viewManager = new ViewManager(root, this);
+        viewManager = new ViewManager(root, this, primaryStage);
 
         Rectangle2D bounds = Screen.getPrimary().getBounds();
         Scene scene = new Scene(root, bounds.getWidth(), bounds.getHeight());

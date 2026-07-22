@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import divar.aut.frontend.DivarApplication;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,16 +28,28 @@ public class ViewManager {
 
     private final StackPane root;
     private final DivarApplication mainApp;
+    private final Stage primaryStage;
 
     /**
      * Constructs a ViewManager with the application's root container and main application reference.
      *
-     * @param root    the shared {@link StackPane} that holds the current view.
-     * @param mainApp the main application instance (unused internally but kept for future use).
+     * @param root         the shared {@link StackPane} that holds the current view.
+     * @param mainApp      the main application instance (unused internally but kept for future use).
+     * @param primaryStage the application's single primary window, used to tell apart views that
+     *                     are embedded in the shared window from ones opened in their own popup
+     *                     {@link Stage}.
      */
-    public ViewManager(StackPane root, DivarApplication mainApp) {
+    public ViewManager(StackPane root, DivarApplication mainApp, Stage primaryStage) {
         this.root = root;
         this.mainApp = mainApp;
+        this.primaryStage = primaryStage;
+    }
+
+    /**
+     * Returns the application's single primary window.
+     */
+    public Stage getPrimaryStage() {
+        return primaryStage;
     }
 
     /**

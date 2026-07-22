@@ -9,11 +9,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -88,17 +85,9 @@ public class FavoritesController {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
                 Parent root = loader.load();
-                divar.aut.frontend.ui.ThemeManager.applyCurrentMode(root);
                 AdDetailsController controller = loader.getController();
                 controller.setData(detail, adService, viewManager.getUserRole(), false, this::loadFavorites, viewManager);
-
-                Stage stage = new Stage();
-                stage.setTitle("جزئیات آگهی: " + detail.title());
-                javafx.scene.paint.Color bg = divar.aut.frontend.ui.ThemeManager.isLightMode()
-                        ? javafx.scene.paint.Color.web("#fffaf0") : javafx.scene.paint.Color.web("#0a1120");
-                stage.setScene(new Scene(root, bg));
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.show();
+                viewManager.show(root);
             } catch (IOException e) {
                 statusLabel.setText("خطا در باز کردن جزئیات آگهی");
             }
