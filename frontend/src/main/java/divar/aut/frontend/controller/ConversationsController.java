@@ -6,17 +6,18 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.net.URL;
+import java.io.IOException;
 import divar.aut.frontend.model.ConversationData;
 import divar.aut.frontend.net.ConversationService;
-import divar.aut.frontend.ui.ConversationDetailScreen;
+import divar.aut.frontend.controller.ConversationDetailController;
 import divar.aut.frontend.ui.ViewManager;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import org.kordamp.ikonli.javafx.FontIcon;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 import java.util.List;
 
@@ -145,15 +146,18 @@ public class ConversationsController {
     }
 
     private void openConversation(ConversationData conversation) {
-        ConversationDetailScreen screen = new ConversationDetailScreen(conversation, this::loadConversations);
-        divar.aut.frontend.ui.ThemeManager.applyCurrentMode(screen.getView());
-        Stage stage = new Stage();
-        stage.setTitle("گفت‌وگو: " + conversation.adTitle());
-        javafx.scene.paint.Color bg = divar.aut.frontend.ui.ThemeManager.isLightMode()
-                ? javafx.scene.paint.Color.web("#fffaf0") : javafx.scene.paint.Color.web("#0a1120");
-        stage.setScene(new Scene(screen.getView(), bg));
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.show();
+        try {
+            URL fxmlUrl = getClass().getResource("/ConversationDetailScreen.fxml");
+            if (fxmlUrl == null) return;
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            Parent view = loader.load();
+            ConversationDetailController controller = loader.getController();
+            controller.setViewManager(viewManager);
+            controller.setData(conversation, this::loadConversations);
+            viewManager.show(view);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

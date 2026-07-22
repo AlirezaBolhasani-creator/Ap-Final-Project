@@ -7,10 +7,17 @@
 <ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="divar.aut.frontend.controller.AdDetailsController"
             stylesheets="@theme.css"
-            fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
-            prefWidth="560" prefHeight="760">
+            fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
 
     <VBox spacing="20" styleClass="detail-page" nodeOrientation="RIGHT_TO_LEFT">
+
+        <HBox alignment="CENTER_RIGHT" spacing="10">
+            <Button text="بازگشت" onAction="#handleBack" styleClass="btn btn-outline">
+                <graphic>
+                    <FontIcon iconLiteral="fas-arrow-right" iconSize="14" iconColor="#a9b8de"/>
+                </graphic>
+            </Button>
+        </HBox>
 
         <!-- Title -->
         <Label fx:id="titleLabel" text="عنوان آگهی" styleClass="text-h1" wrapText="true"/>

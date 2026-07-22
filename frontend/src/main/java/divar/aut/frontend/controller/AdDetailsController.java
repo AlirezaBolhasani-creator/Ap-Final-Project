@@ -6,12 +6,13 @@ import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.FavoriteService;
 import divar.aut.frontend.net.ConversationService;
 import divar.aut.frontend.net.RatingService;
-import divar.aut.frontend.ui.ConversationDetailScreen;
 import divar.aut.frontend.ui.PostAdScreen;
 import divar.aut.frontend.ui.ThemeManager;
 import divar.aut.frontend.ui.ViewManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,8 +22,10 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.geometry.NodeOrientation;
 import org.kordamp.ikonli.javafx.FontIcon;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.net.URL;
 
 import java.util.List;
 import java.util.Optional;
@@ -215,6 +218,13 @@ public class AdDetailsController {
                 }));
     }
 
+    @FXML
+    private void handleBack() {
+        if (viewManager != null) {
+            viewManager.toMain();
+        }
+    }
+
     private void renderImages(AdDetailData ad) {
         imageGalleryBox.getChildren().clear();
 
@@ -299,20 +309,26 @@ public class AdDetailsController {
 
     /**
      * Initiates a conversation with the seller.
-     * Opens a new modal dialog showing the chat.
+     * Loads the conversation detail screen inside the main app view.
      */
     @FXML
     private void handleMessageSeller() {
         messageButton.setDisable(true);
         conversationService.startConversation(adDetail.id(),
                 conversation -> Platform.runLater(() -> {
-                    ConversationDetailScreen screen = new ConversationDetailScreen(conversation, null);
-                    divar.aut.frontend.ui.ThemeManager.applyCurrentMode(screen.getView());
-                    Stage stage = new Stage();
-                    stage.setTitle("گفت‌وگو: " + adDetail.title());
-                    stage.setScene(new Scene(screen.getView()));
-                    stage.initModality(Modality.APPLICATION_MODAL);
-                    stage.show();
+                    try {
+                        URL fxmlUrl = getClass().getResource("/ConversationDetailScreen.fxml");
+                        if (fxmlUrl == null) return;
+                        FXMLLoader loader = new FXMLLoader(fxmlUrl);
+                        Parent view = loader.load();
+                        ConversationDetailController controller = loader.getController();
+                        controller.setViewManager(viewManager);
+                        controller.setData(conversation, null);
+                        viewManager.show(view);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        showError("خطا در باز کردن گفت‌وگو");
+                    }
                     messageButton.setDisable(false);
                 }),
                 error -> Platform.runLater(() -> {

@@ -9,11 +9,20 @@
             fx:controller="divar.aut.frontend.controller.ConversationDetailController"
             stylesheets="@theme.css"
             styleClass="chat-root"
-            prefWidth="600" prefHeight="680"
             nodeOrientation="RIGHT_TO_LEFT">
 
     <top>
         <HBox styleClass="chat-header" alignment="CENTER_RIGHT" spacing="12">
+            <Button text="بازگشت به آگهی" onAction="#handleBackToAd" styleClass="btn btn-outline">
+                <graphic>
+                    <FontIcon iconLiteral="fas-arrow-right" iconSize="14" iconColor="#a9b8de"/>
+                </graphic>
+            </Button>
+            <Button text="بازگشت به گفتگوها" onAction="#handleBack" styleClass="btn btn-outline">
+                <graphic>
+                    <FontIcon iconLiteral="fas-arrow-right" iconSize="14" iconColor="#a9b8de"/>
+                </graphic>
+            </Button>
             <StackPane styleClass="detail-avatar">
                 <FontIcon iconLiteral="fas-comments" iconSize="20" iconColor="#6b93ff"/>
             </StackPane>

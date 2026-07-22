@@ -216,21 +216,13 @@ public class MainViewController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
             Parent root = loader.load();
-            divar.aut.frontend.ui.ThemeManager.applyCurrentMode(root);
             AdDetailsController controller = loader.getController();
             controller.setData(adDetail, adService, viewManager.getUserRole(), showingMyAds, () -> {
                 page = 0;
                 adGrid.getChildren().clear();
                 loadPage();
             }, viewManager);
-
-            javafx.stage.Stage stage = new javafx.stage.Stage();
-            stage.setTitle("جزئیات آگهی: " + adDetail.title());
-            javafx.scene.paint.Color bg = divar.aut.frontend.ui.ThemeManager.isLightMode()
-                    ? javafx.scene.paint.Color.web("#fffaf0") : javafx.scene.paint.Color.web("#0a1120");
-            stage.setScene(new javafx.scene.Scene(root, bg));
-            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
-            stage.show();
+            viewManager.show(root);
         } catch (IOException ex) {
             ex.printStackTrace();
             if (statusLabel != null) statusLabel.setText("خطا در باز کردن جزئیات آگهی");

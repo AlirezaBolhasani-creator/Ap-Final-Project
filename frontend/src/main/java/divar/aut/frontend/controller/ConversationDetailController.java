@@ -8,12 +8,20 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import divar.aut.frontend.model.ConversationData;
 import divar.aut.frontend.model.MessageData;
+import divar.aut.frontend.model.AdDetailData;
+import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.ConversationService;
+import divar.aut.frontend.ui.ViewManager;
+import divar.aut.frontend.controller.AdDetailsController;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.application.Platform;
 import org.kordamp.ikonli.javafx.FontIcon;
+import java.io.IOException;
 
 import java.util.List;
 
@@ -32,6 +40,39 @@ public class ConversationDetailController {
     @FXML private Label statusLabel;
 
     private final ConversationService conversationService = new ConversationService();
+    private final AdService adService = new AdService();
+    private ViewManager viewManager;
+
+    public void setViewManager(ViewManager viewManager) {
+        this.viewManager = viewManager;
+    }
+
+    @FXML
+    private void handleBack() {
+        if (viewManager != null) {
+            viewManager.toConversations();
+        }
+    }
+
+    @FXML
+    private void handleBackToAd() {
+        if (viewManager == null || conversation == null) {
+            return;
+        }
+        adService.fetchAdDetails(conversation.adId(), adDetail -> Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
+                Parent view = loader.load();
+                AdDetailsController controller = loader.getController();
+                controller.setData(adDetail, new AdService(), viewManager.getUserRole(), false, null, viewManager);
+                viewManager.show(view);
+            } catch (IOException e) {
+                e.printStackTrace();
+                statusLabel.setText("خطا در باز کردن آگهی مرتبط");
+            }
+        }), error -> Platform.runLater(() -> statusLabel.setText("خطا در دریافت آگهی: " + error)));
+    }
+
     private ConversationData conversation;
     private Runnable onMessageSent;
 
