@@ -1,0 +1,12 @@
+# Copy this file to "application-local.properties" in this same folder
+# (backend/src/main/resources/) to override settings on your own machine.
+#
+# application-local.properties is listed in .gitignore, so it never gets
+# committed — it's a safe place to put your own secrets or local tweaks.
+# Anything you set here overrides application.properties.
+
+# Your own JWT signing secret (any long random string is fine for local dev):
+jwt.secret=replace-this-with-your-own-random-string
+
+# Example: point at a different local SQLite file instead of divar.db
+# spring.datasource.url=jdbc:sqlite:my-local-copy.db
