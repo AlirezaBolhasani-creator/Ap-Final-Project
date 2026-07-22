@@ -59,3 +59,5 @@
 .admin-group-header {
     -fx-text-fill: #eef3ff; -fx-font-weight: bold; -fx-font-size: 16px; -fx-padding: 10 0 4 0;
 }
+
+/* Scroll styling is provided by theme.css / theme-light.css to support both modes. */

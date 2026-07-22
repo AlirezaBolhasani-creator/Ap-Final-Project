@@ -6,7 +6,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="divar.aut.frontend.controller.AdminDashboardController"
-            stylesheets="@AdminDashboard.css" styleClass="admin-root" nodeOrientation="RIGHT_TO_LEFT">
+            stylesheets="@theme.css, @AdminDashboard.css" styleClass="admin-root" nodeOrientation="RIGHT_TO_LEFT">
     <top>
         <BorderPane styleClass="admin-header">
             <right>
