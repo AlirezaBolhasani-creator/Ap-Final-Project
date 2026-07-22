@@ -54,7 +54,15 @@
 .text-small   { -fx-text-fill: #3a3230; }
 .text-caption { -fx-text-fill: #7a7068; }
 .text-muted   { -fx-text-fill: #3a3230; }
-.text-body.welcome-subtitle { -fx-text-fill: #3a3230; }
+.welcome-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: #3b2922;
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+}
 .text-lo      { -fx-text-fill: #7a7068; }
 .text-brand   { -fx-text-fill: #dc143c; }
 .text-success { -fx-text-fill: #16a34a; }
@@ -176,7 +184,22 @@
 .badge-warning { -fx-background-color: rgba(180,83,9,0.14);  -fx-text-fill: #b45309; }
 .badge-danger  { -fx-background-color: rgba(220,38,38,0.14); -fx-text-fill: #dc2626; }
 .badge-info    { -fx-background-color: rgba(37,99,235,0.14); -fx-text-fill: #2563eb; }
-.badge-neutral { -fx-background-color: rgba(20,10,0,0.08);   -fx-text-fill: #3a3230; }
+.ad-card-category {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2b2321;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 0;
+}
+.badge-neutral {
+    -fx-background-color: rgba(20,10,0,0.12);
+    -fx-text-fill: #3a3230;
+    -fx-border-color: rgba(20,10,0,0.14);
+    -fx-border-width: 1;
+}
 
 /* ── Navigation ───────────────────────────────────────────────────────── */
 .app-nav {

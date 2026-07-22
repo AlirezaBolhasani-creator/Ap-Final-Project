@@ -28,7 +28,7 @@
 
         <!-- Category badge (bottom-right in RTL) -->
         <HBox alignment="BOTTOM_LEFT" styleClass="overlay-pad">
-            <Label fx:id="photoCount" text="" styleClass="badge badge-neutral ad-card-obadge"/>
+            <Label fx:id="photoCount" text="" styleClass="ad-card-category"/>
         </HBox>
 
         <!-- Condition chip (top-left in RTL) -->

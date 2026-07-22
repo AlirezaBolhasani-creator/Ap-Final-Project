@@ -64,7 +64,15 @@
 .text-small   { -fx-font-size: 14px; -fx-text-fill: #a9b8de; }
 .text-caption { -fx-font-size: 12px; -fx-text-fill: #6b7ba3; }
 .text-muted   { -fx-text-fill: #a9b8de; }
-.text-body.welcome-subtitle { -fx-text-fill: #ffffff; }
+.welcome-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: #e8f2ff;
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+}
 .text-lo      { -fx-text-fill: #6b7ba3; }
 .text-brand   { -fx-text-fill: #4c7dff; }
 .text-success { -fx-text-fill: #34d399; }
@@ -215,7 +223,12 @@
 .badge-warning { -fx-background-color: rgba(251,191,36,0.16); -fx-text-fill: #fbbf24; }
 .badge-danger  { -fx-background-color: rgba(251,111,111,0.16);-fx-text-fill: #fb6f6f; }
 .badge-info    { -fx-background-color: rgba(96,165,250,0.16); -fx-text-fill: #60a5fa; }
-.badge-neutral { -fx-background-color: rgba(148,180,255,0.10);-fx-text-fill: #a9b8de; }
+.badge-neutral {
+    -fx-background-color: rgba(148,180,255,0.18);
+    -fx-text-fill: #eef3ff;
+    -fx-border-color: rgba(148,180,255,0.22);
+    -fx-border-width: 1;
+}
 
 /* ── Navigation ───────────────────────────────────────────────────────── */
 .app-nav {
@@ -350,6 +363,16 @@
 }
 .overlay-pad { -fx-padding: 10; }
 .ad-card-obadge { -fx-font-size: 12px; -fx-padding: 4 12 4 12; }
+.ad-card-category {
+    -fx-background-color: transparent;
+    -fx-text-fill: #eef3ff;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 0;
+}
 .ad-card-info { -fx-padding: 14 16 16 16; -fx-background-color: transparent; }
 .ad-card-title {
     -fx-text-fill: #eef3ff; -fx-font-size: 16px; -fx-font-weight: bold;
