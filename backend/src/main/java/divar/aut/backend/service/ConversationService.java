@@ -31,17 +31,17 @@ public class ConversationService {
 
     public ConversationResponse startOrGetConversation(User buyer, Long adId) {
         Ad ad = adRepository.findById(adId)
-                .orElseThrow(() -> ApiException.notFound("Advertisement not found"));
+                .orElseThrow(() -> ApiException.notFound("آگهی مورد نظر پیدا نشد"));
         User seller = ad.getOwner();
 
         if (seller.getId().equals(buyer.getId())) {
-            throw ApiException.badRequest("You cannot message yourself about your own ad");
+            throw ApiException.badRequest("نمی‌توانید درباره آگهی خودتان به خودتان پیام بدهید");
         }
 
         if (buyer.isBlocked()) {
-            throw ApiException.forbidden("You cannot start a conversation because you are blocked.");
+            throw ApiException.forbidden("شما مسدود شده‌اید و نمی‌توانید گفت‌وگو را شروع کنید.");
         } else if (seller.isBlocked()) {
-            throw ApiException.forbidden("You cannot start a conversation with a blocked user.");
+            throw ApiException.forbidden("امکان شروع گفت‌وگو با کاربر مسدودشده وجود ندارد.");
         }
 
         Conversation conversation = conversationRepository.findByAdAndBuyerAndSeller(ad, buyer, seller)
@@ -85,10 +85,10 @@ public class ConversationService {
                 : conversation.getBuyer();
 
         if (sender.isBlocked()) {
-            throw ApiException.forbidden("Blocked users cannot send messages");
+            throw ApiException.forbidden("کاربران مسدودشده نمی‌توانند پیام ارسال کنند");
         }
         else if(receiver.isBlocked()) {
-            throw ApiException.forbidden("Receiver is blocked you cannot send messages");
+            throw ApiException.forbidden("گیرنده پیام مسدود شده است و امکان ارسال پیام وجود ندارد");
         }
         Message message = new Message(conversation, sender, request.getContent());
         messageRepository.save(message);
@@ -112,14 +112,14 @@ public class ConversationService {
 
     private Conversation findConversationOrThrow(Long conversationId) {
         return conversationRepository.findById(conversationId)
-                .orElseThrow(() -> ApiException.notFound("Conversation not found"));
+                .orElseThrow(() -> ApiException.notFound("گفت‌وگوی مورد نظر پیدا نشد"));
     }
 
     private void requireParticipant(User user, Conversation conversation) {
         boolean isBuyer = conversation.getBuyer().getId().equals(user.getId());
         boolean isSeller = conversation.getSeller().getId().equals(user.getId());
         if (!isBuyer && !isSeller) {
-            throw ApiException.forbidden("You are not part of this conversation");
+            throw ApiException.forbidden("شما عضو این گفت‌وگو نیستید");
         }
     }
 }

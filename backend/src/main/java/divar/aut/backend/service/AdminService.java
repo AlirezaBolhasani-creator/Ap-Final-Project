@@ -35,7 +35,7 @@ public class AdminService {
     }
 
     public void deleteAd(Long id) {
-        Ad ad = adRepository.findById(id).orElseThrow(() -> ApiException.notFound("Advertisement not found"));
+        Ad ad = adRepository.findById(id).orElseThrow(() -> ApiException.notFound("آگهی مورد نظر پیدا نشد"));
         ad.markAsDeleted();
         adRepository.save(ad);
     }
@@ -45,8 +45,8 @@ public class AdminService {
     }
 
     public void setBlocked(Long id, boolean blocked) {
-        User user = userRepository.findById(id).orElseThrow(() -> ApiException.notFound("User not found"));
-        if (user.isAdmin() && blocked) throw ApiException.badRequest("Admin accounts cannot be blocked");
+        User user = userRepository.findById(id).orElseThrow(() -> ApiException.notFound("کاربر مورد نظر پیدا نشد"));
+        if (user.isAdmin() && blocked) throw ApiException.badRequest("حساب‌های مدیر را نمی‌توان مسدود کرد");
         user.setBlocked(blocked);
         userRepository.save(user);
     }

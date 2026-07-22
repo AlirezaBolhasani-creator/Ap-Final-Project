@@ -16,7 +16,7 @@ public class MetadataDeleteRequest {
      * The deletion strategy to apply.
      * Must not be null.
      */
-    @NotNull(message = "must not be null")
+    @NotNull(message = "نباید خالی باشد")
     private MetadataDeleteStrategy strategy;
     private Long replacementId;
 

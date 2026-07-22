@@ -25,7 +25,7 @@ public class ImageStorageService {
     public String save(MultipartFile file) {
         try {
             if (file.isEmpty()) {
-                throw ApiException.badRequest("The file is empty");
+                throw ApiException.badRequest("فایل انتخاب‌شده خالی است");
             }
 
             // Create upload directory if it doesn't exist

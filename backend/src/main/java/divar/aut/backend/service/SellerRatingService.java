@@ -29,14 +29,14 @@ public class SellerRatingService {
 
     public RatingResponse rateSeller(User buyer, Long adId, RatingRequest request) {
         Ad ad = adRepository.findById(adId)
-                .orElseThrow(() -> ApiException.notFound("Advertisement not found"));
+                .orElseThrow(() -> ApiException.notFound("آگهی مورد نظر پیدا نشد"));
         User seller = ad.getOwner();
 
         if (seller.getId().equals(buyer.getId())) {
-            throw ApiException.badRequest("You cannot rate yourself");
+            throw ApiException.badRequest("نمی‌توانید به خودتان امتیاز بدهید");
         }
         if (sellerRatingRepository.existsByBuyerAndSeller(buyer, seller)) {
-            throw ApiException.badRequest("You have already rated this seller");
+            throw ApiException.badRequest("شما قبلاً به این فروشنده امتیاز داده‌اید");
         }
 
         SellerRating rating = new SellerRating(seller, buyer, ad, request.getScore(), request.getComment());
@@ -58,7 +58,7 @@ public class SellerRatingService {
 
     public List<RatingResponse> listRatingsForSellerId(Long sellerId) {
         User seller = userRepository.findById(sellerId)
-                .orElseThrow(() -> ApiException.notFound("User not found"));
+                .orElseThrow(() -> ApiException.notFound("کاربر مورد نظر پیدا نشد"));
         return ratingsFor(seller).stream().map(RatingResponse::new).toList();
     }
 
@@ -70,7 +70,7 @@ public class SellerRatingService {
 
     public void deleteRating(Long ratingId) {
         SellerRating rating = sellerRatingRepository.findById(ratingId)
-                .orElseThrow(() -> ApiException.notFound("Rating not found"));
+                .orElseThrow(() -> ApiException.notFound("امتیاز مورد نظر پیدا نشد"));
         sellerRatingRepository.delete(rating);
     }
 }

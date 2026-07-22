@@ -19,39 +19,39 @@ public class AdRequest {
     /**
      * The title of the advertisement. Must not be blank and at most 200 characters.
      */
-    @NotBlank(message = "must not be blank")
-    @Size(max = 200, message = "must be at most 200 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(max = 200, message = "باید حداکثر ۲۰۰ کاراکتر باشد")
     private String title;
 
     /**
      * The detailed description of the advertisement. Must not be blank and at most 2000 characters.
      */
-    @NotBlank(message = "must not be blank")
-    @Size(max = 2000, message = "must be at most 2000 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(max = 2000, message = "باید حداکثر ۲۰۰۰ کاراکتر باشد")
     private String description;
 
     /**
      * The price of the item. Must not be null.
      */
-    @NotNull(message = "must not be null")
+    @NotNull(message = "نباید خالی باشد")
     private double price;
 
     /**
      * The condition of the item (e.g., "new", "used"). Must not be blank.
      */
-    @NotBlank(message = "must not be blank")
+    @NotBlank(message = "نباید خالی باشد")
     private String itemCondition;
 
     /**
      * The ID of the category this ad belongs to. Must not be null.
      */
-    @NotNull(message = "must not be null")
+    @NotNull(message = "نباید خالی باشد")
     private Long categoryId;
 
     /**
      * The ID of the city where the item is located. Must not be null.
      */
-    @NotNull(message = "must not be null")
+    @NotNull(message = "نباید خالی باشد")
     private Long cityId;
 
     public String getTitle() {

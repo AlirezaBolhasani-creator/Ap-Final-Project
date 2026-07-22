@@ -25,17 +25,17 @@ public class CategoryService {
     public CategoryResponse create(CategoryRequest request) {
         String name = request.getName().trim();
         if (categoryRepository.existsByNameIgnoreCase(name)) {
-            throw ApiException.badRequest("Category already exists");
+            throw ApiException.badRequest("این دسته‌بندی قبلاً وجود دارد");
         }
         return new CategoryResponse(categoryRepository.save(new Category(name)));
     }
 
     public CategoryResponse update(Long id, CategoryRequest request) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> ApiException.notFound("Category not found"));
+                .orElseThrow(() -> ApiException.notFound("دسته‌بندی مورد نظر پیدا نشد"));
         String name = request.getName().trim();
         if (!category.getName().equalsIgnoreCase(name) && categoryRepository.existsByNameIgnoreCase(name)) {
-            throw ApiException.badRequest("Category already exists");
+            throw ApiException.badRequest("این دسته‌بندی قبلاً وجود دارد");
         }
         category.setName(name);
         return new CategoryResponse(categoryRepository.save(category));

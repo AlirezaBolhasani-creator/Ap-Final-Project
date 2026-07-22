@@ -114,24 +114,24 @@ public class MetadataDeletionService {
 
     private Category requireCategory(Long id) {
         return categoryRepository.findById(id)
-                .orElseThrow(() -> ApiException.notFound("Category not found"));
+                .orElseThrow(() -> ApiException.notFound("دسته‌بندی مورد نظر پیدا نشد"));
     }
 
     private City requireCity(Long id) {
         return cityRepository.findById(id)
-                .orElseThrow(() -> ApiException.notFound("City not found"));
+                .orElseThrow(() -> ApiException.notFound("شهر مورد نظر پیدا نشد"));
     }
 
     private Category requireReplacementCategory(Long deletedId, Long replacementId) {
         if (replacementId == null || deletedId.equals(replacementId)) {
-            throw ApiException.badRequest("A different replacement category is required");
+            throw ApiException.badRequest("باید یک دسته‌بندی جایگزین متفاوت انتخاب کنید");
         }
         return requireCategory(replacementId);
     }
 
     private City requireReplacementCity(Long deletedId, Long replacementId) {
         if (replacementId == null || deletedId.equals(replacementId)) {
-            throw ApiException.badRequest("A different replacement city is required");
+            throw ApiException.badRequest("باید یک شهر جایگزین متفاوت انتخاب کنید");
         }
         return requireCity(replacementId);
     }

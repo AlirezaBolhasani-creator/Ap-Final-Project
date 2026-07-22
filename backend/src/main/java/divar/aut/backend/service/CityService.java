@@ -25,17 +25,17 @@ public class CityService {
     public CityResponse create(CityRequest request) {
         String name = request.getName().trim();
         if (cityRepository.existsByNameIgnoreCase(name)) {
-            throw ApiException.badRequest("City already exists");
+            throw ApiException.badRequest("این شهر قبلاً وجود دارد");
         }
         return new CityResponse(cityRepository.save(new City(name)));
     }
 
     public CityResponse update(Long id, CityRequest request) {
         City city = cityRepository.findById(id)
-                .orElseThrow(() -> ApiException.notFound("City not found"));
+                .orElseThrow(() -> ApiException.notFound("شهر مورد نظر پیدا نشد"));
         String name = request.getName().trim();
         if (!city.getName().equalsIgnoreCase(name) && cityRepository.existsByNameIgnoreCase(name)) {
-            throw ApiException.badRequest("City already exists");
+            throw ApiException.badRequest("این شهر قبلاً وجود دارد");
         }
         city.setName(name);
         return new CityResponse(cityRepository.save(city));

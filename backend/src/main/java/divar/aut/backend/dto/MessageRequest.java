@@ -11,8 +11,8 @@ import jakarta.validation.constraints.Size;
  * </p>
  */
 public class MessageRequest {
-    @NotBlank(message = "must not be blank")
-    @Size(max = 2000, message = "must be at most 2000 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(max = 2000, message = "باید حداکثر ۲۰۰۰ کاراکتر باشد")
     private String content;
 
     public String getContent() {

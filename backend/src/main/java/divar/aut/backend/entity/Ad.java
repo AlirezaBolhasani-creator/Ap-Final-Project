@@ -22,16 +22,16 @@ public class Ad {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "must not be blank")
-    @Size(max = 200, message = "must be at most 200 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(max = 200, message = "باید حداکثر ۲۰۰ کاراکتر باشد")
     @Column(nullable = false)
     private String title;
 
-    @NotBlank(message = "must not be blank")
+    @NotBlank(message = "نباید خالی باشد")
     @Column(nullable = false, length = 2000)
     private String description;
 
-    @NotNull(message = "must not be null")
+    @NotNull(message = "نباید خالی باشد")
     @Column(nullable = false)
     private double price;
 

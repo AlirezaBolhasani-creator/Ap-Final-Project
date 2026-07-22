@@ -10,8 +10,8 @@ import jakarta.validation.constraints.Size;
  * </p>
  */
 public class CityRequest {
-    @NotBlank(message = "must not be blank")
-    @Size(max = 100, message = "must be at most 100 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(max = 100, message = "باید حداکثر ۱۰۰ کاراکتر باشد")
     private String name;
 
     public String getName() { return name; }

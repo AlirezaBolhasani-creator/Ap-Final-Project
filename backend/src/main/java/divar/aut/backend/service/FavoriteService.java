@@ -31,10 +31,10 @@ public class FavoriteService {
     public void addFavorite(User user, Long adId) {
         Ad ad = findAdOrThrow(adId);
         if (ad.getOwner().getId().equals(user.getId())) {
-            throw ApiException.badRequest("You cannot add your own ad to favorites");
+            throw ApiException.badRequest("نمی‌توانید آگهی خودتان را به علاقه‌مندی‌ها اضافه کنید");
         }
         if (favoriteRepository.existsByUserAndAd(user, ad)) {
-            throw ApiException.badRequest("This ad is already in your favorites");
+            throw ApiException.badRequest("این آگهی قبلاً به علاقه‌مندی‌های شما اضافه شده است");
         }
         favoriteRepository.save(new Favorite(user, ad));
     }
@@ -42,12 +42,12 @@ public class FavoriteService {
     public void removeFavorite(User user, Long adId) {
         Ad ad = findAdOrThrow(adId);
         Favorite favorite = favoriteRepository.findByUserAndAd(user, ad)
-                .orElseThrow(() -> ApiException.notFound("This ad is not in your favorites"));
+                .orElseThrow(() -> ApiException.notFound("این آگهی در علاقه‌مندی‌های شما نیست"));
         favoriteRepository.delete(favorite);
     }
 
     private Ad findAdOrThrow(Long adId) {
         return adRepository.findById(adId)
-                .orElseThrow(() -> ApiException.notFound("Advertisement not found"));
+                .orElseThrow(() -> ApiException.notFound("آگهی مورد نظر پیدا نشد"));
     }
 }

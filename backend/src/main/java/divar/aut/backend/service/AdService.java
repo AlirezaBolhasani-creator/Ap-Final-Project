@@ -86,7 +86,7 @@ public class AdService {
         boolean isAdmin = viewerOrNull != null && viewerOrNull.isAdmin();
 
         if (ad.getStatus() != AdStatus.ACTIVE && !isOwner && !isAdmin) {
-            throw ApiException.notFound("Advertisement not found");
+            throw ApiException.notFound("آگهی مورد نظر پیدا نشد");
         }
 
         return toDetailResponse(ad);
@@ -152,7 +152,7 @@ public class AdService {
         requireOwner(actingUser, ad);
 
         if (ad.getStatus() != AdStatus.ACTIVE) {
-            throw ApiException.badRequest("Only an active ad can be marked as sold");
+            throw ApiException.badRequest("فقط آگهی فعال را می‌توان به‌عنوان فروخته‌شده علامت زد");
         }
         ad.markAsSold();
         adRepository.save(ad);
@@ -166,7 +166,7 @@ public class AdService {
         requireOwner(actingUser, ad);
 
         if (files == null || files.isEmpty()) {
-            throw ApiException.badRequest("No image files provided");
+            throw ApiException.badRequest("هیچ فایل تصویری ارسال نشده است");
         }
 
         for (MultipartFile file : files) {
@@ -183,7 +183,7 @@ public class AdService {
     public AdDetailResponse approvePendingAd(Long adId) {
         Ad ad = findAdOrThrow(adId);
         if (ad.getStatus() != AdStatus.PENDING_REVIEW) {
-            throw ApiException.badRequest("Only a pending ad can be approved");
+            throw ApiException.badRequest("فقط آگهی در انتظار بررسی را می‌توان تأیید کرد");
         }
         ad.approve();
         adRepository.save(ad);
@@ -196,7 +196,7 @@ public class AdService {
     public AdDetailResponse rejectPendingAd(Long adId, String reason, User admin) {
         Ad ad = findAdOrThrow(adId);
         if (ad.getStatus() != AdStatus.PENDING_REVIEW) {
-            throw ApiException.badRequest("Only a pending ad can be rejected");
+            throw ApiException.badRequest("فقط آگهی در انتظار بررسی را می‌توان رد کرد");
         }
         ad.reject(reason);
         adRepository.save(ad);
@@ -209,30 +209,30 @@ public class AdService {
 
     private void requireOwner(User actingUser, Ad ad) {
         if (!ad.getOwner().getId().equals(actingUser.getId())) {
-            throw ApiException.forbidden("You do not own this advertisement");
+            throw ApiException.forbidden("شما مالک این آگهی نیستید");
         }
     }
 
     private Ad findAdOrThrow(Long adId) {
         return adRepository.findById(adId)
-                .orElseThrow(() -> ApiException.notFound("Advertisement not found"));
+                .orElseThrow(() -> ApiException.notFound("آگهی مورد نظر پیدا نشد"));
     }
 
     private Category findCategoryOrThrow(Long categoryId) {
         return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> ApiException.badRequest("Category not found"));
+                .orElseThrow(() -> ApiException.badRequest("دسته‌بندی مورد نظر پیدا نشد"));
     }
 
     private City findCityOrThrow(Long cityId) {
         return cityRepository.findById(cityId)
-                .orElseThrow(() -> ApiException.badRequest("City not found"));
+                .orElseThrow(() -> ApiException.badRequest("شهر مورد نظر پیدا نشد"));
     }
 
     private ItemCondition parseCondition(String value) {
         try {
             return ItemCondition.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw ApiException.badRequest("itemCondition must be NEW or USED");
+            throw ApiException.badRequest("وضعیت کالا باید نو یا کارکرده باشد");
         }
     }
 
