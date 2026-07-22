@@ -350,7 +350,14 @@ public class AdDetailsController {
     private void handleAddFavorite() {
         favoriteButton.setDisable(true);
         favoriteService.addFavorite(adDetail.id(),
-                success -> Platform.runLater(() -> finishAction(success)),
+                success -> Platform.runLater(() -> {
+                    statusLabel.getStyleClass().removeAll("status-danger");
+                    if (!statusLabel.getStyleClass().contains("status-success")) {
+                        statusLabel.getStyleClass().add("status-success");
+                    }
+                    statusLabel.setText(success);
+                    if (onActionCompleted != null) onActionCompleted.run();
+                }),
                 error -> Platform.runLater(() -> {
                     showError(error);
                     favoriteButton.setDisable(false);
