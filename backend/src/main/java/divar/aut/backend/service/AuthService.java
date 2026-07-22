@@ -30,7 +30,13 @@ public class AuthService {
 
     public String register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw ApiException.badRequest("this username is already taken!");
+            throw ApiException.badRequest("این نام کاربری قبلاً استفاده شده است");
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw ApiException.badRequest("این ایمیل قبلاً ثبت شده است");
+        }
+        if (userRepository.existsByPhone(request.getPhone())) {
+            throw ApiException.badRequest("این شماره موبایل قبلاً ثبت شده است");
         }
 
         User user = new User();
@@ -47,10 +53,10 @@ public class AuthService {
     public LoginResult login(LoginRequest loginData) {
         User user = userRepository.findByUsername(loginData.getUsername());
         if (user == null || !passwordEncoder.matches(loginData.getPassword(), user.getPassword())) {
-            throw ApiException.unauthorized("username or password is incorrect!");
+            throw ApiException.unauthorized("نام کاربری یا رمز عبور اشتباه است");
         }
         if (user.isBlocked()) {
-            throw ApiException.forbidden("Your account has been blocked by an administrator");
+            throw ApiException.forbidden("حساب کاربری شما توسط مدیر مسدود شده است");
         }
         String token = jwtUtils.generateToken(user.getUsername());
         return new LoginResult(token, user.getRole().name());

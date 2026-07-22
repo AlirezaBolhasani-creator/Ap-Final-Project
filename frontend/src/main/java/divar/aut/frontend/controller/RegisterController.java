@@ -66,8 +66,7 @@ public class RegisterController {
 
     /**
      * Returns a Persian error message for the first invalid field, or null if
-     * everything looks correct. Email and phone are optional — they're only
-     * validated when the person actually typed something in.
+     * everything looks correct. Name, email, and phone are all required.
      */
     private String validate(String name, String email, String phone) {
         if (name.isEmpty()) {
@@ -76,10 +75,16 @@ public class RegisterController {
         if (!FULL_NAME_PATTERN.matcher(name).matches()) {
             return "نام و نام خانوادگی باید فقط شامل حروف باشد و نام و نام خانوادگی را با فاصله وارد کنید";
         }
-        if (!email.isEmpty() && !EMAIL_PATTERN.matcher(email).matches()) {
+        if (email.isEmpty()) {
+            return "لطفاً ایمیل را وارد کنید";
+        }
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
             return "ایمیل وارد شده معتبر نیست (مثلاً: example@mail.com)";
         }
-        if (!phone.isEmpty() && !PHONE_PATTERN.matcher(phone).matches()) {
+        if (phone.isEmpty()) {
+            return "لطفاً شماره موبایل را وارد کنید";
+        }
+        if (!PHONE_PATTERN.matcher(phone).matches()) {
             return "شماره موبایل باید ۱۱ رقم باشد و با ۰۹ شروع شود (مثلاً: 09123456789)";
         }
         return null;

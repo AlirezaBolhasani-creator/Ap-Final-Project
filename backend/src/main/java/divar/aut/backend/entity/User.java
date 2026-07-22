@@ -18,24 +18,26 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "must not be blank")
-    @Size(max = 100, message = "must be at most 100 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(max = 100, message = "باید حداکثر ۱۰۰ کاراکتر باشد")
     @Column(nullable = false, unique = true)
     private String username;
 
-    @NotBlank(message = "must not be blank")
-    @Size(min = 6, max = 200, message = "must be between 6 and 200 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(min = 6, max = 200, message = "باید بین ۶ تا ۲۰۰ کاراکتر باشد")
     @Column(nullable = false)
     private String password;
 
-    @NotBlank(message = "must not be blank")
-    @Size(max = 200, message = "must be at most 200 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(max = 200, message = "باید حداکثر ۲۰۰ کاراکتر باشد")
     private String fullname;
 
-    @Size(max = 200, message = "must be at most 200 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(max = 200, message = "باید حداکثر ۲۰۰ کاراکتر باشد")
     private String email;
 
-    @Size(max = 50, message = "must be at most 50 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(max = 50, message = "باید حداکثر ۵۰ کاراکتر باشد")
     private String phone;
 
     @Enumerated(EnumType.STRING)

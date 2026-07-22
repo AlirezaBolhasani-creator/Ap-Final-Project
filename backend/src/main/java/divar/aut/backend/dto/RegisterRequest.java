@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
  * Data Transfer Object for user registration requests.
  * <p>
  * Contains all required fields for creating a new user account:
- * full name, username, password, email (optional), and phone (optional).
+ * full name, username, password, email, and phone.
  * Validation constraints enforce business rules.
  * </p>
  */
@@ -20,11 +20,11 @@ public class RegisterRequest {
      * and must contain only letters and spaces with at least a first and
      * last name (two words). Mapped from JSON field "name" via {@link JsonAlias}.
      */
-    @NotBlank(message = "must not be blank")
-    @Size(max = 200, message = "must be at most 200 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(max = 200, message = "باید حداکثر ۲۰۰ کاراکتر باشد")
     @Pattern(
             regexp = "^[\\p{L}]+(\\s[\\p{L}]+)+$",
-            message = "must contain only letters and include both a first and last name"
+            message = "باید فقط شامل حروف باشد و نام و نام خانوادگی را با فاصله وارد کنید"
     )
     @JsonAlias("name")
     private String fullName;
@@ -32,36 +32,38 @@ public class RegisterRequest {
     /**
      * The username for login. Must not be blank, at most 100 characters.
      */
-    @NotBlank(message = "must not be blank")
-    @Size(max = 100, message = "must be at most 100 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(max = 100, message = "باید حداکثر ۱۰۰ کاراکتر باشد")
     private String username;
 
     /**
      * The password for the account. Must not be blank, between 6 and 200 characters.
      */
-    @NotBlank(message = "must not be blank")
-    @Size(min = 6, max = 200, message = "must be between 6 and 200 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(min = 6, max = 200, message = "باید بین ۶ تا ۲۰۰ کاراکتر باشد")
     private String password;
 
     /**
-     * The email address of the user. Optional, but if provided must be at most
+     * The email address of the user. Required, must be at most
      * 200 characters and a well-formed email address.
      */
-    @Size(max = 200, message = "must be at most 200 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(max = 200, message = "باید حداکثر ۲۰۰ کاراکتر باشد")
     @Pattern(
-            regexp = "^$|^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$",
-            message = "must be a valid email address"
+            regexp = "^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$",
+            message = "باید یک ایمیل معتبر باشد"
     )
     private String email;
 
     /**
-     * The phone number of the user. Optional, but if provided must be a valid
+     * The phone number of the user. Required, must be a valid
      * Iranian mobile number (11 digits starting with 09).
      */
-    @Size(max = 50, message = "must be at most 50 characters")
+    @NotBlank(message = "نباید خالی باشد")
+    @Size(max = 50, message = "باید حداکثر ۵۰ کاراکتر باشد")
     @Pattern(
-            regexp = "^$|^09\\d{9}$",
-            message = "must be a valid mobile number (e.g. 09xxxxxxxxx)"
+            regexp = "^09\\d{9}$",
+            message = "باید یک شماره موبایل معتبر باشد (مثلاً: 09xxxxxxxxx)"
     )
     private String phone;
 
