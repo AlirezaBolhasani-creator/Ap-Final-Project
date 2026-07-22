@@ -8,6 +8,7 @@ import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.CategoryService;
 import divar.aut.frontend.net.CityService;
 import divar.aut.frontend.ui.ViewManager;
+import divar.aut.frontend.util.PriceFormatter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -78,7 +79,7 @@ public class PostAdController implements Initializable {
 
         titleField.setText(adDetail.title());
         descriptionArea.setText(adDetail.description());
-        priceField.setText(String.valueOf(adDetail.price()));
+        priceField.setText(PriceFormatter.format(adDetail.price()));
         conditionCombo.getSelectionModel().select(mapConditionToLabel(adDetail.itemCondition()));
 
         if (!categoryList.isEmpty()) {
@@ -100,6 +101,7 @@ public class PostAdController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         conditionCombo.getItems().addAll("نو", "کارکرده");
         conditionCombo.getSelectionModel().select(0);
+        PriceFormatter.attachLiveGrouping(priceField);
         loadCategories();
         loadCities();
     }
@@ -207,7 +209,7 @@ public class PostAdController implements Initializable {
 
         double priceValue = 0.0;
         try {
-            priceValue = Double.parseDouble(priceField.getText());
+            priceValue = PriceFormatter.parse(priceField.getText());
         } catch (NumberFormatException e) {
             statusLabel.setText("قیمت باید عدد باشد!");
             setStatusError();

@@ -7,6 +7,7 @@ import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.FavoriteService;
 import divar.aut.frontend.net.ConversationService;
 import divar.aut.frontend.net.RatingService;
+import divar.aut.frontend.util.PriceFormatter;
 import divar.aut.frontend.ui.PostAdScreen;
 import divar.aut.frontend.ui.ThemeManager;
 import divar.aut.frontend.ui.ViewManager;
@@ -124,7 +125,7 @@ public class AdDetailsController {
         this.adminDeleteHandler = adminDeleteHandler;
 
         titleLabel.setText(ad.title());
-        priceLabel.setText(String.valueOf(ad.price()));
+        priceLabel.setText(PriceFormatter.format(ad.price()));
         locationLabel.setText(ad.cityName());
         categoryLabel.setText(ad.categoryName());
         conditionLabel.setText(mapCondition(ad.itemCondition()));
@@ -220,7 +221,10 @@ public class AdDetailsController {
 
     @FXML
     private void handleBack() {
-        if (viewManager != null) {
+        if (viewManager == null) return;
+        if (isAdmin) {
+            viewManager.toAdminDashboard();
+        } else {
             viewManager.toMain();
         }
     }
@@ -387,7 +391,7 @@ public class AdDetailsController {
         }
         setUiDisabled(true);
         adminDeleteHandler.accept(adDetail.id());
-        closeWindow();
+        returnToPreviousScreen();
     }
 
     /**
@@ -485,7 +489,7 @@ public class AdDetailsController {
     private void finishAction(String successMessage) {
         statusLabel.setText(successMessage);
         if (onActionCompleted != null) onActionCompleted.run();
-        closeWindow();
+        returnToPreviousScreen();
     }
 
     private void showError(String error) {
@@ -516,8 +520,39 @@ public class AdDetailsController {
         };
     }
 
+    /**
+     * Closes this view's window, but only when it's a real standalone popup
+     * {@link Stage} (e.g. opened from {@code FavoritesController}). When the
+     * view is embedded in the shared application window instead, closing
+     * that window would close the whole app, so this is a no-op — the
+     * caller is expected to navigate away via {@link #returnToPreviousScreen()}
+     * or by showing another view directly (see {@link #handleEdit()}).
+     */
     private void closeWindow() {
         Stage stage = (Stage) titleLabel.getScene().getWindow();
+        if (viewManager != null && stage == viewManager.getPrimaryStage()) {
+            return;
+        }
+        stage.close();
+    }
+
+    /**
+     * Returns to whatever screen should be visible after an action
+     * completes. When embedded in the shared application window, this
+     * navigates back via {@link ViewManager} (to the admin dashboard for
+     * admins, or the main screen otherwise). When shown in its own popup
+     * {@link Stage} instead, it simply closes that popup.
+     */
+    private void returnToPreviousScreen() {
+        Stage stage = (Stage) titleLabel.getScene().getWindow();
+        if (viewManager != null && stage == viewManager.getPrimaryStage()) {
+            if (isAdmin) {
+                viewManager.toAdminDashboard();
+            } else {
+                viewManager.toMain();
+            }
+            return;
+        }
         stage.close();
     }
 }

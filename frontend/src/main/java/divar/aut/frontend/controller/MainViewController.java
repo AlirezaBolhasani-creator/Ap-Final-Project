@@ -9,6 +9,7 @@ import divar.aut.frontend.model.AdData;
 import divar.aut.frontend.model.CategoryData;
 import divar.aut.frontend.model.CityData;
 import divar.aut.frontend.ui.ViewManager;
+import divar.aut.frontend.util.PriceFormatter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -104,6 +105,8 @@ public class MainViewController implements Initializable {
             cityCombo.getItems().add("همه شهرها");
             cityCombo.getSelectionModel().selectFirst();
         }
+        if (minPriceField != null) PriceFormatter.attachLiveGrouping(minPriceField);
+        if (maxPriceField != null) PriceFormatter.attachLiveGrouping(maxPriceField);
         if (viewManager != null && viewManager.getUserToken() != null) {
             this.adService = new AdService();
             loadFilterOptions();
@@ -379,7 +382,7 @@ public class MainViewController implements Initializable {
             return null;
         }
         try {
-            return Double.parseDouble(field.getText().trim());
+            return PriceFormatter.parse(field.getText());
         } catch (NumberFormatException e) {
             if (statusLabel != null) statusLabel.setText("قیمت باید عدد باشد");
             return null;
