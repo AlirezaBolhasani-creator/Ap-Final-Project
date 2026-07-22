@@ -32,7 +32,7 @@
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" styleClass="chat-scroll">
+        <ScrollPane fx:id="messageScrollPane" fitToWidth="true" styleClass="chat-scroll">
             <VBox fx:id="messagesBox" spacing="10" styleClass="chat-messages"/>
         </ScrollPane>
     </center>

@@ -1,14 +1,19 @@
 package divar.aut.frontend.controller;
 
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Comparator;
+import divar.aut.frontend.model.AdDetailData;
 import divar.aut.frontend.model.ConversationData;
 import divar.aut.frontend.model.MessageData;
-import divar.aut.frontend.model.AdDetailData;
 import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.ConversationService;
 import divar.aut.frontend.ui.ViewManager;
@@ -17,9 +22,6 @@ import divar.aut.frontend.SessionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
 import javafx.application.Platform;
 import org.kordamp.ikonli.javafx.FontIcon;
 import java.io.IOException;
@@ -36,6 +38,7 @@ import java.util.List;
 public class ConversationDetailController {
 
     @FXML private Label headerLabel;
+    @FXML private ScrollPane messageScrollPane;
     @FXML private VBox messagesBox;
     @FXML private TextField messageField;
     @FXML private Label statusLabel;
@@ -48,6 +51,11 @@ public class ConversationDetailController {
 
     public void setViewManager(ViewManager viewManager) {
         this.viewManager = viewManager;
+    }
+
+    @FXML
+    private void initialize() {
+        messagesBox.heightProperty().addListener((observable, oldValue, newValue) -> scrollToBottom());
     }
 
     @FXML
@@ -128,11 +136,20 @@ public class ConversationDetailController {
     }
 
     private void renderMessages(List<MessageData> messages) {
+        messages.sort(Comparator.comparing(message -> {
+            if (message.sentAt() == null) return LocalDateTime.MIN;
+            try {
+                return LocalDateTime.parse(message.sentAt());
+            } catch (Exception e) {
+                return LocalDateTime.MIN;
+            }
+        }));
         messagesBox.getChildren().clear();
         if (messages.isEmpty()) {
             Label emptyLabel = new Label("هنوز پیامی ارسال نشده است.");
             emptyLabel.getStyleClass().add("empty-state");
             messagesBox.getChildren().add(emptyLabel);
+            scrollToBottom();
             return;
         }
 
@@ -202,6 +219,16 @@ public class ConversationDetailController {
             bubbleWrapper.setMaxWidth(Double.MAX_VALUE);
 
             messagesBox.getChildren().add(bubbleWrapper);
+        }
+        scrollToBottom();
+    }
+
+    private void scrollToBottom() {
+        if (messageScrollPane != null) {
+            Platform.runLater(() -> {
+                messageScrollPane.layout();
+                Platform.runLater(() -> messageScrollPane.setVvalue(messageScrollPane.getVmax()));
+            });
         }
     }
 

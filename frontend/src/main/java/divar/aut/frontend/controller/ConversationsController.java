@@ -65,6 +65,16 @@ public class ConversationsController {
             conversationList.getChildren().add(emptyLabel);
             return;
         }
+        conversations.sort((a, b) -> {
+            if (a.lastMessageAt() == null && b.lastMessageAt() == null) return 0;
+            if (a.lastMessageAt() == null) return 1;
+            if (b.lastMessageAt() == null) return -1;
+            try {
+                return LocalDateTime.parse(b.lastMessageAt()).compareTo(LocalDateTime.parse(a.lastMessageAt()));
+            } catch (Exception e) {
+                return 0;
+            }
+        });
         for (ConversationData conversation : conversations) {
             VBox card = conversationCard(conversation);
             conversationList.getChildren().add(card);
