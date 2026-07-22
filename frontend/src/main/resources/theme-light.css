@@ -396,6 +396,18 @@
     -fx-background-color: #fff8ee;
     -fx-border-color: transparent transparent rgba(20,10,0,0.07) transparent;
 }
+.chat-bubble-container {
+    -fx-padding: 0;
+    -fx-pref-width: 100%;
+}
+.chat-bubble-container.self {
+    -fx-alignment: center-left;
+    -fx-padding: 0 220 0 0;
+}
+.chat-bubble-container.other {
+    -fx-alignment: center-right;
+    -fx-padding: 0 0 0 220;
+}
 .chat-input-area {
     -fx-background-color: #fff8ee;
     -fx-border-color: rgba(20,10,0,0.07) transparent transparent transparent;

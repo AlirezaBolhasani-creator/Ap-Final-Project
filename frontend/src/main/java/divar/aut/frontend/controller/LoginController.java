@@ -1,5 +1,6 @@
 package divar.aut.frontend.controller;
 
+import divar.aut.frontend.SessionManager;
 import divar.aut.frontend.net.AuthService;
 import divar.aut.frontend.ui.ViewManager;
 import javafx.fxml.FXML;
@@ -47,6 +48,7 @@ public class LoginController {
                 (token, role) -> {
                     viewManager.setUserToken(token);
                     viewManager.setUserRole(role);
+                    SessionManager.getInstance().setUsername(username);
                     statusLabel.getStyleClass().remove("status-danger");
                     statusLabel.getStyleClass().add("status-success");
                     statusLabel.setText("ورود موفقیت‌آمیز بود");

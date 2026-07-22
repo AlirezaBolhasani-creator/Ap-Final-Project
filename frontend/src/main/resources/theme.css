@@ -528,7 +528,19 @@
 }
 .chat-scroll { -fx-background-color: transparent; -fx-background: transparent; }
 .chat-scroll > .viewport { -fx-background-color: transparent; }
-.chat-messages { -fx-padding: 18; }
+..chat-messages { -fx-padding: 18; }
+.chat-bubble-container {
+    -fx-padding: 0;
+    -fx-pref-width: 100%;
+}
+.chat-bubble-container.self {
+    -fx-alignment: center-left;
+    -fx-padding: 0 220 0 0;
+}
+.chat-bubble-container.other {
+    -fx-alignment: center-right;
+    -fx-padding: 0 0 0 220;
+}
 .chat-input-area {
     -fx-padding: 14 18 14 18;
     -fx-background-color: #0c1428;

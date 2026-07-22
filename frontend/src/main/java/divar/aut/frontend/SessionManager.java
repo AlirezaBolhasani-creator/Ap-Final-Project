@@ -12,6 +12,7 @@ public class SessionManager {
 
     private String token;
     private String role;
+    private String username;
 
     private SessionManager() {
         // use getInstance()
@@ -25,6 +26,7 @@ public class SessionManager {
     public void endSession() {
         this.token = null;
         this.role = null;
+        this.username = null;
     }
 
     public boolean isLoggedIn() {
@@ -45,6 +47,14 @@ public class SessionManager {
 
     public String getRole() {
         return role;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setRole(String role) {

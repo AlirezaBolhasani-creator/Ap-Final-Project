@@ -13,6 +13,7 @@ import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.ConversationService;
 import divar.aut.frontend.ui.ViewManager;
 import divar.aut.frontend.controller.AdDetailsController;
+import divar.aut.frontend.SessionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -158,12 +159,18 @@ public class ConversationDetailController {
             timeLabel.getStyleClass().add("chat-time");
 
             VBox bubbleContent = new VBox(5, senderRow, textLabel, timeLabel);
-
             bubbleContent.setAlignment(Pos.BOTTOM_RIGHT);
             bubbleContent.setMaxWidth(480);
             bubbleContent.getStyleClass().add("chat-bubble");
 
-            messagesBox.getChildren().add(bubbleContent);
+            boolean isSelf = SessionManager.getInstance().getUsername() != null &&
+                    SessionManager.getInstance().getUsername().equals(message.senderUsername());
+            HBox bubbleWrapper = new HBox(bubbleContent);
+            bubbleWrapper.setAlignment(isSelf ? Pos.CENTER_LEFT : Pos.CENTER_RIGHT);
+            bubbleWrapper.getStyleClass().addAll("chat-bubble-container", isSelf ? "self" : "other");
+            bubbleWrapper.setMaxWidth(Double.MAX_VALUE);
+
+            messagesBox.getChildren().add(bubbleWrapper);
         }
     }
 

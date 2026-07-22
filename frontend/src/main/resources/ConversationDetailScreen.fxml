@@ -12,7 +12,7 @@
             nodeOrientation="RIGHT_TO_LEFT">
 
     <top>
-        <HBox styleClass="chat-header" alignment="CENTER_RIGHT" spacing="12">
+        <HBox styleClass="chat-header" alignment="CENTER_LEFT" spacing="12" nodeOrientation="LEFT_TO_RIGHT">
             <Button text="بازگشت به آگهی" onAction="#handleBackToAd" styleClass="btn btn-outline">
                 <graphic>
                     <FontIcon iconLiteral="fas-arrow-right" iconSize="14" iconColor="#a9b8de"/>
@@ -23,6 +23,7 @@
                     <FontIcon iconLiteral="fas-arrow-right" iconSize="14" iconColor="#a9b8de"/>
                 </graphic>
             </Button>
+            <Region HBox.hgrow="ALWAYS"/>
             <StackPane styleClass="detail-avatar">
                 <FontIcon iconLiteral="fas-comments" iconSize="20" iconColor="#6b93ff"/>
             </StackPane>
