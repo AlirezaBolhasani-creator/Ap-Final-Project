@@ -1,6 +1,7 @@
 package divar.aut.frontend.controller;
 
 import divar.aut.frontend.model.AdDetailData;
+import divar.aut.frontend.model.ConversationData;
 import divar.aut.frontend.model.RatingData;
 import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.FavoriteService;

@@ -123,6 +123,10 @@ public class ConversationDetailController {
                 error -> statusLabel.setText("خطا در دریافت پیام‌ها: " + error));
     }
 
+    private void showError(String error) {
+        statusLabel.setText(error);
+    }
+
     private void renderMessages(List<MessageData> messages) {
         messagesBox.getChildren().clear();
         if (messages.isEmpty()) {
