@@ -33,7 +33,7 @@
 
         <!-- Condition chip (top-left in RTL) -->
         <HBox alignment="TOP_RIGHT" styleClass="overlay-pad">
-            <Label fx:id="conditionLabel" text="نو" styleClass="badge badge-success ad-card-obadge"/>
+            <Label fx:id="conditionLabel" text="نو" styleClass="ad-card-obadge"/>
         </HBox>
     </StackPane>
 

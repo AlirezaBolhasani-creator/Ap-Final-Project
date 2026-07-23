@@ -14,7 +14,7 @@
             <FontIcon iconLiteral="fas-comments" iconSize="22" iconColor="#6b93ff"/>
             <Label text="گفت‌وگوها" styleClass="text-h2"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="بازگشت" styleClass="btn btn-ghost" onAction="#goBack">
+            <Button text="بازگشت" styleClass="btn-outline" onAction="#goBack">
                 <graphic><FontIcon iconLiteral="fas-arrow-left" iconSize="14" iconColor="#a9b8de"/></graphic>
             </Button>
         </HBox>
@@ -23,7 +23,7 @@
     <center>
         <ScrollPane fitToWidth="true">
             <VBox spacing="0" styleClass="list-page">
-                <Label text="پیام‌های خریداران و فروشندگان اینجاست" styleClass="text-small list-sub"/>
+                <Label text="پیام‌های خریداران و فروشندگان اینجاست" styleClass="list-sub"/>
                 <VBox fx:id="conversationList" spacing="12"/>
             </VBox>
         </ScrollPane>

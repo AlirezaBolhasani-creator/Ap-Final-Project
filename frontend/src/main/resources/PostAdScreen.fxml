@@ -20,16 +20,16 @@
                 <Label text="ثبت آگهی جدید" styleClass="text-h1"/>
                 <Label text="اطلاعات کالا یا خدمت خود را وارد کنید تا آگهی‌ات دیده شود" styleClass="text-small"/>
             </VBox>
-            <Button onAction="#handleBack" styleClass="btn btn-ghost" text="بازگشت">
+            <Button onAction="#handleBack" styleClass="btn-ouline" text="بازگشت">
                 <graphic><FontIcon iconLiteral="fas-arrow-right" iconSize="14" iconColor="#a9b8de"/></graphic>
             </Button>
-            <Button fx:id="clearBtn" onAction="#handleClear" styleClass="btn btn-ghost" text="پاک کردن">
+            <Button fx:id="clearBtn" onAction="#handleClear" styleClass="btn-outline" text="پاک کردن">
                 <graphic><FontIcon iconLiteral="fas-redo" iconSize="14" iconColor="#a9b8de"/></graphic>
             </Button>
         </HBox>
 
         <!-- Images card -->
-        <VBox styleClass="card form-card" spacing="12">
+        <VBox styleClass="form-card" spacing="12">
             <HBox alignment="CENTER_LEFT" spacing="8">
                 <FontIcon iconLiteral="fas-images" iconSize="16" iconColor="#6b93ff"/>
                 <Label text="عکس‌های آگهی" styleClass="text-h3"/>
@@ -46,7 +46,7 @@
         </VBox>
 
         <!-- Details card -->
-        <VBox styleClass="card form-card" spacing="16">
+        <VBox styleClass="form-card" spacing="16">
             <HBox alignment="CENTER_LEFT" spacing="8">
                 <FontIcon iconLiteral="fas-align-right" iconSize="16" iconColor="#6b93ff"/>
                 <Label text="جزئیات آگهی" styleClass="text-h3"/>
@@ -71,7 +71,7 @@
         </VBox>
 
         <!-- Pricing & place card -->
-        <VBox styleClass="card form-card" spacing="16">
+        <VBox styleClass="form-card" spacing="16">
             <HBox alignment="CENTER_LEFT" spacing="8">
                 <FontIcon iconLiteral="fas-tag" iconSize="16" iconColor="#34d399"/>
                 <Label text="قیمت و مشخصات" styleClass="text-h3"/>
@@ -116,7 +116,7 @@
         <!-- Submit row -->
         <HBox alignment="CENTER_LEFT" spacing="14">
             <Label fx:id="statusLabel" styleClass="status-danger" HBox.hgrow="ALWAYS"/>
-            <Button fx:id="submitBtn" onAction="#handleSubmit" styleClass="btn btn-primary btn-lg"
+            <Button fx:id="submitBtn" onAction="#handleSubmit" styleClass="btn-primary-lg"
                     prefWidth="190" text="ثبت آگهی">
                 <graphic><FontIcon iconLiteral="fas-paper-plane" iconSize="15" iconColor="#ffffff"/></graphic>
             </Button>

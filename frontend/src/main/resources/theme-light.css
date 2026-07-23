@@ -137,6 +137,32 @@
     -fx-border-color: rgba(220,20,60,0.35);
 }
 
+/* Size-variant merged classes (was "btn btn-* btn-lg/sm") — same colors as their base variant */
+.btn-primary-lg {
+    -fx-background-color: #dc143c; -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(220,20,60,0.30), 16, 0.2, 0, 3);
+}
+.btn-primary-lg:hover { -fx-background-color: #e83a5c;
+    -fx-effect: dropshadow(gaussian, rgba(220,20,60,0.45), 24, 0.3, 0, 5); }
+.btn-primary-lg:pressed { -fx-background-color: #a80f2e; }
+
+.btn-secondary-lg {
+    -fx-background-color: #fff3e6; -fx-text-fill: #000000;
+    -fx-border-color: rgba(20,10,0,0.12);
+}
+.btn-secondary-lg:hover { -fx-background-color: #ffe9e9; -fx-border-color: rgba(220,20,60,0.25); }
+
+.btn-secondary-sm {
+    -fx-background-color: #fff3e6; -fx-text-fill: #000000;
+    -fx-border-color: rgba(20,10,0,0.12);
+}
+.btn-secondary-sm:hover { -fx-background-color: #ffe9e9; -fx-border-color: rgba(220,20,60,0.25); }
+
+.btn-ghost-lg {
+    -fx-text-fill: #3a3230;
+}
+.btn-ghost-lg:hover { -fx-background-color: rgba(220,20,60,0.08); -fx-text-fill: #000000; }
+
 /* ── Inputs ───────────────────────────────────────────────────────────── */
 .text-field, .password-field, .text-area, .combo-box {
     -fx-background-color: #fff3e6;
@@ -184,6 +210,8 @@
 .badge-warning { -fx-background-color: rgba(180,83,9,0.14);  -fx-text-fill: #b45309; }
 .badge-danger  { -fx-background-color: rgba(220,38,38,0.14); -fx-text-fill: #dc2626; }
 .badge-info    { -fx-background-color: rgba(37,99,235,0.14); -fx-text-fill: #2563eb; }
+/* ad-card-obadge is now self-contained (was "badge badge-success ad-card-obadge") */
+.ad-card-obadge { -fx-background-color: rgba(22,163,74,0.14); -fx-text-fill: #16a34a; }
 .ad-card-category {
     -fx-background-color: transparent;
     -fx-text-fill: #2b2321;
@@ -327,6 +355,17 @@
     -fx-border-color: rgba(220,20,60,0.30);
 }
 .detail-desc-text { -fx-text-fill: #2a2220; }
+/* detail-seller / detail-desc are now self-contained (was "card detail-seller" / "card detail-desc") */
+.detail-seller {
+    -fx-background-color: #ffffff;
+    -fx-border-color: rgba(20,10,0,0.08);
+    -fx-effect: dropshadow(gaussian, rgba(60,30,10,0.14), 26, 0, 0, 10);
+}
+.detail-desc {
+    -fx-background-color: #ffffff;
+    -fx-border-color: rgba(20,10,0,0.08);
+    -fx-effect: dropshadow(gaussian, rgba(60,30,10,0.14), 26, 0, 0, 10);
+}
 
 .detail-hero {
     -fx-background-color: #fff8ee;
@@ -354,6 +393,12 @@
     -fx-background-color: rgba(220,20,60,0.12);
     -fx-border-color: rgba(220,20,60,0.30);
 }
+/* form-card is now self-contained (was "card form-card") */
+.form-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: rgba(20,10,0,0.08);
+    -fx-effect: dropshadow(gaussian, rgba(60,30,10,0.14), 26, 0, 0, 10);
+}
 .form-label { -fx-text-fill: #3a3230; }
 .form-req { -fx-text-fill: #dc2626; }
 .upload-box {
@@ -366,6 +411,8 @@
 }
 
 /* ── Favorites / list pages ───────────────────────────────────────────── */
+/* list-sub is now self-contained (was "text-small list-sub") */
+.list-sub { -fx-text-fill: #3a3230; }
 .empty-state {
     -fx-text-fill: #7a7068;
 }

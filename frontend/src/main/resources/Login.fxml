@@ -26,9 +26,9 @@
 
             <Label fx:id="statusLabel" text="" styleClass="status-danger" wrapText="true"/>
 
-            <Button text="ورود" styleClass="btn btn-primary btn-lg" maxWidth="Infinity" onAction="#handleLogin" defaultButton="true"/>
+            <Button text="ورود" styleClass="btn-primary-lg" maxWidth="Infinity" onAction="#handleLogin" defaultButton="true"/>
 
-            <Button text="بازگشت" styleClass="btn btn-ghost" onAction="#goWelcome">
+            <Button text="بازگشت" styleClass="btn-ghost" onAction="#goWelcome">
                 <graphic><FontIcon iconLiteral="fas-arrow-right" iconSize="14" iconColor="#a9b8de"/></graphic>
             </Button>
         </VBox>

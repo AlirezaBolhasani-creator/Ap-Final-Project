@@ -15,7 +15,7 @@
                 <FontIcon iconLiteral="fas-heart" iconSize="22" iconColor="#fb6f6f"/>
                 <Label text="علاقه‌مندی‌ها" styleClass="text-h2"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button text="بازگشت" styleClass="btn btn-ghost" onAction="#goBack">
+                <Button text="بازگشت" styleClass="btn-outline" onAction="#goBack">
                     <graphic><FontIcon iconLiteral="fas-arrow-left" iconSize="14" iconColor="#a9b8de"/></graphic>
                 </Button>
             </HBox>
@@ -25,7 +25,7 @@
     <center>
         <ScrollPane fitToWidth="true">
             <VBox spacing="0" styleClass="list-page">
-                <Label text="آگهی‌هایی که ذخیره کردی اینجا نمایش داده می‌شوند" styleClass="text-small list-sub"/>
+                <Label text="آگهی‌هایی که ذخیره کردی اینجا نمایش داده می‌شوند" styleClass="list-sub"/>
                 <FlowPane fx:id="favoritesGrid" hgap="20" vgap="20" prefWrapLength="820"/>
             </VBox>
         </ScrollPane>

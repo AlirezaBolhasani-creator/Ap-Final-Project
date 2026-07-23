@@ -9,7 +9,7 @@
            stylesheets="@theme.css" styleClass="auth-backdrop"
            nodeOrientation="RIGHT_TO_LEFT">
 
-    <Button fx:id="themeToggleBtn" text="حالت روشن" styleClass="btn btn-outline theme-toggle-btn"
+    <Button fx:id="themeToggleBtn" text="حالت روشن" styleClass="theme-toggle-btn"
             onAction="#onToggleTheme" StackPane.alignment="TOP_LEFT">
         <StackPane.margin><Insets top="20" right="20" bottom="20" left="20"/></StackPane.margin>
     </Button>
@@ -27,11 +27,11 @@
 
             <Separator/>
 
-            <Button text="ورود به حساب" styleClass="btn btn-primary btn-lg" maxWidth="Infinity"
+            <Button text="ورود به حساب" styleClass="btn-primary-lg" maxWidth="Infinity"
                     onAction="#goLogin">
                 <graphic><FontIcon iconLiteral="fas-sign-in-alt" iconSize="18" iconColor="white"/></graphic>
             </Button>
-            <Button text="ساخت حساب جدید" styleClass="btn btn-secondary btn-lg" maxWidth="Infinity"
+            <Button text="ساخت حساب جدید" styleClass="btn-secondary-lg" maxWidth="Infinity"
                     onAction="#goRegister">
                 <graphic><FontIcon iconLiteral="fas-user-plus" iconSize="18" iconColor="#a9b8de"/></graphic>
             </Button>

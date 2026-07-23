@@ -13,12 +13,12 @@
 
     <top>
         <HBox styleClass="chat-header" alignment="CENTER_LEFT" spacing="12" nodeOrientation="LEFT_TO_RIGHT">
-            <Button text="بازگشت به آگهی" onAction="#handleBackToAd" styleClass="btn btn-outline">
+            <Button text="بازگشت به آگهی" onAction="#handleBackToAd" styleClass="btn-outline">
                 <graphic>
                     <FontIcon iconLiteral="fas-arrow-right" iconSize="14" iconColor="#a9b8de"/>
                 </graphic>
             </Button>
-            <Button text="بازگشت به گفتگوها" onAction="#handleBack" styleClass="btn btn-outline">
+            <Button text="بازگشت به گفتگوها" onAction="#handleBack" styleClass="btn-outline">
                 <graphic>
                     <FontIcon iconLiteral="fas-arrow-right" iconSize="14" iconColor="#a9b8de"/>
                 </graphic>
@@ -42,7 +42,7 @@
             <HBox spacing="10" alignment="CENTER_RIGHT">
                 <TextField fx:id="messageField" promptText="پیام خود را بنویسید..." HBox.hgrow="ALWAYS"
                            onAction="#sendMessage"/>
-                <Button text="ارسال" onAction="#sendMessage" styleClass="btn btn-primary">
+                <Button text="ارسال" onAction="#sendMessage" styleClass="btn-primary">
                     <graphic><FontIcon iconLiteral="fas-paper-plane" iconSize="14" iconColor="#ffffff"/></graphic>
                 </Button>
             </HBox>
