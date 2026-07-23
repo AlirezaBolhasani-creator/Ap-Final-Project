@@ -18,6 +18,7 @@ import java.net.URL;
  */
 public class AdminDashboardScreen {
     private Parent view;
+    private divar.aut.frontend.controller.AdminDashboardController controller;
 
     /**
      * Constructs the admin dashboard screen by loading the FXML and setting up
@@ -36,7 +37,7 @@ public class AdminDashboardScreen {
             }
             FXMLLoader loader = new FXMLLoader(fxmlLocation);
             view = loader.load();
-            AdminDashboardController controller = loader.getController();
+            controller = loader.getController();
             controller.setDependencies(adService, viewManager);
         }
         catch (IOException e)
@@ -54,5 +55,9 @@ public class AdminDashboardScreen {
     public  Parent getView()
     {
         return view;
+    }
+
+    public void selectAllAdsTab() {
+        if (controller != null) controller.selectAllAdsTab();
     }
 }

@@ -361,10 +361,11 @@ public class AdDetailsController {
                 Optional<ConversationData> existing = conversations.stream()
                         .filter(c -> c.adId().equals(adDetail.id()))
                         .findFirst();
+                Runnable returnToAd = backAction;
                 if (existing.isPresent()) {
-                    controller.setData(existing.get(), null);
+                    controller.setData(existing.get(), null, returnToAd);
                 } else {
-                    controller.setData(adDetail.id(), adDetail.title(), null);
+                    controller.setData(adDetail.id(), adDetail.title(), null, returnToAd);
                 }
                 viewManager.show(view);
             } catch (IOException e) {

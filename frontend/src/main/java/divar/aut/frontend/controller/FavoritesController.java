@@ -86,7 +86,7 @@ public class FavoritesController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
                 Parent root = loader.load();
                 AdDetailsController controller = loader.getController();
-                controller.setData(detail, adService, viewManager.getUserRole(), false, this::loadFavorites, viewManager);
+                controller.setData(detail, adService, viewManager.getUserRole(), false, this::loadFavorites, viewManager, null, viewManager::toFavorites);
                 viewManager.show(root);
             } catch (IOException e) {
                 statusLabel.setText("خطا در باز کردن جزئیات آگهی");

@@ -163,7 +163,7 @@ public class ConversationsController {
             Parent view = loader.load();
             ConversationDetailController controller = loader.getController();
             controller.setViewManager(viewManager);
-            controller.setData(conversation, this::loadConversations);
+            controller.setData(conversation, this::loadConversations, null);
             viewManager.show(view);
         } catch (IOException e) {
             e.printStackTrace();

@@ -2,6 +2,7 @@ package divar.aut.frontend.ui;
 
 import divar.aut.frontend.controller.ConversationDetailController;
 import divar.aut.frontend.model.ConversationData;
+import divar.aut.frontend.ui.ViewManager;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 
@@ -27,11 +28,30 @@ public class ConversationDetailScreen {
      * @param onMessageSent optional callback to run after a message is sent.
      */
     public ConversationDetailScreen(ConversationData conversation, Runnable onMessageSent) {
+        this(null, conversation, null, null, onMessageSent);
+    }
+
+    public ConversationDetailScreen(ViewManager viewManager, ConversationData conversation, Runnable onMessageSent) {
+        this(viewManager, conversation, null, null, onMessageSent);
+    }
+
+    public ConversationDetailScreen(ViewManager viewManager, Long adId, String adTitle, Runnable onMessageSent) {
+        this(viewManager, null, adId, adTitle, onMessageSent);
+    }
+
+    private ConversationDetailScreen(ViewManager viewManager, ConversationData conversation, Long adId, String adTitle, Runnable onMessageSent) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ConversationDetailScreen.fxml"));
             view = loader.load();
             ConversationDetailController controller = loader.getController();
-            controller.setData(conversation, onMessageSent);
+            if (viewManager != null) {
+                controller.setViewManager(viewManager);
+            }
+            if (conversation != null) {
+                controller.setData(conversation, onMessageSent, null);
+            } else {
+                controller.setData(adId, adTitle, onMessageSent, null);
+            }
         } catch (IOException e) {
             throw new RuntimeException("Error loading ConversationDetailScreen", e);
         }

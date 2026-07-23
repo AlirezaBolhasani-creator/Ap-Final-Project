@@ -32,6 +32,7 @@ import java.util.Optional;
 public class AdminDashboardController {
     @FXML private FlowPane statsPane;
     @FXML private VBox adminAdGrid;
+    @FXML private javafx.scene.control.TabPane adminTabPane;
     @FXML private ListView<UserData> usersList;
     @FXML private ListView<CategoryData> categoriesList;
     @FXML private ListView<CityData> citiesList;
@@ -134,6 +135,12 @@ public class AdminDashboardController {
 
     private void loadAds() { adminService.listAds(this::renderAds, this::showError); }
     private void loadUsers() { adminService.listUsers(usersList.getItems()::setAll, this::showError); }
+
+    public void selectAllAdsTab() {
+        if (adminTabPane != null) {
+            adminTabPane.getSelectionModel().select(1);
+        }
+    }
     private void loadCategories() { categoryService.listAll(categoriesList.getItems()::setAll, this::showError); }
     private void loadCities() { cityService.listAll(citiesList.getItems()::setAll, this::showError); }
 
@@ -195,7 +202,7 @@ public class AdminDashboardController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
                 Parent root = loader.load();
                 loader.<AdDetailsController>getController().setData(detail, adService, "ADMIN", false,
-                        this::refreshAll, viewManager, this::requestAdminDelete);
+                        this::refreshAll, viewManager, this::requestAdminDelete, () -> viewManager.toAdminDashboard(true));
                 viewManager.show(root);
             } catch (IOException e) { showError("خطا در باز کردن آگهی"); }
         }), this::showError);

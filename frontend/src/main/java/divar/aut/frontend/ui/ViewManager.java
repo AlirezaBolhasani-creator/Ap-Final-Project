@@ -130,7 +130,16 @@ public class ViewManager {
      * Navigates to the main application screen (after login).
      */
     public void toMain() {
+        toMain(false);
+    }
+
+    public void toMain(boolean showMyAds) {
         MainView mainView = new MainView(this);
+        if (showMyAds) {
+            mainView.selectMyAdsTab();
+        } else {
+            mainView.selectAllAdsTab();
+        }
         show(mainView.getView());
     }
 
@@ -158,8 +167,15 @@ public class ViewManager {
      * Navigates to the admin dashboard (admin only).
      */
     public void toAdminDashboard() {
+        toAdminDashboard(false);
+    }
+
+    public void toAdminDashboard(boolean openAllAdsTab) {
         AdService adService = new AdService();
         AdminDashboardScreen adminScreen = new AdminDashboardScreen(this, adService);
+        if (openAllAdsTab) {
+            adminScreen.selectAllAdsTab();
+        }
         show(adminScreen.getView());
     }
 

@@ -16,6 +16,7 @@ import divar.aut.frontend.model.ConversationData;
 import divar.aut.frontend.model.MessageData;
 import divar.aut.frontend.net.AdService;
 import divar.aut.frontend.net.ConversationService;
+import divar.aut.frontend.ui.ConversationDetailScreen;
 import divar.aut.frontend.ui.ViewManager;
 import divar.aut.frontend.controller.AdDetailsController;
 import divar.aut.frontend.SessionManager;
@@ -48,6 +49,7 @@ public class ConversationDetailController {
     private ViewManager viewManager;
     private Long adId;
     private String adTitle;
+    private Runnable returnToAdAction;
 
     public void setViewManager(ViewManager viewManager) {
         this.viewManager = viewManager;
@@ -79,7 +81,26 @@ public class ConversationDetailController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
                 Parent view = loader.load();
                 AdDetailsController controller = loader.getController();
-                controller.setData(adDetail, new AdService(), viewManager.getUserRole(), false, null, viewManager);
+                Runnable backAction = returnToAdAction;
+                if (backAction == null) {
+                    backAction = () -> {
+                        try {
+                            if (viewManager == null) return;
+                            Parent conversationView;
+                            if (conversation != null) {
+                                ConversationDetailScreen screen = new ConversationDetailScreen(viewManager, conversation, onMessageSent);
+                                conversationView = screen.getView();
+                            } else {
+                                ConversationDetailScreen screen = new ConversationDetailScreen(viewManager, adId, adTitle, onMessageSent);
+                                conversationView = screen.getView();
+                            }
+                            viewManager.show(conversationView);
+                        } catch (Exception e) {
+                            Platform.runLater(() -> statusLabel.setText("خطا در بازگشت به گفت‌وگو"));
+                        }
+                    };
+                }
+                controller.setData(adDetail, new AdService(), viewManager.getUserRole(), false, null, viewManager, null, backAction);
                 viewManager.show(view);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -98,20 +119,22 @@ public class ConversationDetailController {
      * @param conversation the conversation data to display.
      * @param onMessageSent optional callback to run after a message is sent successfully.
      */
-    public void setData(ConversationData conversation, Runnable onMessageSent) {
+    public void setData(ConversationData conversation, Runnable onMessageSent, Runnable returnToAdAction) {
         this.conversation = conversation;
         this.adId = conversation.adId();
         this.adTitle = conversation.adTitle();
         this.onMessageSent = onMessageSent;
+        this.returnToAdAction = returnToAdAction;
         headerLabel.setText("گفت‌وگو درباره: " + conversation.adTitle());
         loadMessages();
     }
 
-    public void setData(Long adId, String adTitle, Runnable onMessageSent) {
+    public void setData(Long adId, String adTitle, Runnable onMessageSent, Runnable returnToAdAction) {
         this.conversation = null;
         this.adId = adId;
         this.adTitle = adTitle;
         this.onMessageSent = onMessageSent;
+        this.returnToAdAction = returnToAdAction;
         headerLabel.setText("گفت‌وگو درباره: " + adTitle);
         messagesBox.getChildren().clear();
         Label emptyLabel = new Label("هنوز پیامی ارسال نشده است.");

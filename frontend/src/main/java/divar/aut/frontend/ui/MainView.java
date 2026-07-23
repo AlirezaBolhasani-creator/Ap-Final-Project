@@ -23,7 +23,8 @@ import java.net.URL;
  */
 public class MainView {
 
-    private final Parent view;
+    private Parent view;
+    private divar.aut.frontend.controller.MainViewController controller;
 
     /**
      * Constructs the main view by loading the FXML and wiring up the controller
@@ -64,6 +65,7 @@ public class MainView {
             });
 
             view = loader.load();
+            controller = loader.getController();
 
         } catch (IOException e) {
             throw new RuntimeException("خطا در لود MainView.fxml", e);
@@ -76,4 +78,12 @@ public class MainView {
      * @return the {@link Parent} view to be displayed.
      */
     public Parent getView() { return view; }
+
+    public void selectMyAdsTab() {
+        if (controller != null) controller.showMyAdsTab();
+    }
+
+    public void selectAllAdsTab() {
+        if (controller != null) controller.showAllAdsTab();
+    }
 }

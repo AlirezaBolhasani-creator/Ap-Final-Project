@@ -221,11 +221,12 @@ public class MainViewController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdDetails.fxml"));
             Parent root = loader.load();
             AdDetailsController controller = loader.getController();
+            Runnable backAction = showingMyAds ? () -> viewManager.toMain(true) : viewManager::toMain;
             controller.setData(adDetail, adService, viewManager.getUserRole(), showingMyAds, () -> {
                 page = 0;
                 adGrid.getChildren().clear();
                 loadPage();
-            }, viewManager, null, viewManager::toMain);
+            }, viewManager, null, backAction);
             viewManager.show(root);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -245,6 +246,28 @@ public class MainViewController implements Initializable {
         }
         if (sectionTitleLabel != null) {
             sectionTitleLabel.setText(showingMyAds ? "آگهی‌های شما" : "انواع آگهی‌ها و نیازمندی‌ها");
+        }
+        page = 0;
+        adGrid.getChildren().clear();
+        loadPage();
+    }
+
+    public void showMyAdsTab() {
+        if (!showingMyAds) {
+            showingMyAds = true;
+            if (myAdsBtn != null) myAdsBtn.setText("بازگشت به آگهی‌ها");
+            if (sectionTitleLabel != null) sectionTitleLabel.setText("آگهی‌های شما");
+            page = 0;
+            adGrid.getChildren().clear();
+            loadPage();
+        }
+    }
+
+    public void showAllAdsTab() {
+        if (showingMyAds) {
+            showingMyAds = false;
+            if (myAdsBtn != null) myAdsBtn.setText("دیوار من");
+            if (sectionTitleLabel != null) sectionTitleLabel.setText("انواع آگهی‌ها و نیازمندی‌ها");
         }
         page = 0;
         adGrid.getChildren().clear();

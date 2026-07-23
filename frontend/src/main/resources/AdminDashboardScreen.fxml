@@ -25,7 +25,7 @@
         </BorderPane>
     </top>
     <center>
-        <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="admin-tabs">
+        <TabPane fx:id="adminTabPane" tabClosingPolicy="UNAVAILABLE" styleClass="admin-tabs">
             <tabs>
                 <Tab text="آمار">
                     <ScrollPane fitToWidth="true" styleClass="admin-scroll">
