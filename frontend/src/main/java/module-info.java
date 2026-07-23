@@ -20,8 +20,6 @@ module divar.aut.frontend {
     opens divar.aut.frontend.config to javafx.fxml;
     exports divar.aut.frontend.controller;
     opens divar.aut.frontend.controller to javafx.fxml;
-    exports divar.aut.frontend.preview;
-    opens divar.aut.frontend.preview to javafx.fxml;
     exports divar.aut.frontend.util;
 
 }
