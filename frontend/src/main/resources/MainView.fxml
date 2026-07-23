@@ -48,7 +48,7 @@
                             <FontIcon iconLiteral="fas-sign-out-alt" iconSize="15" iconColor="#a9b8de"/>
                         </graphic>
                     </Button>
-                    <Button text="ثبت آگهی" styleClass="btn btn-primary" onAction="#onPostAd">
+                    <Button text="ثبت آگهی" styleClass="btn-primary" onAction="#onPostAd">
                         <graphic>
                             <FontIcon iconLiteral="fas-plus" iconSize="14" iconColor="#ffffff"/>
                         </graphic>
@@ -99,7 +99,7 @@
 
                     <!-- Section header -->
                     <HBox alignment="CENTER_RIGHT" styleClass="section-header">
-                        <Label text="جدیدترین آگهی‌ها" styleClass="text-h2"/>
+                        <Label fx:id="sectionTitleLabel" text="انواع آگهی‌ها و نیازمندی‌ها" styleClass="text-h2"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <ComboBox fx:id="sortCombo" promptText="مرتب‌سازی"/>
                     </HBox>
@@ -133,7 +133,7 @@
                     </HBox>
                     <TextField fx:id="minPriceField" promptText="از" onAction="#applyFilter"/>
                     <TextField fx:id="maxPriceField" promptText="تا" onAction="#applyFilter"/>
-                    <Button text="اعمال فیلتر" styleClass="btn btn-primary" maxWidth="Infinity" onAction="#applyFilter"/>
+                    <Button text="اعمال فیلتر" styleClass="btn-primary" maxWidth="Infinity" onAction="#applyFilter"/>
                 </VBox>
 
                 <VBox styleClass="card" spacing="10">

@@ -47,6 +47,7 @@ public class MainViewController implements Initializable {
     @FXML private ComboBox<String> sortCombo;
     @FXML private Label            statusLabel;
     @FXML private Button           myAdsBtn;
+    @FXML private Label            sectionTitleLabel;
     @FXML private Button           adminPanelBtn;
     @FXML private Button           themeToggleBtn;
     @FXML private HBox             categoryBar;
@@ -242,6 +243,9 @@ public class MainViewController implements Initializable {
         if (myAdsBtn != null) {
             myAdsBtn.setText(showingMyAds ? "بازگشت به آگهی‌ها" : "دیوار من");
         }
+        if (sectionTitleLabel != null) {
+            sectionTitleLabel.setText(showingMyAds ? "آگهی‌های شما" : "انواع آگهی‌ها و نیازمندی‌ها");
+        }
         page = 0;
         adGrid.getChildren().clear();
         loadPage();
@@ -326,6 +330,7 @@ public class MainViewController implements Initializable {
         if (showingMyAds) {
             showingMyAds = false;
             if (myAdsBtn != null) myAdsBtn.setText("دیوار من");
+            if (sectionTitleLabel != null) sectionTitleLabel.setText("انواع آگهی‌ها و نیازمندی‌ها");
         }
         page = 0;
         loadPage();
