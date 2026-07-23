@@ -81,6 +81,7 @@ public class AdDetailsController {
     private java.util.function.Consumer<Long> adminDeleteHandler;
     private ViewManager viewManager;
     private boolean isAdmin;
+    private Runnable backAction;
 
     /**
      * Populates the UI with the provided ad details.
@@ -97,7 +98,7 @@ public class AdDetailsController {
      */
     public void setData(AdDetailData ad, AdService adService, String userRole,
                         boolean isOwner, Runnable onActionCompleted, ViewManager viewManager) {
-        setData(ad, adService, userRole, isOwner, onActionCompleted, viewManager, null);
+        setData(ad, adService, userRole, isOwner, onActionCompleted, viewManager, null, null);
     }
 
     /**
@@ -118,11 +119,40 @@ public class AdDetailsController {
     public void setData(AdDetailData ad, AdService adService, String userRole,
                         boolean isOwner, Runnable onActionCompleted, ViewManager viewManager,
                         java.util.function.Consumer<Long> adminDeleteHandler) {
+        setData(ad, adService, userRole, isOwner, onActionCompleted, viewManager, adminDeleteHandler, null);
+    }
+
+    /**
+     * Populates the UI with the provided ad details, an admin delete handler, and
+     * an explicit navigation target for the back button / post-action return.
+     * <p>
+     * Renders ad information, images, comments, and configures action buttons
+     * based on the user's role and the ad's status.
+     * </p>
+     *
+     * @param ad                 the ad detail data.
+     * @param adService          the service for ad operations.
+     * @param userRole           the role of the currently logged-in user ("ADMIN" or "USER").
+     * @param isOwner            whether the current user is the owner of the ad.
+     * @param onActionCompleted  callback to run after a successful action.
+     * @param viewManager        the navigation manager for switching screens.
+     * @param adminDeleteHandler callback to handle admin deletion (receives ad ID).
+     * @param backAction         where to navigate when the user presses back or an
+     *                           action completes, i.e. the screen this view was
+     *                           actually opened from. When {@code null}, falls back
+     *                           to the previous role-based default (admin dashboard
+     *                           for admins, main screen otherwise) for callers that
+     *                           haven't been updated to pass an explicit origin.
+     */
+    public void setData(AdDetailData ad, AdService adService, String userRole,
+                        boolean isOwner, Runnable onActionCompleted, ViewManager viewManager,
+                        java.util.function.Consumer<Long> adminDeleteHandler, Runnable backAction) {
         this.adDetail = ad;
         this.adService = adService;
         this.onActionCompleted = onActionCompleted;
         this.viewManager = viewManager;
         this.adminDeleteHandler = adminDeleteHandler;
+        this.backAction = backAction;
 
         titleLabel.setText(ad.title());
         priceLabel.setText(PriceFormatter.format(ad.price()));
@@ -222,7 +252,9 @@ public class AdDetailsController {
     @FXML
     private void handleBack() {
         if (viewManager == null) return;
-        if (isAdmin) {
+        if (backAction != null) {
+            backAction.run();
+        } else if (isAdmin) {
             viewManager.toAdminDashboard();
         } else {
             viewManager.toMain();
@@ -539,14 +571,18 @@ public class AdDetailsController {
     /**
      * Returns to whatever screen should be visible after an action
      * completes. When embedded in the shared application window, this
-     * navigates back via {@link ViewManager} (to the admin dashboard for
-     * admins, or the main screen otherwise). When shown in its own popup
-     * {@link Stage} instead, it simply closes that popup.
+     * navigates back to the explicit {@link #backAction} for this view if
+     * one was supplied via {@code setData}, i.e. the screen it was actually
+     * opened from; otherwise it falls back via {@link ViewManager} (to the
+     * admin dashboard for admins, or the main screen otherwise). When shown
+     * in its own popup {@link Stage} instead, it simply closes that popup.
      */
     private void returnToPreviousScreen() {
         Stage stage = (Stage) titleLabel.getScene().getWindow();
         if (viewManager != null && stage == viewManager.getPrimaryStage()) {
-            if (isAdmin) {
+            if (backAction != null) {
+                backAction.run();
+            } else if (isAdmin) {
                 viewManager.toAdminDashboard();
             } else {
                 viewManager.toMain();

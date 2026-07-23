@@ -225,7 +225,7 @@ public class MainViewController implements Initializable {
                 page = 0;
                 adGrid.getChildren().clear();
                 loadPage();
-            }, viewManager);
+            }, viewManager, null, viewManager::toMain);
             viewManager.show(root);
         } catch (IOException ex) {
             ex.printStackTrace();
