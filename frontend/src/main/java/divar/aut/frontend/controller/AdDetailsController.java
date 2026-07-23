@@ -8,6 +8,7 @@ import divar.aut.frontend.net.FavoriteService;
 import divar.aut.frontend.net.ConversationService;
 import divar.aut.frontend.net.RatingService;
 import divar.aut.frontend.util.PriceFormatter;
+import divar.aut.frontend.SessionManager;
 import divar.aut.frontend.ui.PostAdScreen;
 import divar.aut.frontend.ui.ThemeManager;
 import divar.aut.frontend.ui.ViewManager;
@@ -295,6 +296,12 @@ public class AdDetailsController {
      */
     @FXML
     private void handleRateSeller() {
+        String currentUser = SessionManager.getInstance().getUsername();
+        if (currentUser != null && currentUser.equals(adDetail.seller().username())) {
+            showError("شما فروشنده این آگهی هستید و نمی‌توانید امتیاز ثبت کنید.");
+            return;
+        }
+
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("ثبت امتیاز فروشنده");
         dialog.setHeaderText("تجربه شما از معامله با " + adDetail.seller().fullname());
@@ -349,6 +356,11 @@ public class AdDetailsController {
      */
     @FXML
     private void handleMessageSeller() {
+        String currentUser = SessionManager.getInstance().getUsername();
+        if (currentUser != null && currentUser.equals(adDetail.seller().username())) {
+            showError("شما فروشنده این آگهی هستید و نمی‌توانید پیام ارسال کنید.");
+            return;
+        }
         messageButton.setDisable(true);
         conversationService.listConversations(conversations -> Platform.runLater(() -> {
             try {
